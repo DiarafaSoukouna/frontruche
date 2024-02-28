@@ -1,28 +1,26 @@
-import { createApp } from 'vue';
-import App from './App.vue';
+import { createApp } from "vue";
+import App from "./App.vue";
 import router from "./router";
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import i18n from './i18n';
+import AOS from "aos";
+import "aos/dist/aos.css";
+import i18n from "./i18n";
 import store from "./state/store";
 
-
-import BootstrapVueNext from 'bootstrap-vue-next';
+import BootstrapVueNext from "bootstrap-vue-next";
 import vClickOutside from "click-outside-vue3";
 import VueApexCharts from "vue3-apexcharts";
-import Maska from 'maska';
+import Maska from "maska";
 
-import VueFeather from 'vue-feather';
+import VueFeather from "vue-feather";
 
-import '@/assets/scss/config/modern/app.scss';
-import '@vueform/slider/themes/default.css';
-import '@/assets/scss/mermaid.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle'
+import "@/assets/scss/config/modern/app.scss";
+import "@vueform/slider/themes/default.css";
+import "@/assets/scss/mermaid.min.css";
+import "bootstrap/dist/js/bootstrap.bundle";
 
 // FakeBackend authentication
 // import { configureFakeBackend } from './helpers/fake-backend';
 // configureFakeBackend();
-
 
 // Firebase authentication
 // import { initFirebaseBackend } from './authUtils';
@@ -38,19 +36,18 @@ import 'bootstrap/dist/js/bootstrap.bundle'
 
 // initFirebaseBackend(firebaseConfig);
 
-
-
 AOS.init({
-    easing: 'ease-out-back',
-    duration: 1000
+  easing: "ease-out-back",
+  duration: 1000,
 });
 
 createApp(App)
-    .use(store)
-    .use(router)
-    .use(VueApexCharts)
-    .use(BootstrapVueNext)
-    .component(VueFeather.type, VueFeather)
-    .use(Maska)
-    .use(i18n)
-    .use(vClickOutside).mount('#app');
+  .use(store)
+  .use(router)
+  .use(VueApexCharts)
+  .use(BootstrapVueNext)
+  .component(VueFeather.type, VueFeather)
+  .use(Maska)
+  .use(i18n)
+  .use(vClickOutside)
+  .mount("#app");
