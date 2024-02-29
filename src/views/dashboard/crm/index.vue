@@ -1,5 +1,4 @@
 <script>
-// import { CountTo } from "vue3-count-to";
 import Multiselect from "@vueform/multiselect";
 import "@vueform/multiselect/themes/default.css";
 // import flatPickr from "vue-flatpickr-component";
@@ -7,7 +6,7 @@ import "flatpickr/dist/flatpickr.css";
 
 import Layout from "@/layouts/main.vue";
 import PageHeader from "@/components/page-header";
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
 import axios from "axios";
 import animationData from "@/components/widgets/msoeawqm.json";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
@@ -19,17 +18,21 @@ export default {
       taskListModal: false,
       date3: null,
       rangeDateconfig: {
-        wrap: true, // set wrap to true only when using 'input-group'
+        wrap: true,
         altFormat: "M j, Y",
         altInput: true,
         dateFormat: "d M, Y",
         mode: "range",
-        teste: "",
-        code: "",
-        sigle: "",
-        definition: "",
-        contact: "",
+        all: "",
+        nom: "",
+        login: "",
+        titre: "",
+        password: "",
+        prenom: "",
         email: "",
+        profil_id: "",
+        unite_gest: "",
+        partenaire: "",
       },
       config: {
         wrap: true, // set wrap to true only when using 'input-group'
@@ -74,9 +77,6 @@ export default {
         project: "",
         subItem: [],
         status: "",
-        search1: "",
-        recherche: "",
-        all: "",
       },
       //
     };
@@ -90,20 +90,6 @@ export default {
     // simplebar,
   },
   computed: {
-    filteredList() {
-      if (!this.searchQuery) {
-        return this.all;
-      } else {
-        return this.all.filter(
-          (item) =>
-            item.nom.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            item.client.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-      }
-    },
-    getAllList() {
-      return this.all;
-    },
     displayedPosts() {
       return this.paginate(this.allTask);
     },
@@ -112,43 +98,18 @@ export default {
         const search = this.searchQuery.toLowerCase();
         return this.displayedPosts.filter((data) => {
           return (
-            data.taskId.toLowerCase().includes(search) ||
-            data.task.toLowerCase().includes(search) ||
-            data.project.toLowerCase().includes(search) ||
-            data.creater.toLowerCase().includes(search) ||
-            data.dueDate.toLowerCase().includes(search) ||
-            data.status.toLowerCase().includes(search) ||
-            data.priority.toLowerCase().includes(search)
+            data.nom.toLowerCase().includes(search) ||
+            data.client.toLowerCase().includes(search) ||
+            data.prix_annuel.toLowerCase().includes(search) ||
+            data.nom_hote.toLowerCase().includes(search)
           );
-        });
-      } else if (this.filterdate !== null) {
-        if (this.filterdate !== null) {
-          var date1 = this.filterdate.split(" to ")[0];
-          var date2 = this.filterdate.split(" to ")[1];
-        }
-        return this.displayedPosts.filter((data) => {
-          if (
-            new Date(data.dueDate.slice(0, 12)) >= new Date(date1) &&
-            new Date(data.dueDate.slice(0, 12)) <= new Date(date2)
-          ) {
-            return data;
-          } else {
-            return null;
-          }
-        });
-      } else if (this.filtervalue !== null) {
-        return this.displayedPosts.filter((data) => {
-          if (data.status === this.filtervalue || this.filtervalue == "All") {
-            return data;
-          } else {
-            return null;
-          }
         });
       } else {
         return this.displayedPosts;
       }
     },
   },
+
   watch: {
     allTask() {
       this.setPages();
@@ -164,96 +125,87 @@ export default {
   },
   beforeMount() {
     axios
-      .get("https://api-node.themesbrand.website/apps/task")
-      .then((data) => {
-        this.allTask = [];
-        const monthNames = [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ];
-        data.data.data.forEach((row) => {
-          var dd = new Date(row.dueDate);
-          row.dueDate =
-            dd.getDate() +
-            " " +
-            monthNames[dd.getMonth()] +
-            ", " +
-            dd.getFullYear();
-          row.subItem.forEach((imag) => {
-            imag.image_src =
-              "https://api-node.themesbrand.website/images/users/" + imag.img;
-          });
-
-          // row.image_src = `@/assets/images/products/img-8.png`;
-          // row.image_src = 'https://api-node.themesbrand.website/fileupload/users_bucket/' + row.img;
-          this.allTask.push(row);
-        });
-      })
-      .catch((er) => {
-        console.log(er);
+      .get("http://localhost:3000/getDomaine")
+      .then(
+        function (response) {
+          this.allTask = response.data;
+          console.log(response);
+        }.bind(this)
+      )
+      .catch(function (error) {
+        console.log(error);
       });
   },
 
   methods: {
-    async getNote() {
-      try {
-        const response = await axios.get("http://localhost:3000/getDomaine");
-        this.all = response.data;
-        console.log(response);
-      } catch (error) {
-        console.error("Erreur lors de l'appel de l'API : ", error);
-      }
-    },
-    async insertPat() {
-      try {
-        const response = await axios.post(
-          "https://ssise-cosit.com/api-ssise/partenaire/insert",
-          {
-            code_partenaire: this.code,
-            sigle_partenaire: this.sigle,
-            definition_partenaire: this.definition,
-            contact_partenaire: this.contact,
-            email_partenaire: this.email,
-            geler_partenaire: 0,
-            idusrcreation: 1,
-          }
-        );
-        console.log(response);
-        this.getNote();
-      } catch (error) {
-        console.error("Erreur lors de l'appel de l'API : ", error);
-      }
-    },
     performAction() {
       if (this.dataEdit) {
-        this.getNote();
+        console.log("yooo");
       } else {
-        this.insertPat();
+        this.insertUser();
       }
     },
-    async change() {
-      this.all = this.all.filter((x) => x.id_domaine === 3);
-      console.log(this.all);
-    },
-    async test() {
-      if (this.searchQuery) {
-        this.all = this.all.filter(
-          (item) =>
-            item.nom.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            item.client.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
+    handleSubmit() {
+      if (this.dataEdit) {
+        this.submitted = true;
+        if (
+          this.submitted &&
+          this.event.project &&
+          this.event.task &&
+          this.event.creater &&
+          this.event.dueDate &&
+          this.event.status &&
+          this.event.priority
+        ) {
+          this.taskListModal = false;
+
+          axios
+            .patch(
+              `https://api-node.themesbrand.website/apps/task/${this.event._id}`,
+              this.event
+            )
+            .then((response) => {
+              const data = response.data.data;
+              this.allTask = this.allTask.map((item) =>
+                item._id.toString() == data._id.toString()
+                  ? { ...item, ...data }
+                  : item
+              );
+            })
+            .catch((er) => {
+              console.log(er);
+            });
+        }
+      } else {
+        this.submitted = true;
+        if (
+          this.submitted &&
+          this.event.project &&
+          this.event.task &&
+          this.event.creater &&
+          this.event.dueDate &&
+          this.event.status &&
+          this.event.priority
+        ) {
+          const data = {
+            _id: Math.floor(Math.random() * 100 + 20) - 20,
+            taskId: "#VLZ4" + (Math.floor(Math.random() * 100 + 20) - 20),
+            ...this.event,
+          };
+          this.taskListModal = false;
+
+          axios
+            .post(`https://api-node.themesbrand.website/apps/task`, data)
+            .then((response) => {
+              this.allTask.unshift(response.data.data);
+            })
+            .catch((er) => {
+              console.log(er);
+            });
+        }
       }
     },
+
     onSort(column) {
       this.direction = this.direction === "asc" ? "desc" : "asc";
       const sortedArray = [...this.allTask];
@@ -280,8 +232,9 @@ export default {
       this.submitted = false;
     },
 
-    deleteModalToggle() {
+    deleteModalToggle(data) {
       this.deleteModal = true;
+      console.log(this.deleteModal, "yooooooooo", data);
     },
 
     deleteData() {
@@ -311,46 +264,6 @@ export default {
       this.filtervalue = this.filtervalue1;
     },
 
-    deleteMultiple() {
-      let ids_array = [];
-      var items = document.getElementsByName("chk_child");
-      items.forEach(function (ele) {
-        if (ele.checked == true) {
-          var trNode = ele.parentNode.parentNode.parentNode;
-          var id = trNode.querySelector(".id a").innerHTML;
-          ids_array.push(id);
-        }
-      });
-      if (typeof ids_array !== "undefined" && ids_array.length > 0) {
-        if (confirm("Are you sure you want to delete this?")) {
-          var cusList = this.allTask;
-          ids_array.forEach(function (id) {
-            cusList = cusList.filter(function (allTask) {
-              return allTask.taskId != id;
-            });
-          });
-          this.allTask = cusList;
-          document.getElementById("checkAll").checked = false;
-          var itemss = document.getElementsByName("chk_child");
-          itemss.forEach(function (ele) {
-            if (ele.checked == true) {
-              ele.checked = false;
-              ele.closest("tr").classList.remove("table-active");
-            }
-          });
-        } else {
-          return false;
-        }
-      } else {
-        Swal.fire({
-          title: "Please select at least one checkbox",
-          confirmButtonClass: "btn btn-info",
-          buttonsStyling: false,
-          showCloseButton: true,
-        });
-      }
-    },
-
     setPages() {
       let numberOfPages = Math.ceil(this.allTask.length / this.perPage);
       this.pages = [];
@@ -367,7 +280,6 @@ export default {
     },
   },
   mounted() {
-    this.getNote();
     var checkAll = document.getElementById("checkAll");
     if (checkAll) {
       checkAll.onclick = function () {
@@ -480,14 +392,14 @@ export default {
                             <th
                               class="sort"
                               data-sort="id"
-                              @click="onSort('taskId')"
+                              @click="onSort('nom')"
                             >
                               ID
                             </th>
                             <th
                               class="sort"
                               data-sort="project_name"
-                              @click="onSort('project')"
+                              @click="onSort('client')"
                             >
                               Project
                             </th>
@@ -529,7 +441,7 @@ export default {
                           </tr>
                         </thead>
                         <tbody class="list form-check-all">
-                          <tr v-for="task of filteredList" :key="task.id">
+                          <tr v-for="(task, index) of resultQuery" :key="index">
                             <td class="id">
                               <router-link
                                 to="/apps/tasks-details"
@@ -541,7 +453,7 @@ export default {
                               <router-link
                                 to="/apps/projects-overview"
                                 class="fw-medium link-primary"
-                                >{{ task.id }}
+                                >{{ task.client }}
                               </router-link>
                             </td>
                             <td>
@@ -566,12 +478,11 @@ export default {
                                   class="ri-pencil-fill align-bottom me-2 text-muted"
                                 ></i>
                               </span>
-                              <button @click="deleteModal = true">
+                              <span @click="deleteModal = true">
                                 <i
                                   class="ri-delete-bin-fill align-bottom me-2 text-muted"
                                 ></i>
-                                {{ deleteModal }}
-                              </button>
+                              </span>
                             </td>
                           </tr>
                         </tbody>
@@ -584,10 +495,9 @@ export default {
                             :height="75"
                             :width="75"
                           />
-                          <h5 class="mt-2">Sorry! No Result Found</h5>
+                          <h5 class="mt-2">Partenaire non trouvé</h5>
                           <p class="text-muted mb-0">
-                            We've searched more than 200k+ tasks We did not find
-                            any tasks for you search.
+                            Le partenaire recherché n'a pas été retrouvé.
                           </p>
                         </div>
                       </div>
@@ -637,7 +547,7 @@ export default {
                     </div>
                   </BCardBody></BTab
                 >
-                <BTab title="Messages" @click="change()">
+                <BTab title="Messages">
                   <BCardBody
                     class="border border-dashed border-end-0 border-start-0"
                   >
@@ -727,7 +637,7 @@ export default {
                           </tr>
                         </thead>
                         <tbody class="list form-check-all">
-                          <tr v-for="task of filteredList" :key="task.id">
+                          <tr v-for="(task, index) of resultQuery" :key="index">
                             <th scope="row">
                               <div class="form-check">
                                 <input
@@ -932,7 +842,7 @@ export default {
                           </tr>
                         </thead>
                         <tbody class="list form-check-all">
-                          <tr v-for="task of filteredList" :key="task.id">
+                          <tr v-for="(task, index) of resultQuery" :key="index">
                             <th scope="row">
                               <div class="form-check">
                                 <input

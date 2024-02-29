@@ -129,7 +129,20 @@ export default {
       .then(
         function (response) {
           this.allTask = response.data;
-          console.log(response);
+          console.log(typeof this.allTask);
+        }.bind(this)
+      )
+      .catch(function (error) {
+        console.log(error);
+      });
+    axios
+      .get(
+        "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/users/getAllUsers"
+      )
+      .then(
+        function (response) {
+          this.all = response.data;
+          console.log(typeof this.all, this.all.data);
         }.bind(this)
       )
       .catch(function (error) {
@@ -284,46 +297,6 @@ export default {
       this.filterdate = this.filterdate1;
       this.filtervalue = this.filtervalue1;
     },
-
-    // deleteMultiple() {
-    //   let ids_array = [];
-    //   var items = document.getElementsByName("chk_child");
-    //   items.forEach(function (ele) {
-    //     if (ele.checked == true) {
-    //       var trNode = ele.parentNode.parentNode.parentNode;
-    //       var id = trNode.querySelector(".id a").innerHTML;
-    //       ids_array.push(id);
-    //     }
-    //   });
-    //   if (typeof ids_array !== "undefined" && ids_array.length > 0) {
-    //     if (confirm("Are you sure you want to delete this?")) {
-    //       var cusList = this.allTask;
-    //       ids_array.forEach(function (id) {
-    //         cusList = cusList.filter(function (allTask) {
-    //           return allTask.taskId != id;
-    //         });
-    //       });
-    //       this.allTask = cusList;
-    //       document.getElementById("checkAll").checked = false;
-    //       var itemss = document.getElementsByName("chk_child");
-    //       itemss.forEach(function (ele) {
-    //         if (ele.checked == true) {
-    //           ele.checked = false;
-    //           ele.closest("tr").classList.remove("table-active");
-    //         }
-    //       });
-    //     } else {
-    //       return false;
-    //     }
-    //   } else {
-    //     Swal.fire({
-    //       title: "Please select at least one checkbox",
-    //       confirmButtonClass: "btn btn-info",
-    //       buttonsStyling: false,
-    //       showCloseButton: true,
-    //     });
-    //   }
-    // },
 
     setPages() {
       let numberOfPages = Math.ceil(this.allTask.length / this.perPage);

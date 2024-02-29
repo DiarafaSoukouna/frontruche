@@ -4,6 +4,7 @@ import {
   email,
   helpers
 } from "@vuelidate/validators";
+import Swal from "sweetalert2";
 import axios from 'axios';
 
 import {
@@ -44,18 +45,32 @@ export default {
 
     async signinapi() {
       this.processing = true;
-      const result = await axios.post('https://api-node.themesbrand.website/auth/signin', {
-        email: this.email,
-        password: this.password
-      });
-      if (result.data.status == 'errors') {
-        return this.authError = result.data.data;
+      try {
+        const result = await axios.post('https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/users/login', {
+          login_user: this.email,
+          pass_user: this.password
+        });
+        // Vous pouvez ajuster cette condition en fonction de la réponse de votre API
+        if (result.data.status === 'success') {
+          console.log("test", result.data);
+          localStorage.setItem('jwt', result.data.data);
+          this.$router.push({ path: '/' });
+        } else {
+          // Afficher une boîte de dialogue d'erreur avec Swal
+          await Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: 'Login ou mot de passe incorrect'
+          });
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        this.authError = "Une erreur s'est produite lors de la connexion. Veuillez réessayer.";
+      } finally {
+        this.processing = false;
       }
-      localStorage.setItem('jwt', result.data.token);
-      this.$router.push({
-        path: '/'
-      });
     },
+
 
     // Try to log the user in with the username
     // and password they provided.
@@ -121,15 +136,15 @@ export default {
 <template>
   <div class="auth-page-wrapper pt-5">
     <div class="auth-one-bg-position auth-one-bg" id="auth-particles">
-      <div class="bg-overlay"></div>
+      <!-- <div class="bg-overlay"></div> -->
 
-      <div class="shape">
+      <!-- <div class="shape">
 
         <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
           viewBox="0 0 1440 120">
           <path d="M 0,36 C 144,53.6 432,123.2 720,124 C 1008,124.8 1296,56.8 1440,40L1440 140L0 140z"></path>
         </svg>
-      </div>
+      </div> -->
     </div>
 
     <div class="auth-page-content">
@@ -139,12 +154,12 @@ export default {
             <div class="text-center mt-sm-5 mb-4 text-white-50">
               <div>
                 <router-link to="/" class="d-inline-block auth-logo">
-                  <img src="@/assets/images/logo-light.png" alt="" height="20" />
+                  <img src="@/assets/images/ruche.png" alt="" height="70" />
                 </router-link>
               </div>
-              <p class="mt-3 fs-15 fw-medium">
+              <!-- <p class="mt-3 fs-15 fw-medium">
                 Premium Admin & Dashboard Template
-              </p>
+              </p> -->
             </div>
           </BCol>
         </BRow>
@@ -154,8 +169,8 @@ export default {
             <BCard no-body class="mt-4">
               <BCardBody class="p-4">
                 <div class="text-center mt-2">
-                  <h5 class="text-primary">Welcome Back !</h5>
-                  <p class="text-muted">Sign in to continue to Velzon.</p>
+                  <h5 style="color: #438F25;">Se connecter à votre compte</h5>
+                  <!-- <p class="text-muted">Sign in to continue to Velzon.</p> -->
                 </div>
                 <div class="p-2 mt-4">
                   <b-alert v-model="authError" variant="danger" class="mt-3" dismissible>{{ authError }}</b-alert>
@@ -166,8 +181,8 @@ export default {
 
                   <form @submit.prevent="tryToLogIn">
                     <div class="mb-3">
-                      <label for="email" class="form-label">Email</label>
-                      <input type="email" class="form-control" id="email" placeholder="Enter email" v-model="email" />
+                      <label for="email" class="form-label">Login</label>
+                      <input type="text" class="form-control" id="login_user" placeholder="Enter login" v-model="email" />
                       <div class="invalid-feedback">
                         <span></span>
                       </div>
@@ -175,8 +190,7 @@ export default {
 
                     <div class="mb-3">
                       <div class="float-end">
-                        <router-link to="/forgot-password" class="text-muted">Forgot
-                          password?</router-link>
+                        <router-link to="/forgot-password" class="text-muted">Mot de passe oublié?</router-link>
                       </div>
                       <label class="form-label" for="password-input">Password</label>
                       <div class="position-relative auth-pass-inputgroup mb-3">
@@ -192,69 +206,50 @@ export default {
                       </div>
                     </div>
 
-                    <div class="form-check">
+                    <!-- <div class="form-check">
                       <input class="form-check-input" type="checkbox" value="" id="auth-remember-check" />
                       <label class="form-check-label" for="auth-remember-check">Remember
                         me</label>
-                    </div>
+                    </div> -->
 
                     <div class="mt-4">
                       <BButton variant="success" class="w-100" type="submit" @click="signinapi" :disabled="processing">
-                        {{ processing ? "Please wait" : "Sign In" }}
+                        {{ processing ? "Connexion" : "Se connecter" }}
                       </BButton>
                     </div>
 
-                    <div class="mt-4 text-center">
-                      <div class="signin-other-title">
-                        <h5 class="fs-13 mb-4 title">Sign In with</h5>
-                      </div>
-                      <div>
-                        <BButton variant="primary" type="button" class="btn btn-primary btn-icon">
-                          <i class="ri-facebook-fill fs-16"></i>
-                        </BButton>
-                        <BButton variant="danger" type="button" class="btn btn-danger btn-icon ms-1">
-                          <i class="ri-google-fill fs-16"></i>
-                        </BButton>
-                        <BButton variant="dark" type="button" class="btn btn-dark btn-icon ms-1">
-                          <i class="ri-github-fill fs-16"></i>
-                        </BButton>
-                        <BButton variant="info" type="button" class="btn btn-info btn-icon ms-1">
-                          <i class="ri-twitter-fill fs-16"></i>
-                        </BButton>
-                      </div>
-                    </div>
+
                   </form>
                 </div>
               </BCardBody>
             </BCard>
 
-            <div class="mt-4 text-center">
+            <!-- <div class="mt-4 text-center">
               <p class="mb-0">
-                Don't have an account ?
+                Don't  ?
                 <router-link to="/register" class="fw-semibold text-primary
                   text-decoration-underline">
                   Signup
                 </router-link>
               </p>
-            </div>
+            </div> -->
           </BCol>
         </BRow>
       </BContainer>
     </div>
 
-    <footer class="footer">
+    <!-- <footer class="footer">
       <BContainer>
         <BRow>
           <BCol lg="12">
             <div class="text-center">
               <p class="mb-0 text-muted">
-                &copy; {{ new Date().getFullYear() }} Velzon. Crafted with
-                <i class="mdi mdi-heart text-danger"></i> by Themesbrand
+                &copy; {{ new Date().getFullYear() }} Copyright | Tous droits reservés <a href="https://cosit-mali.com/">COSIT</a> 
               </p>
             </div>
           </BCol>
         </BRow>
       </BContainer>
-    </footer>
+    </footer> -->
   </div>
 </template>
