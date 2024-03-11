@@ -27,7 +27,7 @@
 .navbar-menu {
     width: var(--#{$prefix}vertical-menu-width);
     z-index: $vertical-menu-z-index;
-    background: var(--#{$prefix}vertical-menu-bg);
+    background: #285e43;
     border-right: 1px solid var(--#{$prefix}vertical-menu-border);
     bottom: 0;
     margin-top: 0;
