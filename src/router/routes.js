@@ -115,6 +115,14 @@ export default [
     component: () => import("../views/dashboard/job/index"),
   },
   {
+    path: "/dashboard/autre",
+    name: "dashboard-autre",
+    meta: {
+      title: "Autre paramétrages", authRequired: true,
+    },
+    component: () => import("../views/dashboard/autre/index"),
+  },
+  {
     path: "/logout",
     name: "logout",
     meta: {
@@ -125,7 +133,7 @@ export default [
         next();
       },
     },
-    component: () => import("../views/auth/logout/basic")
+    component: () => import("../views/auth/signin/cover")
   },
   {
     path: "/main-calendar",

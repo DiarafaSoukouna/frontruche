@@ -7,6 +7,7 @@
   "t-crypto": "Services et directions",
   "t-projects": "Plans stratégiques",
   "t-nft": "Cadre analytique",
+  "t-autre": "Autres Paramètres",
   "t-job": "Cadre budgetaire",
   "t-apps": "Marchés",
   "t-calendar": "Autres paramètres",
@@ -208,5 +209,9 @@
   "t-level-2.1": "Niveau 2.1",
   "t-level-2.2": "Niveau 2.2",
   "t-level-3.1": "Niveau 3.1",
-  "t-level-3.2": "Niveau 3.2"
+  "t-level-3.2": "Niveau 3.2",
+
+  "ajout": "Add",
+  "nouvelle": "Nouvelle",
+  "localite":"Localité"
 }
