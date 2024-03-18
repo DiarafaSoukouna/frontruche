@@ -123,6 +123,14 @@ export default [
     component: () => import("../views/dashboard/autre/index"),
   },
   {
+    path: "/dashboard/unite-indicateur",
+    name: "dashboard-unite-indicateur",
+    meta: {
+      title: "Unité indicateur", authRequired: true,
+    },
+    component: () => import("../views/dashboard/unite-gestion/index"),
+  },
+  {
     path: "/logout",
     name: "logout",
     meta: {

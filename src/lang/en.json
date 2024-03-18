@@ -214,6 +214,11 @@
 
   "ajout": "Add",
   "nouvelle": "new",
-  "localite":"Localite"
+  "localite":"Localite",
+  "type_pat":"Partner type",
+  "unite": "Unit",
+  "indicateurs": "indicator",
+  "categorie": "Category",
+  "depense": "expenditure"
 
 }

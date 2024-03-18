@@ -211,7 +211,12 @@
   "t-level-3.1": "Niveau 3.1",
   "t-level-3.2": "Niveau 3.2",
 
-  "ajout": "Add",
+  "ajout": "Ajouter",
   "nouvelle": "Nouvelle",
-  "localite":"Localité"
+  "localite":"Localité",
+  "type_pat":"Type partenaire",
+  "unite": "Unité",
+  "indicateurs": "indicateurs",
+  "categorie": "category",
+  "depense": "expenditure"
 }
