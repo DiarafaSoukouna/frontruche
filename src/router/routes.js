@@ -99,6 +99,14 @@ export default [
     component: () => import("../views/dashboard/analytics/index"),
   },
   {
+    path: "/dashboard/structures",
+    name: "dashboard-structures",
+    meta: {
+      title: "Structures", authRequired: true,
+    },
+    component: () => import("../views/dashboard/structures/index"),
+  },
+  {
     path: "/dashboard/nft",
     name: "dashboard-nft",
     meta: {
