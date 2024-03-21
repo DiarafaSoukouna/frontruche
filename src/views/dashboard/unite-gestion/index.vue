@@ -1,11 +1,15 @@
 <script>
+
+
 import Layout from "@/layouts/main.vue";
 import PageHeader from "@/components/page-header";
 
 import animationData from "@/components/widgets/lupuorrc.json";
+import Multiselect from "@vueform/multiselect";
 import Swal from "sweetalert2";
+import "@vueform/multiselect/themes/default.css";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
-import Lottie from "@/components/widgets/lottie.vue";
+//import Lottie from "@/components/widgets/lottie.vue";
 
 import axios from 'axios';
 export default {
@@ -19,13 +23,14 @@ export default {
       activeTab: "Product", // Onglet actif par défaut
       typePartenaires: [], // Ajoutez une propriété pour stocker les Type partenaires
       uniteIndicateur: [], // Ajoutez une propriété pour stocker les Type partenaires
-      categoryDepense: [], // Ajoutez une propriété pour stocker les Type partenaires
+      localiteParent: [], // Ajoutez une propriété pour stocker les Type partenaires
       loading: false,
       niveauActif: null,
       niveauLocalite: null,
       parentLocalite: null,
       libelleParent: null,
       rangLocalite: null,
+      localite_concerne_ugl_str: null,
       rangeDateconfig: {
         wrap: true, // set wrap to true only when using 'input-group'
         altFormat: "M j, Y",
@@ -44,7 +49,12 @@ export default {
         dateFormat: "d M, Y",
       },
       newLocalite: {
-        libelle_pat: "",
+        code_unite_gestion: "",
+        nom_unite_gestion: "",
+        abrege_unite_gestion: "",
+        localite_concerne_ugl: [],
+        chef_lieu_ugl: "",
+        couleur_ugl: "",
 
       },
       unite: {
@@ -101,10 +111,7 @@ export default {
   components: {
     Layout,
     PageHeader,
-    lottie: Lottie,
-    // Multiselect,
-    //flatPickr,
-    //simplebar,
+    Multiselect,
   },
   computed: {
     displayedPosts() {
@@ -161,35 +168,24 @@ export default {
     // Appel à setPages() et à la requête axios pour récupérer les niveaux de Type partenaire
     this.setPages();
     axios
-      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/typePartenaire/getAllTypePartenaire")
+      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteGestion/getAllUniteGestion")
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
         this.typePartenaires = response.data.data;
-        console.log(this.typePartenaires);
+        console.log("env", process.env);
 
 
       })
       .catch((error) => {
         console.error("Erreur lors de la récupération des niveaux de Type partenaire:", error);
       });
+
     axios
-      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteIndicateur/getAllUniteIndicateur")
+      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/localite/getAllLocalite")
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
-        this.uniteIndicateur = response.data.data;
-        console.log(this.uniteIndicateur);
-
-
-      })
-      .catch((error) => {
-        console.error("Erreur lors de la récupération des niveaux de Type partenaire:", error);
-      });
-    axios
-      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/categorieDepense/getAllCategorieDepense")
-      .then((response) => {
-        // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
-        this.categoryDepense = response.data.data;
-        console.log(this.categoryDepense);
+        this.localiteParent = response.data.data;
+        console.log(this.localiteParent);
 
 
       })
@@ -349,7 +345,7 @@ export default {
       });
     },
     handleSubmit2() {
-      let url = "http://ssise-cosit.com/api-ssise/categorieDepense/";
+      let url = "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteGestion/";
       let method = "";
 
       if (this.dataEdit2) {
@@ -362,9 +358,11 @@ export default {
         method = "POST";
       }
 
+      let localite_concerne_ugl_str = this.newLocalite.localite_concerne_ugl.join(',');
+
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
-        title: 'Êtes-vous sûr de vouloir enregistrer cette catégorie dépense ?',
+        title: 'Êtes-vous sûr de vouloir enregistrer cette unité de gestion ?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Oui',
@@ -377,7 +375,7 @@ export default {
           axios({
             method: method,
             url: url,
-            data: this.newDepense
+            data: { ...this.newLocalite, localite_concerne_ugl: localite_concerne_ugl_str } // Utilisez la chaîne de caractères convertie
           })
             .then((response) => {
               // Une fois que la Type partenaire a été ajoutée ou mise à jour avec succès
@@ -386,15 +384,15 @@ export default {
 
               // Affichez un message de succès avec SweetAlert
               Swal.fire({
-                title: 'Catégorie dépense !',
+                title: 'Unité de gestion crée avec succès !',
                 icon: 'success',
                 confirmButtonText: 'OK'
               });
 
-              this.fetchDepense();
+              this.fetchLocalites();
 
               // Réinitialiser les champs du formulaire
-              this.resetDepense();
+              this.resetNewLocalite();
               // Fermer le modal après avoir ajouté ou mis à jour la Type partenaire
               this.taskListModal2 = false;
 
@@ -493,7 +491,7 @@ export default {
       delete filteredData.updated_at;
 
       // Remplir les champs du formulaire avec les détails de la Type partenaire sélectionnée
-      this.newDepense = { ...filteredData };
+      this.newLocalite = { ...filteredData };
 
       this.submitted2 = false;
     },
@@ -522,7 +520,14 @@ export default {
 
     resetNewLocalite() {
       this.newLocalite = {
-        libelle_pat: "",
+        code_unite_gestion: "",
+        nom_unite_gestion: "",
+        abrege_unite_gestion: "",
+        localite_concerne_ugl: [],
+        chef_lieu_ugl: "",
+        couleur_ugl: "",
+        geler_unite_gestion: 0,
+        idusrcreation: "",
       };
     },
     resetNewUnite() {
@@ -646,7 +651,7 @@ export default {
       this.loadingClass = 'loading-yellow';
 
       axios
-        .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/typePartenaire/getAllTypePartenaire", {
+        .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteGestion/getAllUniteGestion", {
 
         })
         .then((response) => {
@@ -775,11 +780,11 @@ export default {
         // Si l'utilisateur clique sur "Oui", procéder à la suppression
         if (result.isConfirmed) {
           // Définir l'URL de la requête de suppression
-          const url = "http://ssise-cosit.com/api-ssise/uniteIndicateur/delete";
+          let url = `${process.env.VUE_APP_API_URL}/uniteGestion/delete`;
 
           // Corps de la requête contenant l'ID de la Type partenaire à supprimer
           const requestBody = {
-            id_unite: id_localite
+            id_UniteGestion: id_localite
           };
 
           // Envoyer la requête DELETE à l'API
@@ -787,7 +792,7 @@ export default {
             .then(() => {
               // Afficher un message de succès avec SweetAlert
               Swal.fire({
-                title: 'Unité supprimée !',
+                title: 'Unité de gestion supprimée !',
                 icon: 'success',
                 confirmButtonText: 'OK'
               });
@@ -909,334 +914,131 @@ export default {
 
 <template>
   <Layout>
-    <PageHeader title="Autres paramètres" pageTitle="Paramétrage" />
+    <PageHeader title="Unité de gestion" pageTitle="Paramétrage" />
     <BRow>
       <BCol class="col-xl-12">
         <BCard no-body>
           <BCardBody class="checkout-tab">
             <BForm action="#">
               <div class="step-arrow-nav mt-n3 mx-n3 mb-3">
-                <BTabs nav-class="nav-pills nav-justified custom-nav">
-                  <BTab active class="nav-item nav-link p-3">
-                    <template #title>
-                      <div class="fs-15">
-                        <i class="
-                          ri-user-line
-                          fs-16
-                          avatar-xs d-inline-flex align-items-center justify-content-center
-                          bg-primary-subtle
-                          text-primary
-                          rounded-circle
-                          align-middle
-                          me-2
-                        "></i>
-                        {{ $t("type_pat") }}
+                <!-- Seul le premier onglet est conservé -->
+                <BTab active class="nav-item nav-link p-3">
+                  <template #title>
+                    <div class="fs-15">
+                      <i class="
+                                  ri-user-line
+                                  fs-16
+                                  avatar-xs d-inline-flex align-items-center justify-content-center
+                                  bg-primary-subtle
+                                  text-primary
+                                  rounded-circle
+                                  align-middle
+                                  me-2
+                                "></i>
+                      {{ $t("type_pat") }}
+                    </div>
+                  </template>
+                  <!-- Contenu du premier onglet -->
+                  <BCardBody class="border border-dashed border-end-0 border-start-0">
+                    <div class="flex-shrink-0">
+                      <div class="d-flex flex-wrap gap-2 justify-content-end">
+                        <BButton variant="secondary" class="me-1" id="remove-actions" @click="deleteMultiple">
+                          <i class="ri-delete-bin-2-line"></i>
+                        </BButton>
+                        <BButton variant="warning" class="add-btn" @click="toggleModal2">
+                          <i class="ri-add-line align-bottom me-1"></i> {{ $t("ajout") }} {{ $t("unite-gestion") }}
+                        </BButton>
                       </div>
-                    </template>
-                    <BCardBody class="border border-dashed border-end-0 border-start-0">
+                    </div>
+                  </BCardBody>
+                  <BCardBody>
+                    <div class="table-responsive table-card mb-4">
+                      <table class="table align-middle table-nowrap mb-0" id="tasksTable">
+                        <thead class="table-light text-muted">
+                          <tr>
+                            <th class="sort" data-sort="id">
+                              Code
+                            </th>
 
-                      <div class="flex-shrink-0">
-                        <div class="d-flex flex-wrap gap-2 justify-content-end">
-                          <BButton variant="secondary" class="me-1" id="remove-actions" @click="deleteMultiple">
-                            <i class="ri-delete-bin-2-line"></i>
-                          </BButton>
+                            <th class="sort" data-sort="id">
+                              Nom
+                            </th>
+                            <th class="sort" data-sort="id">
+                              Abrégé
+                            </th>
+                            <th class="sort" data-sort="id">
+                              Localité concernée
+                            </th>
+                            <th class="sort" data-sort="id">
+                              Couleur
+                            </th>
+                            <th class="sort" data-sort="due_date">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody class="list form-check-all">
+                          <tr v-for="(localite, index) in typePartenaires" :key="index">
+                            <!-- Remplacez 'localite.id_localite' par l'ID approprié -->
+                            <td class="id">{{ localite.code_unite_gestion }}</td>
 
-                          <BButton variant="warning" class="add-btn" @click="toggleModal2">
-                            <i class="ri-add-line align-bottom me-1"></i> {{ $t("ajout") }} {{ $t("type_pat") }}
-                          </BButton>
 
+                            <td class="id">{{ localite.nom_unite_gestion }}</td>
 
+                            <td class="id">{{ localite.abrege_unite_gestion }}</td>
+
+                            <td class="id">{{ localite.localite_concerne_ugl }}</td>
+
+                            <td class="id" :style="{ 'background-color': localite.couleur_ugl }">{{
+                        localite.code_couleur
+                      }}</td>
+
+                            <td class="due_date">
+                              <!-- Ajoutez ici les actions nécessaires -->
+                              <span @click="editDetails2(localite)">
+                                <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                              </span>
+                              <span @click="deleteUnite(localite.id_unite_gestion)">
+                                <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                      <div class="noresult" v-if="resultQuery.length < 1">
+                        <div class="text-center">
+                          <lottie colors="primary:#121331,secondary:#08a88a" :options="defaultOptions" :height="75"
+                            :width="75" />
+                          <h5 class="mt-2">Partenaire non trouvé</h5>
+                          <p class="text-muted mb-0">
+                            Le partenaire recherché n'a pas été retrouvé.
+                          </p>
                         </div>
                       </div>
-                    </BCardBody>
-                    <BCardBody>
-                      <div class="table-responsive table-card mb-4">
-                        <table class="table align-middle table-nowrap mb-0" id="tasksTable">
-                          <thead class="table-light text-muted">
-                            <tr>
-                              <th class="sort" data-sort="id">
-                                Code
-                              </th>
+                    </div>
 
-                              <th class="sort" data-sort="id">
-                                Libellé
-                              </th>
-                              <th class="sort" data-sort="due_date">
-                                Actions
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody class="list form-check-all">
-                            <tr v-for="(localite, index) in typePartenaires" :key="index">
-                              <!-- Remplacez 'localite.id_localite' par l'ID approprié -->
-                              <td class="id">{{ localite.id_type_pat }}</td>
-
-
-                              <td class="id">{{ localite.libelle_pat }}</td>
-
-
-
-                              <td class="due_date">
-                                <!-- Ajoutez ici les actions nécessaires -->
-                                <span @click="editDetails(localite)">
-                                  <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                </span>
-                                <span @click="deleteUnite(localite.id_type_pat)">
-                                  <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
-                                </span>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-
-                        <div class="noresult" v-if="resultQuery.length < 1">
-                          <div class="text-center">
-                            <lottie colors="primary:#121331,secondary:#08a88a" :options="defaultOptions" :height="75"
-                              :width="75" />
-                            <h5 class="mt-2">Partenaire non trouvé</h5>
-                            <p class="text-muted mb-0">
-                              Le partenaire recherché n'a pas été retrouvé.
-                            </p>
-                          </div>
-                        </div>
+                    <div class="d-flex justify-content-end" v-if="resultQuery.length >= 1">
+                      <div class="pagination-wrap hstack gap-2">
+                        <BLink class="page-item pagination-prev" href="#" :disabled="page <= 1" @click="page--">
+                          Previous
+                        </BLink>
+                        <ul class="pagination listjs-pagination mb-0">
+                          <li :class="{
+                        active: pageNumber == page,
+                        disabled: pageNumber == '...',
+                      }" v-for="(pageNumber, index) in pages" :key="index" @click="page = pageNumber">
+                            <BLink class="page" href="#" data-i="1" data-page="8">{{ pageNumber }}</BLink>
+                          </li>
+                        </ul>
+                        <BLink class="page-item pagination-next" href="#" :disabled="page >= pages.length"
+                          @click="page++">
+                          Next
+                        </BLink>
                       </div>
-
-                      <div class="d-flex justify-content-end" v-if="resultQuery.length >= 1">
-                        <div class="pagination-wrap hstack gap-2">
-                          <BLink class="page-item pagination-prev" href="#" :disabled="page <= 1" @click="page--">
-                            Previous
-                          </BLink>
-                          <ul class="pagination listjs-pagination mb-0">
-                            <li :class="{
-                          active: pageNumber == page,
-                          disabled: pageNumber == '...',
-                        }" v-for="(pageNumber, index) in pages" :key="index" @click="page = pageNumber">
-                              <BLink class="page" href="#" data-i="1" data-page="8">{{ pageNumber }}</BLink>
-                            </li>
-                          </ul>
-                          <BLink class="page-item pagination-next" href="#" :disabled="page >= pages.length"
-                            @click="page++">
-                            Next
-                          </BLink>
-                        </div>
-                      </div>
-                    </BCardBody>
-                  </BTab>
-                  <BTab class="nav-item nav-link fs-15 p-3">
-                    <template #title>
-                      <div class="fs-15">
-                        <i class="
-                          ri-bar-chart-line
-                          fs-16
-                          avatar-xs d-inline-flex align-items-center justify-content-center
-                          bg-primary-subtle
-                          text-primary
-                          rounded-circle
-                          align-middle
-                          me-2
-                        "></i>
-                        {{ $t("unite") }} {{ $t("indicateurs") }}
-                      </div>
-                    </template>
-                    <BCardBody class="border border-dashed border-end-0 border-start-0">
-
-                      <div class="flex-shrink-0">
-                        <div class="d-flex flex-wrap gap-2 justify-content-end">
-                          <BButton variant="secondary" class="me-1" id="remove-actions" @click="deleteMultiple">
-                            <i class="ri-delete-bin-2-line"></i>
-                          </BButton>
-
-                          <BButton variant="warning" class="add-btn" @click="toggleModal1">
-                            <i class="ri-add-line align-bottom me-1"></i> {{ $t("ajout") }} {{ $t("unite") }} {{
-                          $t("indicateurs") }}
-                          </BButton>
-
-
-                        </div>
-                      </div>
-                    </BCardBody>
-                    <BCardBody>
-                      <div class="table-responsive table-card mb-4">
-                        <table class="table align-middle table-nowrap mb-0" id="tasksTable">
-                          <thead class="table-light text-muted">
-                            <tr>
-                              <th class="sort" data-sort="id">
-                                Abrégé
-                              </th>
-
-                              <th class="sort" data-sort="id">
-                                Définition
-                              </th>
-                              <th class="sort" data-sort="due_date">
-                                Actions
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody class="list form-check-all">
-                            <tr v-for="(localite, index) in uniteIndicateur" :key="index">
-                              <!-- Remplacez 'localite.id_localite' par l'ID approprié -->
-                              <td class="id">{{ localite.abrege_unite }}</td>
-
-
-                              <td class="id">{{ localite.definition_unite }}</td>
-
-
-
-                              <td class="due_date">
-                                <!-- Ajoutez ici les actions nécessaires -->
-                                <span @click="editDetails1(localite)">
-                                  <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                </span>
-                                <span @click="deleteUnite(localite.id_unite)">
-                                  <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
-                                </span>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-
-                        <div class="noresult" v-if="resultQuery.length < 1">
-                          <div class="text-center">
-                            <lottie colors="primary:#121331,secondary:#08a88a" :options="defaultOptions" :height="75"
-                              :width="75" />
-                            <h5 class="mt-2">Partenaire non trouvé</h5>
-                            <p class="text-muted mb-0">
-                              Le partenaire recherché n'a pas été retrouvé.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="d-flex justify-content-end" v-if="resultQuery.length >= 1">
-                        <div class="pagination-wrap hstack gap-2">
-                          <BLink class="page-item pagination-prev" href="#" :disabled="page <= 1" @click="page--">
-                            Previous
-                          </BLink>
-                          <ul class="pagination listjs-pagination mb-0">
-                            <li :class="{
-                          active: pageNumber == page,
-                          disabled: pageNumber == '...',
-                        }" v-for="(pageNumber, index) in pages" :key="index" @click="page = pageNumber">
-                              <BLink class="page" href="#" data-i="1" data-page="8">{{ pageNumber }}</BLink>
-                            </li>
-                          </ul>
-                          <BLink class="page-item pagination-next" href="#" :disabled="page >= pages.length"
-                            @click="page++">
-                            Next
-                          </BLink>
-                        </div>
-                      </div>
-                    </BCardBody>
-                  </BTab>
-
-                  <BTab class="nav-item nav-link fs-15 p-3">
-                    <template #title>
-                      <div class="fs-15">
-                        <i class="
-                          ri-bank-card-line
-                          fs-16
-                          avatar-xs d-inline-flex align-items-center justify-content-center
-                          bg-primary-subtle
-                          text-primary
-                          rounded-circle
-                          align-middle
-                          me-2
-                        "></i>
-                        {{ $t("categorie") }} {{ $t("depense") }}
-                      </div>
-                    </template>
-                    <BCardBody class="border border-dashed border-end-0 border-start-0">
-
-                      <div class="flex-shrink-0">
-                        <div class="d-flex flex-wrap gap-2 justify-content-end">
-                          <BButton variant="secondary" class="me-1" id="remove-actions" @click="deleteMultiple">
-                            <i class="ri-delete-bin-2-line"></i>
-                          </BButton>
-
-                          <BButton variant="warning" class="add-btn" @click="toggleModal2">
-                            <i class="ri-add-line align-bottom me-1"></i> {{ $t("ajout") }} {{ $t("type_pat") }}
-                          </BButton>
-
-
-                        </div>
-                      </div>
-                    </BCardBody>
-                    <BCardBody>
-                      <div class="table-responsive table-card mb-4">
-                        <table class="table align-middle table-nowrap mb-0" id="tasksTable">
-                          <thead class="table-light text-muted">
-                            <tr>
-                              <th class="sort" data-sort="id">
-                                Abrégé
-                              </th>
-
-                              <th class="sort" data-sort="id">
-                                Définition
-                              </th>
-                              <th class="sort" data-sort="due_date">
-                                Actions
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody class="list form-check-all">
-                            <tr v-for="(localite, index) in categoryDepense" :key="index">
-                              <!-- Remplacez 'localite.id_localite' par l'ID approprié -->
-                              <td class="id">{{ localite.code_categorie_depense }}</td>
-
-
-                              <td class="id">{{ localite.libelle_categorie_depense }}</td>
-
-
-
-                              <td class="due_date">
-                                <!-- Ajoutez ici les actions nécessaires -->
-                                <span @click="editDetails2(localite)">
-                                  <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                </span>
-                                <span @click="deleteDepense(localite.id_categorie_depense)">
-                                  <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
-                                </span>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-
-                        <div class="noresult" v-if="resultQuery.length < 1">
-                          <div class="text-center">
-                            <lottie colors="primary:#121331,secondary:#08a88a" :options="defaultOptions" :height="75"
-                              :width="75" />
-                            <h5 class="mt-2">Partenaire non trouvé</h5>
-                            <p class="text-muted mb-0">
-                              Le partenaire recherché n'a pas été retrouvé.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="d-flex justify-content-end" v-if="resultQuery.length >= 1">
-                        <div class="pagination-wrap hstack gap-2">
-                          <BLink class="page-item pagination-prev" href="#" :disabled="page <= 1" @click="page--">
-                            Previous
-                          </BLink>
-                          <ul class="pagination listjs-pagination mb-0">
-                            <li :class="{
-                          active: pageNumber == page,
-                          disabled: pageNumber == '...',
-                        }" v-for="(pageNumber, index) in pages" :key="index" @click="page = pageNumber">
-                              <BLink class="page" href="#" data-i="1" data-page="8">{{ pageNumber }}</BLink>
-                            </li>
-                          </ul>
-                          <BLink class="page-item pagination-next" href="#" :disabled="page >= pages.length"
-                            @click="page++">
-                            Next
-                          </BLink>
-                        </div>
-                      </div>
-                    </BCardBody>
-                  </BTab>
-
-
-                </BTabs>
+                    </div>
+                  </BCardBody>
+                </BTab>
               </div>
             </BForm>
           </BCardBody>
@@ -1244,80 +1046,12 @@ export default {
       </BCol>
 
 
+
     </BRow>
-    <BModal v-model="taskListModal" id="showmodal" modal-class="zoomIn" hide-footer
-      header-class="p-3 bg-info-subtle taskModal" class="v-modal-custom " centered size="lg"
-      :title="dataEdit ? 'Modifier Type partenaire' : 'Nouveau Type partenaire'">
-      <b-form id="addform" class="tablelist-form" autocomplete="off">
-        <BRow class="g-3">
-          <input type="hidden" id="id" name="" />
 
-          <BCol lg="12">
-            <div>
-              <label for="tasksTitle-field" class="form-label">Nom </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="Title"
-                v-model="newLocalite.libelle_pat" :class="{ 'is-invalid': submitted && !event.task }" />
-              <div class="invalid-feedback">Please enter a title.</div>
-            </div>
-          </BCol>
-
-
-
-
-        </BRow>
-
-        <div class="hstack gap-2 justify-content-end mt-3">
-          <BButton type="button" variant="light" @click="taskListModal = false" id="closemodal">
-            Fermer
-          </BButton>
-          <BButton type="submit" variant="success" id="add-btn" @click="handleSubmit">
-            {{ dataEdit ? "Modifier" : "Enregistrer" }}
-          </BButton>
-        </div>
-      </b-form>
-    </BModal>
-    <BModal v-model="taskListModal1" id="showmodal1" modal-class="zoomIn" hide-footer
-      header-class="p-3 bg-info-subtle taskModal1" class="v-modal-custom" centered size="lg"
-      :title="dataEdit1 ? 'Modifier Type partenaire' : 'Nouveau Type partenaire'">
-      <b-form id="addform1" class="tablelist-form1" autocomplete="off">
-        <BRow class="g-3">
-          <input type="hidden" id="id" name="" />
-
-          <BCol lg="12">
-            <div>
-              <label for="tasksTitle-field" class="form-label">Abrégé </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="Abrégé" v-model="unite.abrege_unite"
-                :class="{ 'is-invalid': submitted && !event.task }" />
-              <div class="invalid-feedback">Please enter a title.</div>
-            </div>
-          </BCol>
-          <BCol lg="12">
-            <div>
-              <label for="tasksTitle-field" class="form-label">Définition unité </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="definition"
-                v-model="unite.definition_unite" :class="{ 'is-invalid': submitted && !event.task }" />
-              <div class="invalid-feedback">Please enter a title.</div>
-            </div>
-          </BCol>
-
-
-
-
-        </BRow>
-
-        <div class="hstack gap-2 justify-content-end mt-3">
-          <BButton type="button" variant="light" @click="taskListModal1 = false" id="closemodal">
-            Fermer
-          </BButton>
-          <BButton type="submit" variant="success" id="add-btn" @click="handleSubmit1">
-            {{ dataEdit1 ? "Modifier" : "Enregistrerllll" }}
-          </BButton>
-        </div>
-      </b-form>
-    </BModal>
     <BModal v-model="taskListModal2" id="showmodal2" modal-class="zoomIn" hide-footer
       header-class="p-3 bg-info-subtle taskModal1" class="v-modal-custom" centered size="lg"
-      :title="dataEdit2 ? 'Modifier catégorie dépense' : 'Nouvelle catégorie dépense'">
+      :title="dataEdit2 ? 'Modifier unité de gestion' : 'Nouvelle unité de gestion'">
       <b-form id="addform2" class="tablelist-form2" autocomplete="off">
         <BRow class="g-3">
           <input type="hidden" id="id" name="" />
@@ -1325,20 +1059,50 @@ export default {
           <BCol lg="12">
             <div>
               <label for="tasksTitle-field" class="form-label">Code </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="Abrégé"
-                v-model="newDepense.code_categorie_depense" :class="{ 'is-invalid': submitted && !event.task }" />
+              <input type="text" id="tasksTitle" class="form-control" placeholder="Code"
+                v-model="newLocalite.code_unite_gestion" :class="{ 'is-invalid': submitted && !event.task }" />
+              <div class="invalid-feedback">Please enter a title.</div>
+            </div>
+          </BCol>
+          <BCol lg="6">
+            <div>
+              <label for="tasksTitle-field" class="form-label">Nom </label>
+              <input type="text" id="tasksTitle" class="form-control" placeholder="Nom"
+                v-model="newLocalite.nom_unite_gestion" :class="{ 'is-invalid': submitted && !event.task }" />
+              <div class="invalid-feedback">Please enter a title.</div>
+            </div>
+          </BCol>
+          <BCol lg="6">
+            <div>
+              <label for="tasksTitle-field" class="form-label">Abréviation </label>
+              <input type="text" id="tasksTitle" class="form-control" placeholder="Abréviation"
+                v-model="newLocalite.abrege_unite_gestion" :class="{ 'is-invalid': submitted && !event.task }" />
               <div class="invalid-feedback">Please enter a title.</div>
             </div>
           </BCol>
           <BCol lg="12">
+            <label for="localiteSelect" class="form-label">Localité concernée</label>
+            <Multiselect v-model="newLocalite.localite_concerne_ugl" id="skillsinput" mode="tags"
+              :close-on-select="false" :searchable="true" :create-option="true"
+              :options="localiteParent.map(localite => ({ value: localite.id_localite, label: localite.libelle_localite }))" />
+
+          </BCol>
+          <BCol lg="6">
             <div>
-              <label for="tasksTitle-field" class="form-label">Libellé </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="definition"
-                v-model="newDepense.libelle_categorie_depense" :class="{ 'is-invalid': submitted && !event.task }" />
+              <label for="tasksTitle-field" class="form-label">Chef lieu </label>
+              <input type="text" id="tasksTitle" class="form-control" placeholder="Chef lieu"
+                v-model="newLocalite.chef_lieu_ugl" :class="{ 'is-invalid': submitted && !event.task }" />
               <div class="invalid-feedback">Please enter a title.</div>
             </div>
           </BCol>
-
+          <BCol lg="6">
+            <div>
+              <label for="tasksTitle-field" class="form-label">Couleur </label>
+              <input type="color" id="tasksTitle" class="form-control" v-model="newLocalite.couleur_ugl"
+                :class="{ 'is-invalid': submitted && !event.task }" />
+              <div class="invalid-feedback">Please enter a title.</div>
+            </div>
+          </BCol>
 
 
 
