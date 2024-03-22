@@ -6,12 +6,12 @@ import "@vueform/multiselect/themes/default.css";
 import "flatpickr/dist/flatpickr.css";
 
 import Layout from "@/layouts/main.vue";
-import PageHeader from "@/components/page-header";
+// import PageHeader from "@/components/page-header";
 import Swal from "sweetalert2";
 import axios from "axios";
 import animationData from "@/components/widgets/msoeawqm.json";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
-import Lottie from "@/components/widgets/lottie.vue";
+// import Lottie from "@/components/widgets/lottie.vue";
 //import simplebar from "simplebar-vue";
 export default {
   data() {
@@ -46,6 +46,7 @@ export default {
         dateFormat: "d M, Y",
       },
       newstructures: {
+        id_sg: 0,
         code_localite: "",
         parent_localite: "",
         code_localite_national: "",
@@ -101,8 +102,8 @@ export default {
   },
   components: {
     Layout,
-    PageHeader,
-    lottie: Lottie,
+    // PageHeader,
+    // lottie: Lottie,
     // Multiselect,
     //flatPickr,
     //simplebar,
@@ -166,9 +167,8 @@ export default {
         "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/structureGenerale/getAllStructureGenerale"
       )
       .then((response) => {
-        // Une fois que les données ont été récupérées avec succès, les assigner à structures
-        this.structures = response.data.data;
-        console.log("structure", this.structures);
+        // this.structures = response.data.data;
+        console.log("structures", response.data.data);
       })
       .catch((error) => {
         console.error("Erreur lors de la récupération des niveaux de localité:", error);
@@ -202,19 +202,8 @@ export default {
   methods: {
     //
     handleSubmit() {
-      let url = "http://ssise-cosit.com/api-ssise/structureGenerale/";
-      let method = "";
-
-      if (this.dataEdit) {
-        // Si dataEdit est true, nous mettons à jour une localité existante
-        url += "update";
-        method = "POST";
-      } else {
-        // Sinon, nous ajoutons une nouvelle localité
-        url += "insert";
-        method = "POST";
-      }
-
+      let url = "http://ssise-cosit.com/api-ssise/structureGenerale/update";
+      let method = "POST";
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
         title: "Êtes-vous sûr de vouloir enregistrer cette localité ?",
@@ -244,13 +233,7 @@ export default {
                 confirmButtonText: "OK",
               });
 
-              // Réinitialiser les champs du formulaire
-              this.resetnewstructures();
-
-              // Fermer le modal après avoir ajouté ou mis à jour la localité
-              this.taskListModal = false;
-
-              this.mounted();
+              this.getStructures();
               // Actualiser la liste des localités si nécessaire
               // (supposons que vous actualisez la liste après chaque modification)
             })
@@ -441,32 +424,28 @@ export default {
     },
 
     getStructures() {
-      // Définir loading à true pour afficher l'indicateur de chargement
       this.loading = true;
       this.rang = 0;
       this.caractere;
       this.test;
-      // Définir la couleur de chargement à jaune
       this.loadingClass = "loading-yellow";
 
       axios
-        .get("https://ssise-cosit.com/structureGenerale/getAllStructureGenerale")
+        .get(
+          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/structureGenerale/getAllStructureGenerale"
+        )
         .then((response) => {
           // Mettre à jour les structures générales avec les données reçues
-          const data = response.data;
-          console.log("status: " + data);
-          // Vous pouvez effectuer le traitement nécessaire sur les données reçues ici
+          const data = response.data.data[0];
+
+          this.newstructures = { ...data };
+
         })
         .catch((error) => {
           console.error(
             "Erreur lors de la récupération des structures générales:",
             error
           );
-        })
-        .finally(() => {
-          // Après avoir obtenu les données ou en cas d'erreur, définir loading à false
-          // pour masquer l'indicateur de chargement
-          this.loading = false;
         });
     },
 
@@ -530,7 +509,7 @@ export default {
     },
   },
   mounted() {
-    // this.getStructures();
+    this.getStructures();
     var checkAll = document.getElementById("checkAll");
     if (checkAll) {
       checkAll.onclick = function () {
@@ -578,192 +557,306 @@ export default {
 
 <template>
   <Layout>
-    <PageHeader title="Structures Générales" pageTitle="Paramétrages" />
-    <br>
-    <br>
-    <BCol xxl="12">
-      <BCard no-body class="mt-xxl-n5">
-        <BCardBody class="p-4 pt-2">
-          <BTabs nav-class="nav-tabs-custom rounded border-bottom-0">
-            <BTab class="nav-item" title="Personal Details" active>
-              <form action="javascript:void(0);">
-                <BRow class="pt-4">
-                  <BCol lg="6">
-                    <div class="mb-3">
-                      <label for="firstnameInput" class="form-label">First Name</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="firstnameInput"
-                        placeholder="Enter your firstname"
-                        value="Dave"
-                      />
-                    </div>
-                  </BCol>
-                  <BCol lg="6">
-                    <div class="mb-3">
-                      <label for="lastnameInput" class="form-label">Last Name</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="lastnameInput"
-                        placeholder="Enter your lastname"
-                        value="Adame"
-                      />
-                    </div>
-                  </BCol>
-                  <BCol lg="6">
-                    <div class="mb-3">
-                      <label for="phonenumberInput" class="form-label"
-                        >Phone Number</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="phonenumberInput"
-                        placeholder="Enter your phone number"
-                        value="+(1) 987 6543"
-                      />
-                    </div>
-                  </BCol>
-                  <BCol lg="6">
-                    <div class="mb-3">
-                      <label for="emailInput" class="form-label">Email Address</label>
-                      <input
-                        type="email"
-                        class="form-control"
-                        id="emailInput"
-                        placeholder="Enter your email"
-                        value="daveadame@velzon.com"
-                      />
-                    </div>
-                  </BCol>
-                  <BCol lg="12">
-                    <div class="mb-3">
-                      <label for="JoiningdatInput" class="form-label">Joining Date</label>
+    <div class="position-relative mx-n4 mt-n4">
+      <div class="profile-wid-bg profile-setting-img">
+        <img src="@/assets/images/profile-bg.jpg" class="profile-wid-img" alt="" />
+        <div class="overlay-content">
+          <!-- <div class="text-end p-3">
+            <div class="p-0 ms-auto rounded-circle profile-photo-edit">
+              <input
+                id="profile-foreground-img-file-input"
+                type="file"
+                class="profile-foreground-img-file-input"
+              />
+              <label
+                for="profile-foreground-img-file-input"
+                class="profile-photo-edit btn btn-light"
+              >
+                <i class="ri-image-edit-line align-bottom me-1"></i> Change Cover
+              </label>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
 
-                      <flat-pickr
-                        v-model="date"
-                        id="dateinput"
-                        class="form-control"
-                      ></flat-pickr>
-                    </div>
-                  </BCol>
-                  <BCol lg="12">
-                    <div class="mb-3">
-                      <label for="skillsInput" class="form-label">Skills</label>
-                      <Multiselect
-                        v-model="value"
-                        id="skillsinput"
-                        mode="tags"
-                        :close-on-select="false"
-                        :searchable="true"
-                        :create-option="true"
-                        :options="[
-                          { value: 'illustrator', label: 'Illustrator' },
-                          { value: 'photoshop', label: 'Photoshop' },
-                          { value: 'css', label: 'CSS' },
-                          { value: 'html', label: 'HTML' },
-                          { value: 'javascript', label: 'Javascript' },
-                          { value: 'python', label: 'Python' },
-                          { value: 'php', label: 'PHP' },
-                        ]"
-                      />
-                    </div>
-                  </BCol>
-                  <BCol lg="6">
-                    <div class="mb-3">
-                      <label for="designationInput" class="form-label">Designation</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="designationInput"
-                        placeholder="Designation"
-                        value="Lead Designer / Developer"
-                      />
-                    </div>
-                  </BCol>
-                  <BCol lg="6">
-                    <div class="mb-3">
-                      <label for="websiteInput1" class="form-label">Website</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="websiteInput1"
-                        placeholder="www.example.com"
-                        value="www.velzon.com"
-                      />
-                    </div>
-                  </BCol>
-                  <BCol lg="4">
-                    <div class="mb-3">
-                      <label for="cityInput" class="form-label">City</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="cityInput"
-                        placeholder="City"
-                        value="California"
-                      />
-                    </div>
-                  </BCol>
-                  <BCol lg="4">
-                    <div class="mb-3">
-                      <label for="countryInput" class="form-label">Country</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="countryInput"
-                        placeholder="Country"
-                        value="United States"
-                      />
-                    </div>
-                  </BCol>
-                  <BCol lg="4">
-                    <div class="mb-3">
-                      <label for="zipcodeInput" class="form-label">Zip Code</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        minlength="5"
-                        maxlength="6"
-                        id="zipcodeInput"
-                        placeholder="Enter zipcode"
-                        value="90011"
-                      />
-                    </div>
-                  </BCol>
-                  <BCol lg="12">
-                    <div class="mb-3 pb-2">
-                      <label for="exampleFormControlTextarea" class="form-label"
-                        >Description</label
-                      >
-                      <textarea
-                        class="form-control"
-                        id="exampleFormControlTextarea"
-                        placeholder="Enter your description"
-                        rows="3"
-                      >
-Hi I'm Anna Adame,It will be as simple as Occidental; in fact, it will be Occidental. To an English person, it will seem like simplified English, as a skeptical Cambridge friend of mine told me what Occidental is European languages are members of the same family.</textarea
-                      >
-                    </div>
-                  </BCol>
-                  <BCol lg="12">
-                    <div class="hstack gap-2 justify-content-end">
-                      <BButton type="submit" variant="primary" @click="updatedata">
-                        Updates
-                      </BButton>
-                      <BButton type="button" variant="soft-success"> Cancel </BButton>
-                    </div>
-                  </BCol>
-                </BRow>
-              </form>
-            </BTab>
-          </BTabs>
-        </BCardBody>
-      </BCard>
-    </BCol>
-    <!-- <BRow>
+    <BRow>
+      <BCol xxl="3">
+        <BCard no-body class="mt-n5">
+          <BCardBody class="p-4">
+            <div class="text-center">
+              <div class="profile-user position-relative d-inline-block mx-auto mb-4">
+                <img
+                  src="@/assets/images/ruche.png" width="40"
+                  class="rounded-circle avatar-xl img-thumbnail user-profile-image"
+                  alt="user-profile-image"
+                />
+                <div class="avatar-xs p-0 rounded-circle profile-photo-edit">
+                  <input
+                    id="profile-img-file-input"
+                    type="file"
+                    class="profile-img-file-input"
+                  />
+                  <label
+                    for="profile-img-file-input"
+                    class="profile-photo-edit avatar-xs"
+                  >
+                    <span class="avatar-title rounded-circle bg-light text-body">
+                      <i class="ri-camera-fill"></i>
+                    </span>
+                  </label>
+                </div>
+              </div>
+              <h5 class="fs-17 mb-1">{{ newstructures.NomSysteme_sg }}</h5>
+              <p class="text-muted mb-0">
+                {{ newstructures.Email_sg }}/ {{ newstructures.Telephone_sg }}
+              </p>
+            </div>
+          </BCardBody>
+        </BCard>
+        <BCard no-body>
+          <BCardBody>
+            <div class="d-flex align-items-center mb-5">
+              <div class="flex-grow-1">
+                <h5 class="card-title mb-0">Complete Your Profile</h5>
+              </div>
+              <div class="flex-shrink-0">
+                <BLink
+                  href="javascript:void(0);"
+                  class="badge bg-light text-primary fs-12"
+                  ><i class="ri-edit-box-line align-bottom me-1"></i> Edit</BLink
+                >
+              </div>
+            </div>
+
+            <BProgress class="animated-progress custom-progress progress-label">
+              <BProgressBar :value="30" variant="danger">
+                <div class="label">30%</div>
+              </BProgressBar>
+            </BProgress>
+          </BCardBody>
+        </BCard>
+        <BCard no-body>
+          <BCardBody>
+            <BCol lg="12">
+              <div class="mb-3">
+                <label for="firstnameInput" class="form-label">Localité </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="firstnameInput"
+                  placeholder="Enter your firstname"
+                  v-model="newstructures.Localite_sg"
+                />
+              </div>
+            </BCol>
+            <BCol lg="12">
+              <div class="mb-3">
+                <label for="firstnameInput" class="form-label">Code Niveau </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="firstnameInput"
+                  placeholder="Enter your firstname"
+                  v-model="newstructures.CodeNiveau_sg"
+                />
+              </div>
+            </BCol>
+          </BCardBody>
+        </BCard>
+      </BCol>
+      <BCol xxl="9">
+        <BCard no-body class="mt-xxl-n5">
+          <BCardBody class="p-4 pt-2">
+            <BTabs nav-class="nav-tabs-custom rounded border-bottom-0">
+              <BTab class="nav-item" title="Structure Générale" active>
+                <form action="javascript:void(0);">
+                  <BRow class="pt-4">
+                    <BCol lg="4">
+                      <div class="mb-3">
+                        <label for="firstnameInput" class="form-label">Sigle </label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="firstnameInput"
+                          placeholder="Enter your firstname"
+                          v-model="newstructures.Sigle_sg"
+                        />
+                      </div>
+                    </BCol>
+                    <BCol lg="4">
+                      <div class="mb-3">
+                        <label for="lastnameInput" class="form-label">Nom</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="lastnameInput"
+                          placeholder="Enter your lastname"
+                          v-model="newstructures.Nom_sg"
+                        />
+                      </div>
+                    </BCol>
+                    <BCol lg="4">
+                      <div class="mb-3">
+                        <label for="phonenumberInput" class="form-label">Téléphone</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="phonenumberInput"
+                          placeholder="Enter your phone number"
+                          v-model="newstructures.Telephone_sg"
+                        />
+                      </div>
+                    </BCol>
+                    <BCol lg="4">
+                      <div class="mb-3">
+                        <label for="emailInput" class="form-label">Email</label>
+                        <input
+                          type="email"
+                          class="form-control"
+                          id="emailInput"
+                          placeholder="Enter your email"
+                          v-model="newstructures.Email_sg"
+                        />
+                      </div>
+                    </BCol>
+                    <BCol lg="4">
+                      <div class="mb-3">
+                        <label for="designationInput" class="form-label">WhatsApp</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="designationInput"
+                          placeholder="Designation"
+                          v-model="newstructures.WhattApp_sg"
+                        />
+                      </div>
+                    </BCol>
+                    <BCol lg="4">
+                      <div class="mb-3">
+                        <label for="websiteInput1" class="form-label">Adresse</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="websiteInput1"
+                          placeholder="www.example.com"
+                          v-model="newstructures.Adresse_sg"
+                        />
+                      </div>
+                    </BCol>
+                    <BCol lg="4">
+                      <div class="mb-3">
+                        <label for="cityInput" class="form-label">Nom Responsable</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="cityInput"
+                          placeholder="City"
+                          v-model="newstructures.NomPremierResponsable_sg"
+                        />
+                      </div>
+                    </BCol>
+                    <BCol lg="4">
+                      <div class="mb-3">
+                        <label for="countryInput" class="form-label"
+                          >Fonction Responsable</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="countryInput"
+                          placeholder="Country"
+                          v-model="newstructures.FonctionPremierResponsable_sg"
+                        />
+                      </div>
+                    </BCol>
+                    <BCol lg="4">
+                      <div class="mb-3">
+                        <label for="zipcodeInput" class="form-label"
+                          >Email Responsable</label
+                        >
+                        <input
+                          type="email"
+                          class="form-control"
+                          id="zipcodeInput"
+                          placeholder="Enter zipcode"
+                          v-model="newstructures.EmailPremierResponsable_sg"
+                        />
+                      </div>
+                    </BCol>
+                    <BCol lg="12">
+                      <div class="mb-3 pb-2">
+                        <label for="exampleFormControlTextarea" class="form-label"
+                          >Description du système</label
+                        >
+                        <textarea
+                          class="form-control"
+                          id="exampleFormControlTextarea"
+                          placeholder="Enter your description"
+                          rows="2"
+                          v-model="newstructures.DescriptionSysteme_sg"
+                        ></textarea>
+                      </div>
+                    </BCol>
+                    <BCol lg="4">
+                      <div class="mb-3">
+                        <label for="countryInput" class="form-label">Sigle Système</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="countryInput"
+                          placeholder="Country"
+                          v-model="newstructures.SigleSysteme_sg"
+                        />
+                      </div>
+                    </BCol>
+                    <BCol lg="4">
+                      <div class="mb-3">
+                        <label for="cityInput" class="form-label">Nom Système</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="cityInput"
+                          placeholder="City"
+                          v-model="newstructures.NomSysteme_sg"
+                        />
+                      </div>
+                    </BCol>
+                    <BCol lg="4">
+                      <div class="mb-3">
+                        <label for="zipcodeInput" class="form-label"
+                          >Slogan Système</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          minlength="5"
+                          maxlength="6"
+                          id="zipcodeInput"
+                          placeholder="Enter zipcode"
+                          v-model="newstructures.SloganSysteme_sg"
+                        />
+                      </div>
+                    </BCol>
+                    <BCol lg="12">
+                      <div class="hstack gap-2 justify-content-end">
+                        <BButton type="submit" variant="primary" @click="handleSubmit">
+                          Enregistrer
+                        </BButton>
+                      </div>
+                    </BCol>
+                  </BRow>
+                </form>
+              </BTab>
+            </BTabs>
+          </BCardBody>
+        </BCard>
+      </BCol>
+    </BRow>
+  </Layout>
+  <!--<Layout>
+    
+     <BRow>
       <BCol lg="12">
         <BCard no-body id="tasksList">
           <BCardHeader class="border-0">
@@ -920,9 +1013,8 @@ Hi I'm Anna Adame,It will be as simple as Occidental; in fact, it will be Occide
           </BCardBody>
         </BCard>
       </BCol>
-    </BRow> -->
+    </BRow> 
 
-    <!-- task list modal -->
     <BModal
       v-model="taskListModal"
       id="showmodal"
@@ -1147,7 +1239,6 @@ Hi I'm Anna Adame,It will be as simple as Occidental; in fact, it will be Occide
       </b-form>
     </BModal>
 
-    <!-- delete modal -->
     <BModal
       v-model="deleteModal"
       modal-class="zoomIn"
@@ -1184,5 +1275,5 @@ Hi I'm Anna Adame,It will be as simple as Occidental; in fact, it will be Occide
         </button>
       </div>
     </BModal>
-  </Layout>
+  </Layout>-->
 </template>
