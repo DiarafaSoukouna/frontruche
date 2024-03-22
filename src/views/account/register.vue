@@ -103,7 +103,7 @@ export default {
                   <img src="@/assets/images/logo-light.png" alt="" height="20">
                 </router-link>
               </div>
-              <p class="mt-3 fs-15 fw-medium">Premium Admin & Dashboard Template</p>
+              <p class="mt-3 fs-15 fw-medium">Premium Admin & Dashboard test  Template</p>
             </div>
           </BCol>
         </BRow>

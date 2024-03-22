@@ -99,6 +99,14 @@ export default [
     component: () => import("../views/dashboard/analytics/index"),
   },
   {
+    path: "/dashboard/structures",
+    name: "dashboard-structures",
+    meta: {
+      title: "Structures", authRequired: true,
+    },
+    component: () => import("../views/dashboard/structures/index"),
+  },
+  {
     path: "/dashboard/nft",
     name: "dashboard-nft",
     meta: {
@@ -123,10 +131,10 @@ export default [
     component: () => import("../views/dashboard/autre/index"),
   },
   {
-    path: "/dashboard/unite-indicateur",
-    name: "dashboard-unite-indicateur",
+    path: "/parametrage/unite-gestion",
+    name: "dashboard-unite-gestion",
     meta: {
-      title: "Unité indicateur", authRequired: true,
+      title: "Autre paramétrages", authRequired: true,
     },
     component: () => import("../views/dashboard/unite-gestion/index"),
   },

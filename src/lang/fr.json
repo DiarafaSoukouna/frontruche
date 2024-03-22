@@ -4,6 +4,7 @@
   "t-analytics": "Localités",
   "t-crm": "Partenaires",
   "t-ecommerce": "Utilisateurs",
+  "t-structure": "Structure générale",
   "t-crypto": "Services et directions",
   "t-projects": "Plans stratégiques",
   "t-nft": "Cadre analytique",
@@ -211,6 +212,7 @@
   "t-level-3.1": "Niveau 3.1",
   "t-level-3.2": "Niveau 3.2",
 
+  "unite-gestion": "Unité de gestion",
   "ajout": "Ajouter",
   "nouvelle": "Nouvelle",
   "localite":"Localité",

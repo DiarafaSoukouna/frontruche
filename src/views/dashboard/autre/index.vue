@@ -241,7 +241,7 @@ export default {
 
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
-        title: 'Êtes-vous sûr de vouloir enregistrer cette Type partenaire ?',
+        title: 'Êtes-vous sûr de vouloir enregistrer ce Type partenaire ?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Oui',
