@@ -632,10 +632,9 @@ export default {
     </div>
 
     <BButton
-      variant="danger"
       @click="topFunction"
-      class="btn-icon"
       id="back-to-top"
+      style="background-color: #285e43"
     >
       <i class="ri-arrow-up-line"></i>
     </BButton>
