@@ -16,16 +16,15 @@ import animationData1 from "@/components/widgets/gsqxdxog.json";
 export default {
   data() {
     return {
-      
-      API_URL : process.env.VUE_APP_BACK_URL,
-      PROXY_URL : process.env.VUE_APP_BACK_URL_PROXY,
+      API_URL: process.env.VUE_APP_BACK_URL,
+      PROXY_URL: process.env.VUE_APP_BACK_URL_PROXY,
       taskListModal: false,
       date3: null,
       structures: [], // Pour stocker les niveaux de localité de l'API
       activeTab: "Product", // Onglet actif par défaut
       localites: [], // Ajoutez une propriété pour stocker les localités
       localiteParent: [], // Ajoutez une propriété pour stocker les localités
-      loading: false,
+      loading: true,
       niveauActif: null,
       niveauLocalite: null,
       parentLocalite: null,
@@ -205,7 +204,7 @@ export default {
   methods: {
     //
     handleSubmit() {
-      let url = this.API_URL+ "structureGenerale/update";
+      let url = this.API_URL + "structureGenerale/update";
       let method = "POST";
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
@@ -433,15 +432,14 @@ export default {
       this.test;
       this.loadingClass = "loading-yellow";
       axios
-        .get(
-          this.PROXY_URL + this.API_URL+"structureGenerale/getAllStructureGenerale"
-        )
+        .get(this.PROXY_URL + this.API_URL + "structureGenerale/getAllStructureGenerale")
         .then((response) => {
           // Mettre à jour les structures générales avec les données reçues
           const data = response.data.data[0];
 
           this.newstructures = { ...data };
-          console.log('coooc', this.cot);
+          this.loading = false;
+          console.log("coooc", this.cot);
         })
         .catch((error) => {
           console.error(
@@ -581,15 +579,26 @@ export default {
         </div>
       </div>
     </div>
-
-    <BRow>
+    <div class="text-center mt-sm-5 pt-4" v-if="loading">
+      <button class="btn btn-outline-success btn-load" >
+      <span class="d-flex align-items-center">
+        <span class="spinner-border flex-shrink-0" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </span>
+        <span class="flex-grow-1 ms-2"> Chargement... </span>
+      </span>
+    </button>
+    </div>
+   
+    <BRow v-if="!loading">
       <BCol xxl="3">
         <BCard no-body class="mt-n5">
           <BCardBody class="p-4">
             <div class="text-center">
               <div class="profile-user position-relative d-inline-block mx-auto mb-4">
                 <img
-                  src="@/assets/images/ruche.png" width="40"
+                  src="@/assets/images/ruche.png"
+                  width="40"
                   class="rounded-circle avatar-xl img-thumbnail user-profile-image"
                   alt="user-profile-image"
                 />
@@ -609,14 +618,14 @@ export default {
                   </label>
                 </div>
               </div>
-              <h5 class="fs-17 mb-1">{{ newstructures.NomSysteme_sg }} </h5>
+              <h5 class="fs-17 mb-1">{{ newstructures.NomSysteme_sg }}</h5>
               <p class="text-muted mb-0">
                 {{ newstructures.Email_sg }}/ {{ newstructures.Telephone_sg }}
               </p>
             </div>
           </BCardBody>
         </BCard>
-        <!-- <BCard no-body>
+        <!-- <BCard no-body> 
           <BCardBody>
             <div class="d-flex align-items-center mb-5">
               <div class="flex-grow-1">

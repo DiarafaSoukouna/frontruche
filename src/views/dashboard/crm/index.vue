@@ -21,6 +21,7 @@ export default {
       type: false,
       date3: null,
       extyp: false,
+      loading: true,
       rangeDateconfig: {
         wrap: true,
         altFormat: "M j, Y",
@@ -145,6 +146,7 @@ export default {
     },
   },
   beforeMount() {
+    this.loading = true;
     this.getPartenaire();
     this.getTypePat();
   },
@@ -158,6 +160,7 @@ export default {
           { headers: headers }
         );
         this.allTask = response.data.data;
+        this.loading = false;
         console.log(response.data);
       } catch (error) {
         console.error("Erreur lors de la requête GET :", error);
@@ -172,6 +175,7 @@ export default {
         );
         this.typPat = response.data.data;
 
+        this.loading = false;
         console.log(this.typPat);
       } catch (error) {
         console.error("Erreur lors de la requête GET :", error);
@@ -408,14 +412,10 @@ export default {
     deleteData() {
       if (this.event._id) {
         axios
-          .delete(
-            `https://api-node.themesbrand.website/apps/task/${this.event._id}`
-          )
+          .delete(`https://api-node.themesbrand.website/apps/task/${this.event._id}`)
           .then((response) => {
             if (response.data.status === "success") {
-              this.allTask = this.allTask.filter(
-                (item) => item._id != this.event._id
-              );
+              this.allTask = this.allTask.filter((item) => item._id != this.event._id);
             }
           })
           .catch((er) => {
@@ -481,16 +481,12 @@ export default {
 
         if (event.target.closest("tr").classList.contains("table-active")) {
           checkedCount > 0
-            ? (document.getElementById("remove-actions").style.display =
-                "block")
-            : (document.getElementById("remove-actions").style.display =
-                "none");
+            ? (document.getElementById("remove-actions").style.display = "block")
+            : (document.getElementById("remove-actions").style.display = "none");
         } else {
           checkedCount > 0
-            ? (document.getElementById("remove-actions").style.display =
-                "block")
-            : (document.getElementById("remove-actions").style.display =
-                "none");
+            ? (document.getElementById("remove-actions").style.display = "block")
+            : (document.getElementById("remove-actions").style.display = "none");
         }
       });
     });
@@ -518,15 +514,11 @@ export default {
                   >
                     <i class="ri-delete-bin-2-line"></i>
                   </BButton>
-                  <BButton
-                    style="background-color: #285e43"
-                    @click="toggleModal"
-                  >
+                  <BButton style="background-color: #285e43" @click="toggleModal">
                     <i class="ri-add-line align-bottom me-1"></i> Partenaire
                   </BButton>
                   <BButton style="background-color: #285e43" @click="modalType">
-                    <i class="ri-add-line align-bottom me-1"></i> Type
-                    partenaire
+                    <i class="ri-add-line align-bottom me-1"></i> Type partenaire
                   </BButton>
                 </div>
               </div>
@@ -539,19 +531,13 @@ export default {
                   :title="tab.libelle_pat"
                   :active="index === 1"
                 >
-                  <BCardBody
-                    class="border border-dashed border-end-0 border-start-0"
-                  >
+                  <BCardBody class="border border-dashed border-end-0 border-start-0">
                     <BButton
                       @click="
                         editTyp();
                         recupTyp(tab.id_type_pat);
                       "
-                      style="
-                        background-color: #ea9600;
-                        border: none;
-                        margin-bottom: 15px;
-                      "
+                      style="background-color: #ea9600; border: none; margin-bottom: 15px"
                     >
                       <i class="ri-pencil-fill"></i>
                       {{ tab.libelle_pat }}
@@ -585,11 +571,18 @@ export default {
                     </b-form>
                   </BCardBody>
                   <BCardBody>
-                    <div class="table-responsive table-card mb-4">
-                      <table
-                        class="table align-middle table-nowrap mb-0"
-                        id="tasksTable"
-                      >
+                    <div class="text-center mt-sm-5 pt-4" v-if="loading">
+                      <button class="btn btn-outline-success btn-load">
+                        <span class="d-flex align-items-center">
+                          <span class="spinner-border flex-shrink-0" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                          </span>
+                          <span class="flex-grow-1 ms-2"> Chargement... </span>
+                        </span>
+                      </button>
+                    </div>
+                    <div class="table-responsive table-card mb-4" v-if="!loading">
+                      <table class="table align-middle table-nowrap mb-0" id="tasksTable">
                         <thead class="table-light text-muted">
                           <tr>
                             <th
@@ -747,13 +740,9 @@ export default {
                             :key="index"
                             @click="page = pageNumber"
                           >
-                            <BLink
-                              class="page"
-                              href="#"
-                              data-i="1"
-                              data-page="8"
-                              >{{ pageNumber }}</BLink
-                            >
+                            <BLink class="page" href="#" data-i="1" data-page="8">{{
+                              pageNumber
+                            }}</BLink>
                           </li>
                         </ul>
                         <BLink
@@ -789,9 +778,7 @@ export default {
     >
       <b-form id="addform" class="tablelist-form" autocomplete="off">
         <BRow class="g-3">
-          <div
-            style="justify-content: space-between; display: flex; margin: 5px"
-          >
+          <div style="justify-content: space-between; display: flex; margin: 5px">
             <BCol lg="6" style="margin-right: 10px">
               <label for="projectName-field" class="form-label">Code</label>
               <input
@@ -819,13 +806,9 @@ export default {
               </div>
             </BCol>
           </div>
-          <div
-            style="justify-content: space-between; display: flex; margin: 5px"
-          >
+          <div style="justify-content: space-between; display: flex; margin: 5px">
             <BCol lg="6" style="margin-right: 10px">
-              <label for="createName-field" class="form-label"
-                >Definition</label
-              >
+              <label for="createName-field" class="form-label">Definition</label>
               <input
                 type="text"
                 id="createName"
@@ -849,9 +832,7 @@ export default {
               <div class="invalid-feedback">Please enter a client name.</div>
             </BCol>
           </div>
-          <div
-            style="justify-content: space-between; display: flex; margin: 5px"
-          >
+          <div style="justify-content: space-between; display: flex; margin: 5px">
             <BCol lg="6" style="margin-right: 10px">
               <label for="createName-field" class="form-label">Site web</label>
               <input
@@ -877,13 +858,9 @@ export default {
               <div class="invalid-feedback">Please enter a client name.</div>
             </BCol>
           </div>
-          <div
-            style="justify-content: space-between; display: flex; margin: 5px"
-          >
+          <div style="justify-content: space-between; display: flex; margin: 5px">
             <BCol lg="6" style="margin-right: 10px">
-              <label for="ticket-status" class="form-label"
-                >Type Partenaire</label
-              >
+              <label for="ticket-status" class="form-label">Type Partenaire</label>
               <select v-model="type_partenaire" class="form-control">
                 <option
                   v-for="option in typPat"
@@ -896,9 +873,7 @@ export default {
               <div class="invalid-feedback">Please select a status.</div>
             </BCol>
             <BCol lg="6">
-              <label for="createName-field" class="form-label"
-                >logo_partenaire</label
-              >
+              <label for="createName-field" class="form-label">logo_partenaire</label>
               <input
                 type="text"
                 id="createName"
@@ -1011,11 +986,7 @@ export default {
         </div>
       </div>
       <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-        <button
-          type="button"
-          class="btn w-sm btn-light"
-          @click="deleteModal = false"
-        >
+        <button type="button" class="btn w-sm btn-light" @click="deleteModal = false">
           Fermer
         </button>
         <button

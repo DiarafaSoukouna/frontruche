@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
 import Lottie from "@/components/widgets/lottie.vue";
 
-import axios from 'axios';
+import axios from "axios";
 export default {
   data() {
     return {
@@ -20,7 +20,7 @@ export default {
       typePartenaires: [], // Ajoutez une propriété pour stocker les Type partenaires
       uniteIndicateur: [], // Ajoutez une propriété pour stocker les Type partenaires
       categoryDepense: [], // Ajoutez une propriété pour stocker les Type partenaires
-      loading: false,
+      loading: true,
       niveauActif: null,
       niveauLocalite: null,
       parentLocalite: null,
@@ -45,7 +45,6 @@ export default {
       },
       newLocalite: {
         libelle_pat: "",
-
       },
       unite: {
         abrege_unite: "",
@@ -160,43 +159,53 @@ export default {
   created() {
     // Appel à setPages() et à la requête axios pour récupérer les niveaux de Type partenaire
     this.setPages();
+    this.loading = true;
     axios
-      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/typePartenaire/getAllTypePartenaire")
+      .get(
+        "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/typePartenaire/getAllTypePartenaire"
+      )
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
         this.typePartenaires = response.data.data;
         console.log(this.typePartenaires);
-
-
       })
       .catch((error) => {
-        console.error("Erreur lors de la récupération des niveaux de Type partenaire:", error);
+        console.error(
+          "Erreur lors de la récupération des niveaux de Type partenaire:",
+          error
+        );
       });
     axios
-      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteIndicateur/getAllUniteIndicateur")
+      .get(
+        "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteIndicateur/getAllUniteIndicateur"
+      )
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
         this.uniteIndicateur = response.data.data;
         console.log(this.uniteIndicateur);
-
-
       })
       .catch((error) => {
-        console.error("Erreur lors de la récupération des niveaux de Type partenaire:", error);
+        console.error(
+          "Erreur lors de la récupération des niveaux de Type partenaire:",
+          error
+        );
       });
     axios
-      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/categorieDepense/getAllCategorieDepense")
+      .get(
+        "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/categorieDepense/getAllCategorieDepense"
+      )
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
         this.categoryDepense = response.data.data;
         console.log(this.categoryDepense);
-
-
       })
       .catch((error) => {
-        console.error("Erreur lors de la récupération des niveaux de Type partenaire:", error);
+        console.error(
+          "Erreur lors de la récupération des niveaux de Type partenaire:",
+          error
+        );
       });
-
+      this.loading = false;
   },
 
   filters: {
@@ -241,11 +250,11 @@ export default {
 
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
-        title: 'Êtes-vous sûr de vouloir enregistrer ce Type partenaire ?',
-        icon: 'question',
+        title: "Êtes-vous sûr de vouloir enregistrer ce Type partenaire ?",
+        icon: "question",
         showCancelButton: true,
-        confirmButtonText: 'Oui',
-        cancelButtonText: 'Non'
+        confirmButtonText: "Oui",
+        cancelButtonText: "Non",
       }).then((result) => {
         // Si l'utilisateur clique sur "Oui", procéder à l'enregistrement
         if (result.isConfirmed) {
@@ -254,7 +263,7 @@ export default {
           axios({
             method: method,
             url: url,
-            data: this.newLocalite
+            data: this.newLocalite,
           })
             .then((response) => {
               // Une fois que la Type partenaire a été ajoutée ou mise à jour avec succès
@@ -263,9 +272,9 @@ export default {
 
               // Affichez un message de succès avec SweetAlert
               Swal.fire({
-                title: 'Type partenaire  !',
-                icon: 'success',
-                confirmButtonText: 'OK'
+                title: "Type partenaire  !",
+                icon: "success",
+                confirmButtonText: "OK",
               });
 
               this.fetchLocalites();
@@ -277,16 +286,17 @@ export default {
 
               // Actualiser la liste des Type partenaires si nécessaire
               // (supposons que vous actualisez la liste après chaque modification)
-
             })
             .catch((error) => {
               // En cas d'erreur lors de l'ajout ou de la mise à jour de la Type partenaire, gérez l'erreur ici
-              console.error("Erreur lors de l'enregistrement de la Type partenaire :", error);
+              console.error(
+                "Erreur lors de l'enregistrement de la Type partenaire :",
+                error
+              );
             });
         }
       });
-    }
-    ,
+    },
     handleSubmit1() {
       let url = "http://ssise-cosit.com/api-ssise/uniteIndicateur/";
       let method = "";
@@ -303,11 +313,11 @@ export default {
 
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
-        title: 'Êtes-vous sûr de vouloir enregistrer cette unité indicateur ?',
-        icon: 'question',
+        title: "Êtes-vous sûr de vouloir enregistrer cette unité indicateur ?",
+        icon: "question",
         showCancelButton: true,
-        confirmButtonText: 'Oui',
-        cancelButtonText: 'Non'
+        confirmButtonText: "Oui",
+        cancelButtonText: "Non",
       }).then((result) => {
         // Si l'utilisateur clique sur "Oui", procéder à l'enregistrement
         if (result.isConfirmed) {
@@ -316,7 +326,7 @@ export default {
           axios({
             method: method,
             url: url,
-            data: this.unite
+            data: this.unite,
           })
             .then((response) => {
               // Une fois que la Type partenaire a été ajoutée ou mise à jour avec succès
@@ -325,9 +335,9 @@ export default {
 
               // Affichez un message de succès avec SweetAlert
               Swal.fire({
-                title: 'Unité indicateur !',
-                icon: 'success',
-                confirmButtonText: 'OK'
+                title: "Unité indicateur !",
+                icon: "success",
+                confirmButtonText: "OK",
               });
 
               this.fetchUnites();
@@ -339,11 +349,13 @@ export default {
 
               // Actualiser la liste des Type partenaires si nécessaire
               // (supposons que vous actualisez la liste après chaque modification)
-
             })
             .catch((error) => {
               // En cas d'erreur lors de l'ajout ou de la mise à jour de la Type partenaire, gérez l'erreur ici
-              console.error("Erreur lors de l'enregistrement de la Type partenaire :", error);
+              console.error(
+                "Erreur lors de l'enregistrement de la Type partenaire :",
+                error
+              );
             });
         }
       });
@@ -364,11 +376,11 @@ export default {
 
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
-        title: 'Êtes-vous sûr de vouloir enregistrer cette catégorie dépense ?',
-        icon: 'question',
+        title: "Êtes-vous sûr de vouloir enregistrer cette catégorie dépense ?",
+        icon: "question",
         showCancelButton: true,
-        confirmButtonText: 'Oui',
-        cancelButtonText: 'Non'
+        confirmButtonText: "Oui",
+        cancelButtonText: "Non",
       }).then((result) => {
         // Si l'utilisateur clique sur "Oui", procéder à l'enregistrement
         if (result.isConfirmed) {
@@ -377,7 +389,7 @@ export default {
           axios({
             method: method,
             url: url,
-            data: this.newDepense
+            data: this.newDepense,
           })
             .then((response) => {
               // Une fois que la Type partenaire a été ajoutée ou mise à jour avec succès
@@ -386,9 +398,9 @@ export default {
 
               // Affichez un message de succès avec SweetAlert
               Swal.fire({
-                title: 'Catégorie dépense !',
-                icon: 'success',
-                confirmButtonText: 'OK'
+                title: "Catégorie dépense !",
+                icon: "success",
+                confirmButtonText: "OK",
               });
 
               this.fetchDepense();
@@ -400,11 +412,13 @@ export default {
 
               // Actualiser la liste des Type partenaires si nécessaire
               // (supposons que vous actualisez la liste après chaque modification)
-
             })
             .catch((error) => {
               // En cas d'erreur lors de l'ajout ou de la mise à jour de la Type partenaire, gérez l'erreur ici
-              console.error("Erreur lors de l'enregistrement de la Type partenaire :", error);
+              console.error(
+                "Erreur lors de l'enregistrement de la Type partenaire :",
+                error
+              );
             });
         }
       });
@@ -432,7 +446,9 @@ export default {
       this.foundLocalite;
       // Recherche de la Type partenaire par ID dans la liste des Type partenaires
 
-      this.foundLocalite = this.allTask.find(localite => localite.id_localite === parseInt(id));
+      this.foundLocalite = this.allTask.find(
+        (localite) => localite.id_localite === parseInt(id)
+      );
       console.log("Type partenaire trouvée :", this.foundLocalite); // Vérifier la Type partenaire trouvée
       return this.foundLocalite;
     },
@@ -547,14 +563,10 @@ export default {
     deleteData() {
       if (this.event._id) {
         axios
-          .delete(
-            `https://api-node.themesbrand.website/apps/task/${this.event._id}`
-          )
+          .delete(`https://api-node.themesbrand.website/apps/task/${this.event._id}`)
           .then((response) => {
             if (response.data.status === "success") {
-              this.allTask = this.allTask.filter(
-                (item) => item._id != this.event._id
-              );
+              this.allTask = this.allTask.filter((item) => item._id != this.event._id);
             }
           })
           .catch((er) => {
@@ -627,7 +639,9 @@ export default {
     },
 
     getLibelleByRang(idNiveau) {
-      const niveau = this.niveauxLocalite.find(niveau => niveau.rang_niveau === idNiveau);
+      const niveau = this.niveauxLocalite.find(
+        (niveau) => niveau.rang_niveau === idNiveau
+      );
 
       if (niveau) {
         return niveau.libelle_niv_localite;
@@ -643,18 +657,18 @@ export default {
       this.caractere;
       this.test;
       // Définir la couleur de chargement à jaune
-      this.loadingClass = 'loading-yellow';
+      this.loadingClass = "loading-yellow";
 
       axios
-        .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/typePartenaire/getAllTypePartenaire", {
-
-        })
+        .get(
+          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/typePartenaire/getAllTypePartenaire",
+          {}
+        )
         .then((response) => {
           // Mettre à jour la liste des Type partenaires avec les données reçues
 
           this.typePartenaires = response.data.data;
           console.log(this.typePartenaires);
-
         })
         .catch((error) => {
           console.error("Erreur lors de la récupération des Type partenaires:", error);
@@ -672,18 +686,18 @@ export default {
       this.caractere;
       this.test;
       // Définir la couleur de chargement à jaune
-      this.loadingClass = 'loading-yellow';
+      this.loadingClass = "loading-yellow";
 
       axios
-        .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteIndicateur/getAllUniteIndicateur", {
-
-        })
+        .get(
+          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteIndicateur/getAllUniteIndicateur",
+          {}
+        )
         .then((response) => {
           // Mettre à jour la liste des Type partenaires avec les données reçues
 
           this.uniteIndicateur = response.data.data;
           console.log(this.typePartenaires);
-
         })
         .catch((error) => {
           console.error("Erreur lors de la récupération des Type partenaires:", error);
@@ -701,18 +715,17 @@ export default {
       this.caractere;
       this.test;
       // Définir la couleur de chargement à jaune
-      this.loadingClass = 'loading-yellow';
+      this.loadingClass = "loading-yellow";
 
       axios
-        .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/categorieDepense/getAllCategorieDepense", {
-
-        })
+        .get(
+          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/categorieDepense/getAllCategorieDepense",
+          {}
+        )
         .then((response) => {
           // Mettre à jour la liste des Type partenaires avec les données reçues
 
           this.categoryDepense = response.data.data;
-
-
         })
         .catch((error) => {
           console.error("Erreur lors de la récupération des Type partenaires:", error);
@@ -727,11 +740,11 @@ export default {
     deleteLocalite(id_localite) {
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
-        title: 'Êtes-vous sûr de vouloir supprimer cet type partenaire ?',
-        icon: 'question',
+        title: "Êtes-vous sûr de vouloir supprimer cet type partenaire ?",
+        icon: "question",
         showCancelButton: true,
-        confirmButtonText: 'Oui',
-        cancelButtonText: 'Non'
+        confirmButtonText: "Oui",
+        cancelButtonText: "Non",
       }).then((result) => {
         // Si l'utilisateur clique sur "Oui", procéder à la suppression
         if (result.isConfirmed) {
@@ -740,17 +753,18 @@ export default {
 
           // Corps de la requête contenant l'ID de la Type partenaire à supprimer
           const requestBody = {
-            id_type_pat: id_localite
+            id_type_pat: id_localite,
           };
 
           // Envoyer la requête DELETE à l'API
-          axios.delete(url, { data: requestBody })
+          axios
+            .delete(url, { data: requestBody })
             .then(() => {
               // Afficher un message de succès avec SweetAlert
               Swal.fire({
-                title: 'Type partenaire supprimé !',
-                icon: 'success',
-                confirmButtonText: 'OK'
+                title: "Type partenaire supprimé !",
+                icon: "success",
+                confirmButtonText: "OK",
               });
 
               // Actualiser la liste des Type partenaires après la suppression
@@ -758,7 +772,10 @@ export default {
             })
             .catch((error) => {
               // En cas d'erreur lors de la suppression de la Type partenaire, gérez l'erreur ici
-              console.error("Erreur lors de la suppression de la Type partenaire :", error);
+              console.error(
+                "Erreur lors de la suppression de la Type partenaire :",
+                error
+              );
             });
         }
       });
@@ -766,11 +783,11 @@ export default {
     deleteUnite(id_localite) {
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
-        title: 'Êtes-vous sûr de vouloir supprimer cete unité ?',
-        icon: 'question',
+        title: "Êtes-vous sûr de vouloir supprimer cete unité ?",
+        icon: "question",
         showCancelButton: true,
-        confirmButtonText: 'Oui',
-        cancelButtonText: 'Non'
+        confirmButtonText: "Oui",
+        cancelButtonText: "Non",
       }).then((result) => {
         // Si l'utilisateur clique sur "Oui", procéder à la suppression
         if (result.isConfirmed) {
@@ -779,17 +796,18 @@ export default {
 
           // Corps de la requête contenant l'ID de la Type partenaire à supprimer
           const requestBody = {
-            id_unite: id_localite
+            id_unite: id_localite,
           };
 
           // Envoyer la requête DELETE à l'API
-          axios.delete(url, { data: requestBody })
+          axios
+            .delete(url, { data: requestBody })
             .then(() => {
               // Afficher un message de succès avec SweetAlert
               Swal.fire({
-                title: 'Unité supprimée !',
-                icon: 'success',
-                confirmButtonText: 'OK'
+                title: "Unité supprimée !",
+                icon: "success",
+                confirmButtonText: "OK",
               });
 
               // Actualiser la liste des Type partenaires après la suppression
@@ -797,7 +815,10 @@ export default {
             })
             .catch((error) => {
               // En cas d'erreur lors de la suppression de la Type partenaire, gérez l'erreur ici
-              console.error("Erreur lors de la suppression de la Type partenaire :", error);
+              console.error(
+                "Erreur lors de la suppression de la Type partenaire :",
+                error
+              );
             });
         }
       });
@@ -805,11 +826,11 @@ export default {
     deleteDepense(id_localite) {
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
-        title: 'Êtes-vous sûr de vouloir supprimer cette catégorie dépense ?',
-        icon: 'question',
+        title: "Êtes-vous sûr de vouloir supprimer cette catégorie dépense ?",
+        icon: "question",
         showCancelButton: true,
-        confirmButtonText: 'Oui',
-        cancelButtonText: 'Non'
+        confirmButtonText: "Oui",
+        cancelButtonText: "Non",
       }).then((result) => {
         // Si l'utilisateur clique sur "Oui", procéder à la suppression
         if (result.isConfirmed) {
@@ -818,17 +839,18 @@ export default {
 
           // Corps de la requête contenant l'ID de la Type partenaire à supprimer
           const requestBody = {
-            id_categorie_depense: id_localite
+            id_categorie_depense: id_localite,
           };
 
           // Envoyer la requête DELETE à l'API
-          axios.delete(url, { data: requestBody })
+          axios
+            .delete(url, { data: requestBody })
             .then(() => {
               // Afficher un message de succès avec SweetAlert
               Swal.fire({
-                title: 'Catégorie dépense supprimée !',
-                icon: 'success',
-                confirmButtonText: 'OK'
+                title: "Catégorie dépense supprimée !",
+                icon: "success",
+                confirmButtonText: "OK",
               });
 
               // Actualiser la liste des Type partenaires après la suppression
@@ -836,7 +858,10 @@ export default {
             })
             .catch((error) => {
               // En cas d'erreur lors de la suppression de la Type partenaire, gérez l'erreur ici
-              console.error("Erreur lors de la suppression de la Type partenaire :", error);
+              console.error(
+                "Erreur lors de la suppression de la Type partenaire :",
+                error
+              );
             });
         }
       });
@@ -853,7 +878,10 @@ export default {
       }
       if (this.newLocalite.code_localite.length > parseInt(this.caractere)) {
         // Si la limite est dépassée, couper la saisie
-        this.newLocalite.code_localite = this.newLocalite.code_localite.slice(0, parseInt(this.caractere));
+        this.newLocalite.code_localite = this.newLocalite.code_localite.slice(
+          0,
+          parseInt(this.caractere)
+        );
       }
     },
   },
@@ -890,16 +918,12 @@ export default {
 
         if (event.target.closest("tr").classList.contains("table-active")) {
           checkedCount > 0
-            ? (document.getElementById("remove-actions").style.display =
-              "block")
-            : (document.getElementById("remove-actions").style.display =
-              "none");
+            ? (document.getElementById("remove-actions").style.display = "block")
+            : (document.getElementById("remove-actions").style.display = "none");
         } else {
           checkedCount > 0
-            ? (document.getElementById("remove-actions").style.display =
-              "block")
-            : (document.getElementById("remove-actions").style.display =
-              "none");
+            ? (document.getElementById("remove-actions").style.display = "block")
+            : (document.getElementById("remove-actions").style.display = "none");
         }
       });
     });
@@ -910,7 +934,17 @@ export default {
 <template>
   <Layout>
     <PageHeader title="Autres paramètres" pageTitle="Paramétrage" />
-    <BRow>
+    <div class="text-center mt-sm-5 pt-4" v-if="loading">
+      <button class="btn btn-outline-success btn-load">
+        <span class="d-flex align-items-center">
+          <span class="spinner-border flex-shrink-0" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </span>
+          <span class="flex-grow-1 ms-2"> Chargement... </span>
+        </span>
+      </button>
+    </div>
+    <BRow v-if="!loading">
       <BCol class="col-xl-12">
         <BCard no-body>
           <BCardBody class="checkout-tab">
@@ -920,50 +954,47 @@ export default {
                   <BTab active class="nav-item nav-link p-3">
                     <template #title>
                       <div class="fs-15">
-                        <i class="
-                          ri-user-line
-                          fs-16
-                          avatar-xs d-inline-flex align-items-center justify-content-center
-                          bg-primary-subtle
-                          text-primary
-                          rounded-circle
-                          align-middle
-                          me-2
-                        "></i>
+                        <i
+                          class="ri-user-line fs-16 avatar-xs d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle align-middle me-2"
+                        ></i>
                         {{ $t("type_pat") }}
                       </div>
                     </template>
                     <BCardBody class="border border-dashed border-end-0 border-start-0">
-
                       <div class="flex-shrink-0">
                         <div class="d-flex flex-wrap gap-2 justify-content-end">
-                          <BButton variant="secondary" class="me-1" id="remove-actions" @click="deleteMultiple">
+                          <BButton
+                            variant="secondary"
+                            class="me-1"
+                            id="remove-actions"
+                            @click="deleteMultiple"
+                          >
                             <i class="ri-delete-bin-2-line"></i>
                           </BButton>
 
-                          <BButton variant="warning" class="add-btn" @click="toggleModal2">
-                            <i class="ri-add-line align-bottom me-1"></i> {{ $t("ajout") }} {{ $t("type_pat") }}
+                          <BButton
+                            variant="warning"
+                            class="add-btn"
+                            @click="toggleModal2"
+                          >
+                            <i class="ri-add-line align-bottom me-1"></i>
+                            {{ $t("ajout") }} {{ $t("type_pat") }}
                           </BButton>
-
-
                         </div>
                       </div>
                     </BCardBody>
                     <BCardBody>
                       <div class="table-responsive table-card mb-4">
-                        <table class="table align-middle table-nowrap mb-0" id="tasksTable">
+                        <table
+                          class="table align-middle table-nowrap mb-0"
+                          id="tasksTable"
+                        >
                           <thead class="table-light text-muted">
                             <tr>
-                              <th class="sort" data-sort="id">
-                                Code
-                              </th>
+                              <th class="sort" data-sort="id">Code</th>
 
-                              <th class="sort" data-sort="id">
-                                Libellé
-                              </th>
-                              <th class="sort" data-sort="due_date">
-                                Actions
-                              </th>
+                              <th class="sort" data-sort="id">Libellé</th>
+                              <th class="sort" data-sort="due_date">Actions</th>
                             </tr>
                           </thead>
                           <tbody class="list form-check-all">
@@ -971,18 +1002,19 @@ export default {
                               <!-- Remplacez 'localite.id_localite' par l'ID approprié -->
                               <td class="id">{{ localite.id_type_pat }}</td>
 
-
                               <td class="id">{{ localite.libelle_pat }}</td>
-
-
 
                               <td class="due_date">
                                 <!-- Ajoutez ici les actions nécessaires -->
                                 <span @click="editDetails(localite)">
-                                  <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                  <i
+                                    class="ri-pencil-fill align-bottom me-2 text-muted"
+                                  ></i>
                                 </span>
                                 <span @click="deleteUnite(localite.id_type_pat)">
-                                  <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                  <i
+                                    class="ri-delete-bin-fill align-bottom me-2 text-muted"
+                                  ></i>
                                 </span>
                               </td>
                             </tr>
@@ -991,8 +1023,12 @@ export default {
 
                         <div class="noresult" v-if="resultQuery.length < 1">
                           <div class="text-center">
-                            <lottie colors="primary:#121331,secondary:#08a88a" :options="defaultOptions" :height="75"
-                              :width="75" />
+                            <lottie
+                              colors="primary:#121331,secondary:#08a88a"
+                              :options="defaultOptions"
+                              :height="75"
+                              :width="75"
+                            />
                             <h5 class="mt-2">Partenaire non trouvé</h5>
                             <p class="text-muted mb-0">
                               Le partenaire recherché n'a pas été retrouvé.
@@ -1001,21 +1037,40 @@ export default {
                         </div>
                       </div>
 
-                      <div class="d-flex justify-content-end" v-if="resultQuery.length >= 1">
+                      <div
+                        class="d-flex justify-content-end"
+                        v-if="resultQuery.length >= 1"
+                      >
                         <div class="pagination-wrap hstack gap-2">
-                          <BLink class="page-item pagination-prev" href="#" :disabled="page <= 1" @click="page--">
+                          <BLink
+                            class="page-item pagination-prev"
+                            href="#"
+                            :disabled="page <= 1"
+                            @click="page--"
+                          >
                             Previous
                           </BLink>
                           <ul class="pagination listjs-pagination mb-0">
-                            <li :class="{
-                          active: pageNumber == page,
-                          disabled: pageNumber == '...',
-                        }" v-for="(pageNumber, index) in pages" :key="index" @click="page = pageNumber">
-                              <BLink class="page" href="#" data-i="1" data-page="8">{{ pageNumber }}</BLink>
+                            <li
+                              :class="{
+                                active: pageNumber == page,
+                                disabled: pageNumber == '...',
+                              }"
+                              v-for="(pageNumber, index) in pages"
+                              :key="index"
+                              @click="page = pageNumber"
+                            >
+                              <BLink class="page" href="#" data-i="1" data-page="8">{{
+                                pageNumber
+                              }}</BLink>
                             </li>
                           </ul>
-                          <BLink class="page-item pagination-next" href="#" :disabled="page >= pages.length"
-                            @click="page++">
+                          <BLink
+                            class="page-item pagination-next"
+                            href="#"
+                            :disabled="page >= pages.length"
+                            @click="page++"
+                          >
                             Next
                           </BLink>
                         </div>
@@ -1025,51 +1080,47 @@ export default {
                   <BTab class="nav-item nav-link fs-15 p-3">
                     <template #title>
                       <div class="fs-15">
-                        <i class="
-                          ri-bar-chart-line
-                          fs-16
-                          avatar-xs d-inline-flex align-items-center justify-content-center
-                          bg-primary-subtle
-                          text-primary
-                          rounded-circle
-                          align-middle
-                          me-2
-                        "></i>
+                        <i
+                          class="ri-bar-chart-line fs-16 avatar-xs d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle align-middle me-2"
+                        ></i>
                         {{ $t("unite") }} {{ $t("indicateurs") }}
                       </div>
                     </template>
                     <BCardBody class="border border-dashed border-end-0 border-start-0">
-
                       <div class="flex-shrink-0">
                         <div class="d-flex flex-wrap gap-2 justify-content-end">
-                          <BButton variant="secondary" class="me-1" id="remove-actions" @click="deleteMultiple">
+                          <BButton
+                            variant="secondary"
+                            class="me-1"
+                            id="remove-actions"
+                            @click="deleteMultiple"
+                          >
                             <i class="ri-delete-bin-2-line"></i>
                           </BButton>
 
-                          <BButton variant="warning" class="add-btn" @click="toggleModal1">
-                            <i class="ri-add-line align-bottom me-1"></i> {{ $t("ajout") }} {{ $t("unite") }} {{
-                          $t("indicateurs") }}
+                          <BButton
+                            variant="warning"
+                            class="add-btn"
+                            @click="toggleModal1"
+                          >
+                            <i class="ri-add-line align-bottom me-1"></i>
+                            {{ $t("ajout") }} {{ $t("unite") }} {{ $t("indicateurs") }}
                           </BButton>
-
-
                         </div>
                       </div>
                     </BCardBody>
                     <BCardBody>
                       <div class="table-responsive table-card mb-4">
-                        <table class="table align-middle table-nowrap mb-0" id="tasksTable">
+                        <table
+                          class="table align-middle table-nowrap mb-0"
+                          id="tasksTable"
+                        >
                           <thead class="table-light text-muted">
                             <tr>
-                              <th class="sort" data-sort="id">
-                                Abrégé
-                              </th>
+                              <th class="sort" data-sort="id">Abrégé</th>
 
-                              <th class="sort" data-sort="id">
-                                Définition
-                              </th>
-                              <th class="sort" data-sort="due_date">
-                                Actions
-                              </th>
+                              <th class="sort" data-sort="id">Définition</th>
+                              <th class="sort" data-sort="due_date">Actions</th>
                             </tr>
                           </thead>
                           <tbody class="list form-check-all">
@@ -1077,18 +1128,19 @@ export default {
                               <!-- Remplacez 'localite.id_localite' par l'ID approprié -->
                               <td class="id">{{ localite.abrege_unite }}</td>
 
-
                               <td class="id">{{ localite.definition_unite }}</td>
-
-
 
                               <td class="due_date">
                                 <!-- Ajoutez ici les actions nécessaires -->
                                 <span @click="editDetails1(localite)">
-                                  <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                  <i
+                                    class="ri-pencil-fill align-bottom me-2 text-muted"
+                                  ></i>
                                 </span>
                                 <span @click="deleteUnite(localite.id_unite)">
-                                  <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                  <i
+                                    class="ri-delete-bin-fill align-bottom me-2 text-muted"
+                                  ></i>
                                 </span>
                               </td>
                             </tr>
@@ -1097,8 +1149,12 @@ export default {
 
                         <div class="noresult" v-if="resultQuery.length < 1">
                           <div class="text-center">
-                            <lottie colors="primary:#121331,secondary:#08a88a" :options="defaultOptions" :height="75"
-                              :width="75" />
+                            <lottie
+                              colors="primary:#121331,secondary:#08a88a"
+                              :options="defaultOptions"
+                              :height="75"
+                              :width="75"
+                            />
                             <h5 class="mt-2">Partenaire non trouvé</h5>
                             <p class="text-muted mb-0">
                               Le partenaire recherché n'a pas été retrouvé.
@@ -1107,21 +1163,40 @@ export default {
                         </div>
                       </div>
 
-                      <div class="d-flex justify-content-end" v-if="resultQuery.length >= 1">
+                      <div
+                        class="d-flex justify-content-end"
+                        v-if="resultQuery.length >= 1"
+                      >
                         <div class="pagination-wrap hstack gap-2">
-                          <BLink class="page-item pagination-prev" href="#" :disabled="page <= 1" @click="page--">
+                          <BLink
+                            class="page-item pagination-prev"
+                            href="#"
+                            :disabled="page <= 1"
+                            @click="page--"
+                          >
                             Previous
                           </BLink>
                           <ul class="pagination listjs-pagination mb-0">
-                            <li :class="{
-                          active: pageNumber == page,
-                          disabled: pageNumber == '...',
-                        }" v-for="(pageNumber, index) in pages" :key="index" @click="page = pageNumber">
-                              <BLink class="page" href="#" data-i="1" data-page="8">{{ pageNumber }}</BLink>
+                            <li
+                              :class="{
+                                active: pageNumber == page,
+                                disabled: pageNumber == '...',
+                              }"
+                              v-for="(pageNumber, index) in pages"
+                              :key="index"
+                              @click="page = pageNumber"
+                            >
+                              <BLink class="page" href="#" data-i="1" data-page="8">{{
+                                pageNumber
+                              }}</BLink>
                             </li>
                           </ul>
-                          <BLink class="page-item pagination-next" href="#" :disabled="page >= pages.length"
-                            @click="page++">
+                          <BLink
+                            class="page-item pagination-next"
+                            href="#"
+                            :disabled="page >= pages.length"
+                            @click="page++"
+                          >
                             Next
                           </BLink>
                         </div>
@@ -1132,50 +1207,47 @@ export default {
                   <BTab class="nav-item nav-link fs-15 p-3">
                     <template #title>
                       <div class="fs-15">
-                        <i class="
-                          ri-bank-card-line
-                          fs-16
-                          avatar-xs d-inline-flex align-items-center justify-content-center
-                          bg-primary-subtle
-                          text-primary
-                          rounded-circle
-                          align-middle
-                          me-2
-                        "></i>
+                        <i
+                          class="ri-bank-card-line fs-16 avatar-xs d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle align-middle me-2"
+                        ></i>
                         {{ $t("categorie") }} {{ $t("depense") }}
                       </div>
                     </template>
                     <BCardBody class="border border-dashed border-end-0 border-start-0">
-
                       <div class="flex-shrink-0">
                         <div class="d-flex flex-wrap gap-2 justify-content-end">
-                          <BButton variant="secondary" class="me-1" id="remove-actions" @click="deleteMultiple">
+                          <BButton
+                            variant="secondary"
+                            class="me-1"
+                            id="remove-actions"
+                            @click="deleteMultiple"
+                          >
                             <i class="ri-delete-bin-2-line"></i>
                           </BButton>
 
-                          <BButton variant="warning" class="add-btn" @click="toggleModal2">
-                            <i class="ri-add-line align-bottom me-1"></i> {{ $t("ajout") }} {{ $t("type_pat") }}
+                          <BButton
+                            variant="warning"
+                            class="add-btn"
+                            @click="toggleModal2"
+                          >
+                            <i class="ri-add-line align-bottom me-1"></i>
+                            {{ $t("ajout") }} {{ $t("type_pat") }}
                           </BButton>
-
-
                         </div>
                       </div>
                     </BCardBody>
                     <BCardBody>
                       <div class="table-responsive table-card mb-4">
-                        <table class="table align-middle table-nowrap mb-0" id="tasksTable">
+                        <table
+                          class="table align-middle table-nowrap mb-0"
+                          id="tasksTable"
+                        >
                           <thead class="table-light text-muted">
                             <tr>
-                              <th class="sort" data-sort="id">
-                                Abrégé
-                              </th>
+                              <th class="sort" data-sort="id">Abrégé</th>
 
-                              <th class="sort" data-sort="id">
-                                Définition
-                              </th>
-                              <th class="sort" data-sort="due_date">
-                                Actions
-                              </th>
+                              <th class="sort" data-sort="id">Définition</th>
+                              <th class="sort" data-sort="due_date">Actions</th>
                             </tr>
                           </thead>
                           <tbody class="list form-check-all">
@@ -1183,18 +1255,21 @@ export default {
                               <!-- Remplacez 'localite.id_localite' par l'ID approprié -->
                               <td class="id">{{ localite.code_categorie_depense }}</td>
 
-
                               <td class="id">{{ localite.libelle_categorie_depense }}</td>
-
-
 
                               <td class="due_date">
                                 <!-- Ajoutez ici les actions nécessaires -->
                                 <span @click="editDetails2(localite)">
-                                  <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                  <i
+                                    class="ri-pencil-fill align-bottom me-2 text-muted"
+                                  ></i>
                                 </span>
-                                <span @click="deleteDepense(localite.id_categorie_depense)">
-                                  <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                <span
+                                  @click="deleteDepense(localite.id_categorie_depense)"
+                                >
+                                  <i
+                                    class="ri-delete-bin-fill align-bottom me-2 text-muted"
+                                  ></i>
                                 </span>
                               </td>
                             </tr>
@@ -1203,8 +1278,12 @@ export default {
 
                         <div class="noresult" v-if="resultQuery.length < 1">
                           <div class="text-center">
-                            <lottie colors="primary:#121331,secondary:#08a88a" :options="defaultOptions" :height="75"
-                              :width="75" />
+                            <lottie
+                              colors="primary:#121331,secondary:#08a88a"
+                              :options="defaultOptions"
+                              :height="75"
+                              :width="75"
+                            />
                             <h5 class="mt-2">Partenaire non trouvé</h5>
                             <p class="text-muted mb-0">
                               Le partenaire recherché n'a pas été retrouvé.
@@ -1213,41 +1292,64 @@ export default {
                         </div>
                       </div>
 
-                      <div class="d-flex justify-content-end" v-if="resultQuery.length >= 1">
+                      <div
+                        class="d-flex justify-content-end"
+                        v-if="resultQuery.length >= 1"
+                      >
                         <div class="pagination-wrap hstack gap-2">
-                          <BLink class="page-item pagination-prev" href="#" :disabled="page <= 1" @click="page--">
+                          <BLink
+                            class="page-item pagination-prev"
+                            href="#"
+                            :disabled="page <= 1"
+                            @click="page--"
+                          >
                             Previous
                           </BLink>
                           <ul class="pagination listjs-pagination mb-0">
-                            <li :class="{
-                          active: pageNumber == page,
-                          disabled: pageNumber == '...',
-                        }" v-for="(pageNumber, index) in pages" :key="index" @click="page = pageNumber">
-                              <BLink class="page" href="#" data-i="1" data-page="8">{{ pageNumber }}</BLink>
+                            <li
+                              :class="{
+                                active: pageNumber == page,
+                                disabled: pageNumber == '...',
+                              }"
+                              v-for="(pageNumber, index) in pages"
+                              :key="index"
+                              @click="page = pageNumber"
+                            >
+                              <BLink class="page" href="#" data-i="1" data-page="8">{{
+                                pageNumber
+                              }}</BLink>
                             </li>
                           </ul>
-                          <BLink class="page-item pagination-next" href="#" :disabled="page >= pages.length"
-                            @click="page++">
+                          <BLink
+                            class="page-item pagination-next"
+                            href="#"
+                            :disabled="page >= pages.length"
+                            @click="page++"
+                          >
                             Next
                           </BLink>
                         </div>
                       </div>
                     </BCardBody>
                   </BTab>
-
-
                 </BTabs>
               </div>
             </BForm>
           </BCardBody>
         </BCard>
       </BCol>
-
-
     </BRow>
-    <BModal v-model="taskListModal" id="showmodal" modal-class="zoomIn" hide-footer
-      header-class="p-3 bg-info-subtle taskModal" class="v-modal-custom " centered size="lg"
-      :title="dataEdit ? 'Modifier Type partenaire' : 'Nouveau Type partenaire'">
+    <BModal
+      v-model="taskListModal"
+      id="showmodal"
+      modal-class="zoomIn"
+      hide-footer
+      header-class="p-3 bg-info-subtle taskModal"
+      class="v-modal-custom"
+      centered
+      size="lg"
+      :title="dataEdit ? 'Modifier Type partenaire' : 'Nouveau Type partenaire'"
+    >
       <b-form id="addform" class="tablelist-form" autocomplete="off">
         <BRow class="g-3">
           <input type="hidden" id="id" name="" />
@@ -1255,19 +1357,26 @@ export default {
           <BCol lg="12">
             <div>
               <label for="tasksTitle-field" class="form-label">Nom </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="Title"
-                v-model="newLocalite.libelle_pat" :class="{ 'is-invalid': submitted && !event.task }" />
+              <input
+                type="text"
+                id="tasksTitle"
+                class="form-control"
+                placeholder="Title"
+                v-model="newLocalite.libelle_pat"
+                :class="{ 'is-invalid': submitted && !event.task }"
+              />
               <div class="invalid-feedback">Please enter a title.</div>
             </div>
           </BCol>
-
-
-
-
         </BRow>
 
         <div class="hstack gap-2 justify-content-end mt-3">
-          <BButton type="button" variant="light" @click="taskListModal = false" id="closemodal">
+          <BButton
+            type="button"
+            variant="light"
+            @click="taskListModal = false"
+            id="closemodal"
+          >
             Fermer
           </BButton>
           <BButton type="submit" variant="success" id="add-btn" @click="handleSubmit">
@@ -1276,9 +1385,17 @@ export default {
         </div>
       </b-form>
     </BModal>
-    <BModal v-model="taskListModal1" id="showmodal1" modal-class="zoomIn" hide-footer
-      header-class="p-3 bg-info-subtle taskModal1" class="v-modal-custom" centered size="lg"
-      :title="dataEdit1 ? 'Modifier Type partenaire' : 'Nouveau Type partenaire'">
+    <BModal
+      v-model="taskListModal1"
+      id="showmodal1"
+      modal-class="zoomIn"
+      hide-footer
+      header-class="p-3 bg-info-subtle taskModal1"
+      class="v-modal-custom"
+      centered
+      size="lg"
+      :title="dataEdit1 ? 'Modifier Type partenaire' : 'Nouveau Type partenaire'"
+    >
       <b-form id="addform1" class="tablelist-form1" autocomplete="off">
         <BRow class="g-3">
           <input type="hidden" id="id" name="" />
@@ -1286,27 +1403,40 @@ export default {
           <BCol lg="12">
             <div>
               <label for="tasksTitle-field" class="form-label">Abrégé </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="Abrégé" v-model="unite.abrege_unite"
-                :class="{ 'is-invalid': submitted && !event.task }" />
+              <input
+                type="text"
+                id="tasksTitle"
+                class="form-control"
+                placeholder="Abrégé"
+                v-model="unite.abrege_unite"
+                :class="{ 'is-invalid': submitted && !event.task }"
+              />
               <div class="invalid-feedback">Please enter a title.</div>
             </div>
           </BCol>
           <BCol lg="12">
             <div>
               <label for="tasksTitle-field" class="form-label">Définition unité </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="definition"
-                v-model="unite.definition_unite" :class="{ 'is-invalid': submitted && !event.task }" />
+              <input
+                type="text"
+                id="tasksTitle"
+                class="form-control"
+                placeholder="definition"
+                v-model="unite.definition_unite"
+                :class="{ 'is-invalid': submitted && !event.task }"
+              />
               <div class="invalid-feedback">Please enter a title.</div>
             </div>
           </BCol>
-
-
-
-
         </BRow>
 
         <div class="hstack gap-2 justify-content-end mt-3">
-          <BButton type="button" variant="light" @click="taskListModal1 = false" id="closemodal">
+          <BButton
+            type="button"
+            variant="light"
+            @click="taskListModal1 = false"
+            id="closemodal"
+          >
             Fermer
           </BButton>
           <BButton type="submit" variant="success" id="add-btn" @click="handleSubmit1">
@@ -1315,9 +1445,17 @@ export default {
         </div>
       </b-form>
     </BModal>
-    <BModal v-model="taskListModal2" id="showmodal2" modal-class="zoomIn" hide-footer
-      header-class="p-3 bg-info-subtle taskModal1" class="v-modal-custom" centered size="lg"
-      :title="dataEdit2 ? 'Modifier catégorie dépense' : 'Nouvelle catégorie dépense'">
+    <BModal
+      v-model="taskListModal2"
+      id="showmodal2"
+      modal-class="zoomIn"
+      hide-footer
+      header-class="p-3 bg-info-subtle taskModal1"
+      class="v-modal-custom"
+      centered
+      size="lg"
+      :title="dataEdit2 ? 'Modifier catégorie dépense' : 'Nouvelle catégorie dépense'"
+    >
       <b-form id="addform2" class="tablelist-form2" autocomplete="off">
         <BRow class="g-3">
           <input type="hidden" id="id" name="" />
@@ -1325,27 +1463,40 @@ export default {
           <BCol lg="12">
             <div>
               <label for="tasksTitle-field" class="form-label">Code </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="Abrégé"
-                v-model="newDepense.code_categorie_depense" :class="{ 'is-invalid': submitted && !event.task }" />
+              <input
+                type="text"
+                id="tasksTitle"
+                class="form-control"
+                placeholder="Abrégé"
+                v-model="newDepense.code_categorie_depense"
+                :class="{ 'is-invalid': submitted && !event.task }"
+              />
               <div class="invalid-feedback">Please enter a title.</div>
             </div>
           </BCol>
           <BCol lg="12">
             <div>
               <label for="tasksTitle-field" class="form-label">Libellé </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="definition"
-                v-model="newDepense.libelle_categorie_depense" :class="{ 'is-invalid': submitted && !event.task }" />
+              <input
+                type="text"
+                id="tasksTitle"
+                class="form-control"
+                placeholder="definition"
+                v-model="newDepense.libelle_categorie_depense"
+                :class="{ 'is-invalid': submitted && !event.task }"
+              />
               <div class="invalid-feedback">Please enter a title.</div>
             </div>
           </BCol>
-
-
-
-
         </BRow>
 
         <div class="hstack gap-2 justify-content-end mt-3">
-          <BButton type="button" variant="light" @click="taskListModal2 = false" id="closemodal">
+          <BButton
+            type="button"
+            variant="light"
+            @click="taskListModal2 = false"
+            id="closemodal"
+          >
             Fermer
           </BButton>
           <BButton type="submit" variant="success" id="add-btn" @click="handleSubmit2">
