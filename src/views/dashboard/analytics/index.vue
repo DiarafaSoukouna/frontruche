@@ -114,44 +114,18 @@ export default {
     resultQuery() {
       if (this.searchQuery) {
         const search = this.searchQuery.toLowerCase();
-        return this.displayedPosts.filter((data) => {
+        return this.localites.filter((localite) => {
           return (
-            data.id.toLowerCase().includes(search) ||
-            data.task.toLowerCase().includes(search) ||
-            data.femme_localite.toLowerCase().includes(search) ||
-            data.creater.toLowerCase().includes(search) ||
-            data.dueDate.toLowerCase().includes(search) ||
-            data.status.toLowerCase().includes(search) ||
-            data.priority.toLowerCase().includes(search)
+            localite.code_localite.toLowerCase().includes(search) ||
+            localite.libelle_localite.toLowerCase().includes(search)
           );
         });
-      } else if (this.filterdate !== null) {
-        if (this.filterdate !== null) {
-          var date1 = this.filterdate.split(" to ")[0];
-          var date2 = this.filterdate.split(" to ")[1];
-        }
-        return this.displayedPosts.filter((data) => {
-          if (
-            new Date(data.dueDate.slice(0, 12)) >= new Date(date1) &&
-            new Date(data.dueDate.slice(0, 12)) <= new Date(date2)
-          ) {
-            return data;
-          } else {
-            return null;
-          }
-        });
-      } else if (this.filtervalue !== null) {
-        return this.displayedPosts.filter((data) => {
-          if (data.status === this.filtervalue || this.filtervalue == "All") {
-            return data;
-          } else {
-            return null;
-          }
-        });
       } else {
-        return this.displayedPosts;
+        return this.localites;
       }
     },
+
+
   },
   watch: {
     allTask() {

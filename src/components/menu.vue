@@ -299,7 +299,7 @@ export default {
           </a>
           <div class="collapse collapse menu-dropdown" id="sidebarDashboards">
             <ul class="nav nav-sm flex-column">
-             
+
               <li class="nav-item">
                 <router-link to="/dashboard/analytics" class="nav-link custom-abc" data-key="t-analytics">
                   {{ $t("t-analytics") }}
@@ -316,7 +316,7 @@ export default {
                 </router-link>
               </li>
               <li class="nav-item">
-                <router-link to="/" class="nav-link" data-key="t-ecommerce">
+                <router-link to="/parametrage/user" class="nav-link" data-key="t-ecommerce">
                   {{ $t("t-ecommerce") }}
                 </router-link>
               </li>

@@ -1144,9 +1144,12 @@ export default {
           <BCol lg="6">
             <div>
               <label for="tasksTitle-field" class="form-label">Chef lieu </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="Chef lieu"
-                v-model="newLocalite.chef_lieu_ugl" :class="{ 'is-invalid': submitted && !event.task }" />
-              <div class="invalid-feedback">Please enter a title.</div>
+
+              <select class="form-select" v-model="newLocalite.chef_lieu_ugl">
+                <!-- Utilisation de v-for pour itérer sur les localités et afficher chaque option -->
+                <option v-for="localite in localiteParent" :key="localite.id_localite" :value="localite.id_localite">{{
+                        localite.libelle_localite }}</option>
+              </select>
             </div>
           </BCol>
           <BCol lg="6">
