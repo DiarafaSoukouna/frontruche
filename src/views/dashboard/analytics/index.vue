@@ -608,16 +608,19 @@ export default {
       <BCol lg="12">
         <BCard no-body id="tasksList">
           <BCardHeader class="border-0">
-            <div class="d-flex align-items-center">
-              <h5 class="card-title mb-0 flex-grow-1">All Tasks</h5>
+            <div class="d-flex justify-content-end">
+
               <div class="flex-shrink-0">
-                <div class="d-flex flex-wrap gap-2">
-                  <BButton variant="secondary" class="me-1" id="remove-actions" @click="deleteMultiple">
-                    <i class="ri-delete-bin-2-line"></i>
-                  </BButton>
+                <div class="d-flex flex-wrap gap-2 ">
+                  <router-link :to="{ name: 'dashboard-niveau-localite' }">
+                    <BButton variant="secondary" class="add-btn">
+                      Niveau localité
+                    </BButton>
+                  </router-link>
+
 
                   <BButton variant="warning" class="add-btn" @click="toggleModal">
-                    <i class="ri-add-line align-bottom me-1"></i>  {{ $t("ajout") }} {{ niveauActif }}
+                    <i class="ri-add-line align-bottom me-1"></i> {{ $t("ajout") }} {{ niveauActif }}
                   </BButton>
 
 

@@ -21,7 +21,7 @@ export default {
       date3: null,
       niveauxLocalite: [], // Pour stocker les niveaux de Type partenaire de l'API
       activeTab: "Product", // Onglet actif par défaut
-      typePartenaires: [], // Ajoutez une propriété pour stocker les Type partenaires
+      niveauLocal: [], // Ajoutez une propriété pour stocker les Type partenaires
       uniteIndicateur: [], // Ajoutez une propriété pour stocker les Type partenaires
       localiteParent: [], // Ajoutez une propriété pour stocker les Type partenaires
       loading: false,
@@ -186,10 +186,10 @@ export default {
     // Appel à setPages() et à la requête axios pour récupérer les niveaux de Type partenaire
     this.setPages();
     axios
-      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteGestion/getAllUniteGestion")
+      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/getAllNiveauLocalite")
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
-        this.typePartenaires = response.data.data;
+        this.niveauLocal = response.data.data;
         console.log("env", process.env);
 
 
@@ -678,8 +678,8 @@ export default {
         .then((response) => {
           // Mettre à jour la liste des Type partenaires avec les données reçues
 
-          this.typePartenaires = response.data.data;
-          console.log(this.typePartenaires);
+          this.niveauLocal = response.data.data;
+          console.log(this.niveauLocal);
 
         })
         .catch((error) => {
@@ -708,7 +708,7 @@ export default {
           // Mettre à jour la liste des Type partenaires avec les données reçues
 
           this.uniteIndicateur = response.data.data;
-          console.log(this.typePartenaires);
+          console.log(this.niveauLocal);
 
         })
         .catch((error) => {
@@ -990,7 +990,7 @@ export default {
                         </BCol>
 
                         <BButton variant="warning" class="add-btn" @click="toggleModal2">
-                          <i class="ri-add-line align-bottom me-1"></i> {{ $t("ajout") }} {{ $t("unite-gestion") }}
+                          <i class="ri-add-line align-bottom me-1"></i> {{ $t("ajout") }} {{ $t("niveau-localite") }}
                         </BButton>
                       </div>
                     </div>
@@ -1001,58 +1001,39 @@ export default {
                         <thead class="table-light text-muted">
                           <tr>
                             <th class="sort" data-sort="id">
-                              Code
+                              Rang
                             </th>
 
                             <th class="sort" data-sort="id">
                               Nom
                             </th>
                             <th class="sort" data-sort="id">
-                              Abrégé
+                              Nombre de caractères
                             </th>
-                            <th class="sort" data-sort="id">
-                              Localité concernée
-                            </th>
-                            <th class="sort" data-sort="id">
-                              Couleur
-                            </th>
+
                             <th class="sort" data-sort="due_date">
                               Actions
                             </th>
                           </tr>
                         </thead>
                         <tbody class="list form-check-all">
-                          <tr v-for="(localite, index) in typePartenaires" :key="index">
+                          <tr v-for="(localite, index) in niveauLocal" :key="index">
                             <!-- Remplacez 'localite.id_localite' par l'ID approprié -->
-                            <td class="id">{{ localite.code_unite_gestion }}</td>
+                            <td class="id">{{ localite.rang_niveau }}</td>
 
 
-                            <td class="id">{{ localite.nom_unite_gestion }}</td>
+                            <td class="id">{{ localite.libelle_niv_localite }}</td>
 
-                            <td class="id">{{ localite.abrege_unite_gestion }}</td>
-
-                            <td class="id">
-                              <!-- Utiliser v-for pour parcourir chaque identifiant -->
-                              <span v-for="(id, index) in localite.localite_concerne_ugl.split(',') " :key="index">
-                                {{ getLocaliteLabel(parseInt(id)) }}
-                                <!-- Appeler la fonction getLocaliteLabel avec l'identifiant converti en nombre -->
-                                <!-- Ajouter une virgule après chaque libellé sauf pour le dernier -->
-                                <span v-if="index !== localite.localite_concerne_ugl.split(',').length - 1">, </span>
-                              </span>
-                            </td>
+                            <td class="id">{{ localite.nb_char_niv_localite }}</td>
 
 
-
-                            <td class="id" :style="{ 'background-color': localite.couleur_ugl }">{{
-                        localite.code_couleur
-                      }}</td>
 
                             <td class="due_date">
                               <!-- Ajoutez ici les actions nécessaires -->
                               <span @click="editDetails2(localite)">
                                 <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                               </span>
-                              <span @click="deleteUnite(localite.id_unite_gestion)">
+                              <span @click="deleteUnite(localite.id_niv_localite)">
                                 <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
                               </span>
                             </td>

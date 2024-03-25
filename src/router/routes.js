@@ -131,6 +131,14 @@ export default [
     component: () => import("../views/dashboard/autre/index"),
   },
   {
+    path: "/parametrage/niveau-localite",
+    name: "dashboard-niveau-localite",
+    meta: {
+      title: "Niveau localité", authRequired: true,
+    },
+    component: () => import("../views/dashboard/niveau-localite/index"),
+  },
+  {
     path: "/parametrage/unite-gestion",
     name: "dashboard-unite-gestion",
     meta: {
