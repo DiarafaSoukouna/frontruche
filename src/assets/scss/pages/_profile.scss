@@ -31,8 +31,8 @@
         top: 0;
         bottom: 0;
         opacity: 0.9;
-        background: $primary;
-        background: linear-gradient(to top, darken($primary, 25%), $primary);
+        // background: $primary;
+        background: linear-gradient(to top, #285e43, #40c884);
 
     }
 
@@ -149,7 +149,7 @@ $value in $theme-colors {
 
 .profile-setting-img {
     position: relative;
-    height: 260px;
+    height: 60px;
 
     .overlay-content {
         content: "";

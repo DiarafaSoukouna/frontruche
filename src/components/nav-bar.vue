@@ -5,6 +5,7 @@ import img2 from "../assets/images/products/img-2.png";
 import img3 from "../assets/images/products/img-3.png";
 import img4 from "../assets/images/products/img-6.png";
 import img5 from "../assets/images/products/img-5.png";
+import axios from "axios";
 
 import simplebar from "simplebar-vue";
 
@@ -61,6 +62,11 @@ export default {
 
       languages: [
         {
+          flag: require("@/assets/images/flags/french.svg"),
+          language: "fr",
+          title: "Français",
+        },
+        {
           flag: require("@/assets/images/flags/us.svg"),
           language: "en",
           title: "English",
@@ -90,11 +96,7 @@ export default {
           language: "ch",
           title: "中國人",
         },
-        {
-          flag: require("@/assets/images/flags/french.svg"),
-          language: "fr",
-          title: "Français",
-        },
+       
         {
           flag: require("@/assets/images/flags/ae.svg"),
           language: "ar",
@@ -106,6 +108,7 @@ export default {
       flag: null,
       value: null,
       myVar: 1,
+      NomSysteme : null,
     };
   },
   components: {
@@ -113,47 +116,69 @@ export default {
   },
 
   methods: {
+    getStructures() {
+      this.loading = true;
+      this.rang = 0;
+      this.caractere;
+      this.test;
+      this.loadingClass = "loading-yellow";
+
+      axios
+        .get(
+          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/structureGenerale/getAllStructureGenerale"
+        )
+        .then((response) => {
+          // Mettre à jour les structures générales avec les données reçues
+          const data = response.data.data[0];
+
+          this.NomSysteme = data.NomSysteme_sg;
+          console.log("my data", data);
+
+        })
+        .catch((error) => {
+          console.error(
+            "Erreur lors de la récupération des structures générales:",
+            error
+          );
+        });
+    },
     ...layoutMethods,
     isCustomDropdown() {
       //Search bar
-      var searchOptions = document.getElementById("search-close-options");
-      var dropdown = document.getElementById("search-dropdown");
-      var searchInput = document.getElementById("search-options");
-
-      searchInput.addEventListener("focus", () => {
-        var inputLength = searchInput.value.length;
-        if (inputLength > 0) {
-          dropdown.classList.add("show");
-          searchOptions.classList.remove("d-none");
-        } else {
-          dropdown.classList.remove("show");
-          searchOptions.classList.add("d-none");
-        }
-      });
-
-      searchInput.addEventListener("keyup", () => {
-        var inputLength = searchInput.value.length;
-        if (inputLength > 0) {
-          dropdown.classList.add("show");
-          searchOptions.classList.remove("d-none");
-        } else {
-          dropdown.classList.remove("show");
-          searchOptions.classList.add("d-none");
-        }
-      });
-
-      searchOptions.addEventListener("click", () => {
-        searchInput.value = "";
-        dropdown.classList.remove("show");
-        searchOptions.classList.add("d-none");
-      });
-
-      document.body.addEventListener("click", (e) => {
-        if (e.target.getAttribute("id") !== "search-options") {
-          dropdown.classList.remove("show");
-          searchOptions.classList.add("d-none");
-        }
-      });
+      // var searchOptions = document.getElementById("search-close-options");
+      // var dropdown = document.getElementById("search-dropdown");
+      // var searchInput = document.getElementById("search-options");
+      // searchInput.addEventListener("focus", () => {
+      //   var inputLength = searchInput.value.length;
+      //   if (inputLength > 0) {
+      //     dropdown.classList.add("show");
+      //     searchOptions.classList.remove("d-none");
+      //   } else {
+      //     dropdown.classList.remove("show");
+      //     searchOptions.classList.add("d-none");
+      //   }
+      // });
+      // searchInput.addEventListener("keyup", () => {
+      //   var inputLength = searchInput.value.length;
+      //   if (inputLength > 0) {
+      //     dropdown.classList.add("show");
+      //     searchOptions.classList.remove("d-none");
+      //   } else {
+      //     dropdown.classList.remove("show");
+      //     searchOptions.classList.add("d-none");
+      //   }
+      // });
+      // searchOptions.addEventListener("click", () => {
+      //   searchInput.value = "";
+      //   dropdown.classList.remove("show");
+      //   searchOptions.classList.add("d-none");
+      // });
+      // document.body.addEventListener("click", (e) => {
+      //   if (e.target.getAttribute("id") !== "search-options") {
+      //     dropdown.classList.remove("show");
+      //     searchOptions.classList.add("d-none");
+      //   }
+      // });
     },
     toggleHamburgerMenu() {
       var windowSize = document.documentElement.clientWidth;
@@ -168,9 +193,7 @@ export default {
         document.querySelector(".hamburger-icon").classList.toggle("open");
 
       //For collapse horizontal menu
-      if (
-        document.documentElement.getAttribute("data-layout") === "horizontal"
-      ) {
+      if (document.documentElement.getAttribute("data-layout") === "horizontal") {
         document.body.classList.contains("menu")
           ? document.body.classList.remove("menu")
           : document.body.classList.add("menu");
@@ -225,9 +248,7 @@ export default {
         } else if (document.documentElement.mozRequestFullScreen) {
           document.documentElement.mozRequestFullScreen();
         } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen(
-            Element.ALLOW_KEYBOARD_INPUT
-          );
+          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
         }
       } else {
         if (document.cancelFullScreen) {
@@ -271,14 +292,14 @@ export default {
         .toFixed(2);
     },
   },
+ 
   mounted() {
+    this.getStructures();
     if (process.env.VUE_APP_I18N_LOCALE) {
       this.flag = process.env.VUE_APP_I18N_LOCALE;
       this.languages.forEach((item) => {
         if (item.language == this.flag) {
-          document
-            .getElementById("header-lang-img")
-            .setAttribute("src", item.flag);
+          document.getElementById("header-lang-img").setAttribute("src", item.flag);
         }
       });
     }
@@ -286,8 +307,7 @@ export default {
     document.addEventListener("scroll", function () {
       var pageTopbar = document.getElementById("page-topbar");
       if (pageTopbar) {
-        document.body.scrollTop >= 50 ||
-        document.documentElement.scrollTop >= 50
+        document.body.scrollTop >= 50 || document.documentElement.scrollTop >= 50
           ? pageTopbar.classList.add("topbar-shadow")
           : pageTopbar.classList.remove("topbar-shadow");
       }
@@ -341,7 +361,10 @@ export default {
           </button>
 
           <!-- App Search-->
-          <form class="app-search d-none d-md-block">
+          <div class="dropdown-header">
+            <h2 class="mb-2 text-uppercase" style="color: #285e43; font-weight: 800;">{{NomSysteme}} </h2>
+          </div>
+          <!-- <form class="app-search d-none d-md-block">
             <div class="position-relative">
               <input
                 type="text"
@@ -473,7 +496,7 @@ export default {
                 ></router-link>
               </div>
             </div>
-          </form>
+          </form> -->
         </div>
 
         <div class="d-flex align-items-center">
@@ -518,7 +541,7 @@ export default {
             <template #button-content>
               <img
                 id="header-lang-img"
-                src="@/assets/images/flags/us.svg"
+                src="@/assets/images/flags/french.svg"
                 alt="Header Language"
                 height="20"
                 class="rounded"
@@ -533,12 +556,7 @@ export default {
               @click="setLanguage(entry.language, entry.title, entry.flag)"
               :key="key"
             >
-              <img
-                :src="entry.flag"
-                alt="user-image"
-                class="me-2 rounded"
-                height="18"
-              />
+              <img :src="entry.flag" alt="user-image" class="me-2 rounded" height="18" />
               <span class="align-middle">{{ entry.title }}</span>
             </BLink>
           </BDropdown>
@@ -580,19 +598,13 @@ export default {
                 </BCol>
                 <BCol>
                   <BLink class="dropdown-icon-item" href="#!">
-                    <img
-                      src="@/assets/images/brands/bitbucket.png"
-                      alt="bitbucket"
-                    />
+                    <img src="@/assets/images/brands/bitbucket.png" alt="bitbucket" />
                     <span>Bitbucket</span>
                   </BLink>
                 </BCol>
                 <BCol>
                   <BLink class="dropdown-icon-item" href="#!">
-                    <img
-                      src="@/assets/images/brands/dribbble.png"
-                      alt="dribbble"
-                    />
+                    <img src="@/assets/images/brands/dribbble.png" alt="dribbble" />
                     <span>Dribbble</span>
                   </BLink>
                 </BCol>
@@ -601,19 +613,13 @@ export default {
               <BRow class="g-0">
                 <BCol>
                   <BLink class="dropdown-icon-item" href="#!">
-                    <img
-                      src="@/assets/images/brands/dropbox.png"
-                      alt="dropbox"
-                    />
+                    <img src="@/assets/images/brands/dropbox.png" alt="dropbox" />
                     <span>Dropbox</span>
                   </BLink>
                 </BCol>
                 <BCol>
                   <BLink class="dropdown-icon-item" href="#!">
-                    <img
-                      src="@/assets/images/brands/mail_chimp.png"
-                      alt="mail_chimp"
-                    />
+                    <img src="@/assets/images/brands/mail_chimp.png" alt="mail_chimp" />
                     <span>Mail Chimp</span>
                   </BLink>
                 </BCol>
@@ -679,9 +685,7 @@ export default {
                     </div>
                   </div>
                   <h5 class="mb-3">Your Cart is Empty!</h5>
-                  <router-link
-                    to="/ecommerce/products"
-                    class="btn btn-success w-md mb-3"
+                  <router-link to="/ecommerce/products" class="btn btn-success w-md mb-3"
                     >Shop Now</router-link
                   >
                 </div>
@@ -697,11 +701,9 @@ export default {
                     />
                     <div class="flex-grow-1">
                       <h6 class="mt-0 mb-1 fs-14">
-                        <router-link
-                          :to="item.productLink"
-                          class="text-reset"
-                          >{{ item.productName }}</router-link
-                        >
+                        <router-link :to="item.productLink" class="text-reset">{{
+                          item.productName
+                        }}</router-link>
                       </h6>
                       <p class="mb-0 fs-12 text-muted">
                         Quantity: <span>{{ item.quantity }}</span>
@@ -709,9 +711,7 @@ export default {
                     </div>
                     <div class="px-2">
                       <h5 class="m-0 fw-normal">
-                        $<span class="cart-item-price">{{
-                          item.itemPrice
-                        }}</span>
+                        $<span class="cart-item-price">{{ item.itemPrice }}</span>
                       </h5>
                     </div>
                     <div class="ps-2">
@@ -732,14 +732,10 @@ export default {
               class="p-3 border-bottom-0 border-start-0 border-end-0 border-dashed border"
               id="checkout-elem"
             >
-              <div
-                class="d-flex justify-content-between align-items-center pb-3"
-              >
+              <div class="d-flex justify-content-between align-items-center pb-3">
                 <h5 class="m-0 text-muted">Total:</h5>
                 <div class="px-2">
-                  <h5 class="m-0" id="cart-item-total">
-                    ${{ calculateTotalPrice }}
-                  </h5>
+                  <h5 class="m-0" id="cart-item-total">${{ calculateTotalPrice }}</h5>
                 </div>
               </div>
 
@@ -793,15 +789,11 @@ export default {
                 ><span class="visually-hidden">unread messages </span>
               </span>
             </template>
-            <div
-              class="dropdown-head bg-primary bg-pattern rounded-top dropdown-menu-lg"
-            >
+            <div class="dropdown-head bg-primary bg-pattern rounded-top dropdown-menu-lg">
               <div class="p-3">
                 <BRow class="align-items-center">
                   <BCol>
-                    <h6 class="m-0 fs-16 fw-semibold text-white">
-                      Notifications
-                    </h6>
+                    <h6 class="m-0 fs-16 fw-semibold text-white">Notifications</h6>
                   </BCol>
                   <BCol cols="auto" class="dropdown-tabs">
                     <BBadge
@@ -814,20 +806,14 @@ export default {
                 </BRow>
               </div>
             </div>
-            <BTabs
-              nav-class="dropdown-tabs nav-tab-custom bg-primary px-2 pt-2"
-            >
+            <BTabs nav-class="dropdown-tabs nav-tab-custom bg-primary px-2 pt-2">
               <BTab
                 title=" All (4) "
                 class="tab-pane fade py-2 ps-2 show"
                 id="all-noti-tab"
                 role="tabpanel"
               >
-                <simplebar
-                  data-simplebar
-                  style="max-height: 300px"
-                  class="pe-2"
-                >
+                <simplebar data-simplebar style="max-height: 300px" class="pe-2">
                   <div
                     class="text-reset notification-item d-block dropdown-item position-relative"
                   >
@@ -846,12 +832,9 @@ export default {
                             <span class="text-secondary">reward</span> is ready!
                           </h6>
                         </BLink>
-                        <p
-                          class="mb-0 fs-11 fw-medium text-uppercase text-muted"
-                        >
+                        <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
                           <span
-                            ><i class="mdi mdi-clock-outline"></i> Just 30 sec
-                            ago</span
+                            ><i class="mdi mdi-clock-outline"></i> Just 30 sec ago</span
                           >
                         </p>
                       </div>
@@ -872,23 +855,15 @@ export default {
                       />
                       <div class="flex-grow-1">
                         <BLink href="#!" class="stretched-link">
-                          <h6 class="mt-0 mb-1 fs-13 fw-semibold">
-                            Angela Bernier
-                          </h6>
+                          <h6 class="mt-0 mb-1 fs-13 fw-semibold">Angela Bernier</h6>
                         </BLink>
                         <div class="fs-13 text-muted">
                           <p class="mb-1">
-                            Answered to your comment on the cash flow forecast's
-                            graph 🔔.
+                            Answered to your comment on the cash flow forecast's graph 🔔.
                           </p>
                         </div>
-                        <p
-                          class="mb-0 fs-11 fw-medium text-uppercase text-muted"
-                        >
-                          <span
-                            ><i class="mdi mdi-clock-outline"></i> 48 min
-                            ago</span
-                          >
+                        <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                          <span><i class="mdi mdi-clock-outline"></i> 48 min ago</span>
                         </p>
                       </div>
                       <div class="px-2 fs-15">
@@ -911,17 +886,12 @@ export default {
                       <div class="flex-grow-1">
                         <BLink href="#!" class="stretched-link">
                           <h6 class="mt-0 mb-2 fs-13 lh-base">
-                            You have received <b class="text-success">20</b> new
-                            messages in the conversation
+                            You have received <b class="text-success">20</b> new messages
+                            in the conversation
                           </h6>
                         </BLink>
-                        <p
-                          class="mb-0 fs-11 fw-medium text-uppercase text-muted"
-                        >
-                          <span
-                            ><i class="mdi mdi-clock-outline"></i> 2 hrs
-                            ago</span
-                          >
+                        <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                          <span><i class="mdi mdi-clock-outline"></i> 2 hrs ago</span>
                         </p>
                       </div>
                       <div class="px-2 fs-15">
@@ -941,22 +911,13 @@ export default {
                       />
                       <div class="flex-grow-1">
                         <BLink href="#!" class="stretched-link">
-                          <h6 class="mt-0 mb-1 fs-13 fw-semibold">
-                            Maureen Gibson
-                          </h6>
+                          <h6 class="mt-0 mb-1 fs-13 fw-semibold">Maureen Gibson</h6>
                         </BLink>
                         <div class="fs-13 text-muted">
-                          <p class="mb-1">
-                            We talked about a project on linkedin.
-                          </p>
+                          <p class="mb-1">We talked about a project on linkedin.</p>
                         </div>
-                        <p
-                          class="mb-0 fs-11 fw-medium text-uppercase text-muted"
-                        >
-                          <span
-                            ><i class="mdi mdi-clock-outline"></i> 4 hrs
-                            ago</span
-                          >
+                        <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                          <span><i class="mdi mdi-clock-outline"></i> 4 hrs ago</span>
                         </p>
                       </div>
                       <div class="px-2 fs-15">
@@ -981,14 +942,8 @@ export default {
                 role="tabpanel"
                 aria-labelledby="messages-tab"
               >
-                <simplebar
-                  data-simplebar
-                  style="max-height: 300px"
-                  class="pe-2"
-                >
-                  <div
-                    class="text-reset notification-item d-block dropdown-item"
-                  >
+                <simplebar data-simplebar style="max-height: 300px" class="pe-2">
+                  <div class="text-reset notification-item d-block dropdown-item">
                     <div class="d-flex">
                       <img
                         src="@/assets/images/users/avatar-3.jpg"
@@ -997,22 +952,13 @@ export default {
                       />
                       <div class="flex-grow-1">
                         <BLink href="#!" class="stretched-link">
-                          <h6 class="mt-0 mb-1 fs-13 fw-semibold">
-                            James Lemire
-                          </h6>
+                          <h6 class="mt-0 mb-1 fs-13 fw-semibold">James Lemire</h6>
                         </BLink>
                         <div class="fs-13 text-muted">
-                          <p class="mb-1">
-                            We talked about a project on linkedin.
-                          </p>
+                          <p class="mb-1">We talked about a project on linkedin.</p>
                         </div>
-                        <p
-                          class="mb-0 fs-11 fw-medium text-uppercase text-muted"
-                        >
-                          <span
-                            ><i class="mdi mdi-clock-outline"></i> 30 min
-                            ago</span
-                          >
+                        <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                          <span><i class="mdi mdi-clock-outline"></i> 30 min ago</span>
                         </p>
                       </div>
                       <div class="px-2 fs-15">
@@ -1021,9 +967,7 @@ export default {
                     </div>
                   </div>
 
-                  <div
-                    class="text-reset notification-item d-block dropdown-item"
-                  >
+                  <div class="text-reset notification-item d-block dropdown-item">
                     <div class="d-flex">
                       <img
                         src="@/assets/images/users/avatar-2.jpg"
@@ -1032,23 +976,15 @@ export default {
                       />
                       <div class="flex-grow-1">
                         <BLink href="#!" class="stretched-link">
-                          <h6 class="mt-0 mb-1 fs-13 fw-semibold">
-                            Angela Bernier
-                          </h6>
+                          <h6 class="mt-0 mb-1 fs-13 fw-semibold">Angela Bernier</h6>
                         </BLink>
                         <div class="fs-13 text-muted">
                           <p class="mb-1">
-                            Answered to your comment on the cash flow forecast's
-                            graph 🔔.
+                            Answered to your comment on the cash flow forecast's graph 🔔.
                           </p>
                         </div>
-                        <p
-                          class="mb-0 fs-11 fw-medium text-uppercase text-muted"
-                        >
-                          <span
-                            ><i class="mdi mdi-clock-outline"></i> 2 hrs
-                            ago</span
-                          >
+                        <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                          <span><i class="mdi mdi-clock-outline"></i> 2 hrs ago</span>
                         </p>
                       </div>
                       <div class="px-2 fs-15">
@@ -1057,9 +993,7 @@ export default {
                     </div>
                   </div>
 
-                  <div
-                    class="text-reset notification-item d-block dropdown-item"
-                  >
+                  <div class="text-reset notification-item d-block dropdown-item">
                     <div class="d-flex">
                       <img
                         src="@/assets/images/users/avatar-6.jpg"
@@ -1068,22 +1002,15 @@ export default {
                       />
                       <div class="flex-grow-1">
                         <BLink href="#!" class="stretched-link">
-                          <h6 class="mt-0 mb-1 fs-13 fw-semibold">
-                            Kenneth Brown
-                          </h6>
+                          <h6 class="mt-0 mb-1 fs-13 fw-semibold">Kenneth Brown</h6>
                         </BLink>
                         <div class="fs-13 text-muted">
                           <p class="mb-1">
                             Mentionned you in his comment on 📃 invoice #12501.
                           </p>
                         </div>
-                        <p
-                          class="mb-0 fs-11 fw-medium text-uppercase text-muted"
-                        >
-                          <span
-                            ><i class="mdi mdi-clock-outline"></i> 10 hrs
-                            ago</span
-                          >
+                        <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                          <span><i class="mdi mdi-clock-outline"></i> 10 hrs ago</span>
                         </p>
                       </div>
                       <div class="px-2 fs-15">
@@ -1092,9 +1019,7 @@ export default {
                     </div>
                   </div>
 
-                  <div
-                    class="text-reset notification-item d-block dropdown-item"
-                  >
+                  <div class="text-reset notification-item d-block dropdown-item">
                     <div class="d-flex">
                       <img
                         src="@/assets/images/users/avatar-8.jpg"
@@ -1103,22 +1028,13 @@ export default {
                       />
                       <div class="flex-grow-1">
                         <BLink href="#!" class="stretched-link">
-                          <h6 class="mt-0 mb-1 fs-13 fw-semibold">
-                            Maureen Gibson
-                          </h6>
+                          <h6 class="mt-0 mb-1 fs-13 fw-semibold">Maureen Gibson</h6>
                         </BLink>
                         <div class="fs-13 text-muted">
-                          <p class="mb-1">
-                            We talked about a project on linkedin.
-                          </p>
+                          <p class="mb-1">We talked about a project on linkedin.</p>
                         </div>
-                        <p
-                          class="mb-0 fs-11 fw-medium text-uppercase text-muted"
-                        >
-                          <span
-                            ><i class="mdi mdi-clock-outline"></i> 3 days
-                            ago</span
-                          >
+                        <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                          <span><i class="mdi mdi-clock-outline"></i> 3 days ago</span>
                         </p>
                       </div>
                       <div class="px-2 fs-15">
@@ -1137,11 +1053,7 @@ export default {
               </BTab>
 
               <BTab title="Alerts" class="p-4">
-                <simplebar
-                  data-simplebar
-                  style="max-height: 300px"
-                  class="pe-2"
-                >
+                <simplebar data-simplebar style="max-height: 300px" class="pe-2">
                   <div class="w-25 w-sm-50 pt-3 mx-auto">
                     <img
                       src="@/assets/images/svg/bell.svg"
@@ -1174,8 +1086,7 @@ export default {
                   alt="Header Avatar"
                 />
                 <span class="text-start ms-xl-2">
-                  <span
-                    class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"
+                  <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"
                     >Edward Diana</span
                   >
                   <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text"
@@ -1186,9 +1097,7 @@ export default {
             </template>
             <h6 class="dropdown-header">Welcome Anna!</h6>
             <router-link class="dropdown-item" to="/pages/profile"
-              ><i
-                class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"
-              ></i>
+              ><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
               <span class="align-middle"> Profile</span>
             </router-link>
             <router-link class="dropdown-item" to="/chat">
@@ -1204,9 +1113,7 @@ export default {
               <span class="align-middle"> Taskboard</span>
             </router-link>
             <router-link class="dropdown-item" to="/pages/faqs"
-              ><i
-                class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"
-              ></i>
+              ><i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i>
               <span class="align-middle"> Help</span>
             </router-link>
             <div class="dropdown-divider"></div>
@@ -1219,9 +1126,7 @@ export default {
                 variant="success-subtle"
                 class="bg-success-subtle text-success mt-1 float-end"
                 >New</BBadge
-              ><i
-                class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"
-              ></i>
+              ><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>
               <span class="align-middle"> Settings</span>
             </router-link>
             <router-link class="dropdown-item" to="/auth/lockscreen-basic"

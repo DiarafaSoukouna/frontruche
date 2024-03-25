@@ -1,5 +1,5 @@
 <script>
-import Multiselect from "@vueform/multiselect";
+// import Multiselect from "@vueform/multiselect";
 import "@vueform/multiselect/themes/default.css";
 // import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
@@ -24,15 +24,6 @@ export default {
         dateFormat: "d M, Y",
         mode: "range",
         all: "",
-        nom: "",
-        login: "",
-        titre: "",
-        password: "",
-        prenom: "",
-        email: "",
-        profil_id: "",
-        unite_gest: "",
-        partenaire: "",
       },
       config: {
         wrap: true, // set wrap to true only when using 'input-group'
@@ -51,6 +42,19 @@ export default {
       filtersearchQuery1: null,
       date: null,
       allTask: [],
+      allPartenaire: [],
+      allUnite: [],
+      allProfils: [],
+      nom: "",
+      login: "",
+      titre: "",
+      password: "",
+      prenom: "",
+      email: "",
+      profil_id: "",
+      unite_gest: "",
+      partenaire: "",
+      id: "",
       searchQuery: null,
       page: 1,
       perPage: 8,
@@ -85,7 +89,7 @@ export default {
     Layout,
     PageHeader,
     lottie: Lottie,
-    Multiselect,
+    // Multiselect,
     // flatPickr,
     // simplebar,
   },
@@ -98,10 +102,10 @@ export default {
         const search = this.searchQuery.toLowerCase();
         return this.displayedPosts.filter((data) => {
           return (
-            data.nom.toLowerCase().includes(search) ||
-            data.client.toLowerCase().includes(search) ||
-            data.prix_annuel.toLowerCase().includes(search) ||
-            data.nom_hote.toLowerCase().includes(search)
+            data.nom_user.toLowerCase().includes(search) ||
+            data.prenom_user.toLowerCase().includes(search) ||
+            data.titre_user.toLowerCase().includes(search) ||
+            data.email_user.toLowerCase().includes(search)
           );
         });
       } else {
@@ -124,36 +128,32 @@ export default {
     },
   },
   beforeMount() {
-    axios
-      .get("http://localhost:3000/getDomaine")
-      .then(
-        function (response) {
-          this.allTask = response.data;
-          console.log(typeof this.allTask);
-        }.bind(this)
-      )
-      .catch(function (error) {
-        console.log(error);
-      });
-    axios
-      .get(
-        "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/users/getAllUsers"
-      )
-      .then(
-        function (response) {
-          this.all = response.data;
-          console.log(typeof this.all, this.all.data);
-        }.bind(this)
-      )
-      .catch(function (error) {
-        console.log(error);
-      });
+    this.getUsers();
+    this.getProfil();
+    this.getUniteGest();
+    this.getPartenaire();
+    console.log("Hello tout le monde", this.allUnite);
   },
 
   methods: {
+    getUsers() {
+      axios
+        .get(
+          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/users/getAllUsers"
+        )
+        .then(
+          function (response) {
+            this.allTask = response.data.data;
+            console.log(response.data.data);
+          }.bind(this)
+        )
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     async insertUser() {
       try {
-        const response = await axios.post(
+        await axios.post(
           "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/users/insert",
           {
             nom_user: this.nom,
@@ -167,17 +167,136 @@ export default {
             code_partenaire: this.partenaire,
           }
         );
-        console.log(response);
+        this.getUsers();
+        this.clean();
+        this.taskListModal = false;
       } catch (error) {
         console.error("Erreur lors de l'appel de l'API : ", error);
       }
     },
+    async modifUser() {
+      try {
+        await axios.post(
+          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/users/update",
+          {
+            id_user: this.id,
+            nom_user: this.nom,
+            login_user: this.login,
+            titre_user: this.titre,
+            prenom_user: this.prenom,
+            email_user: this.email,
+            profil_id: this.profil_id,
+            code_unite_gestion: this.unite_gest,
+            code_partenaire: this.partenaire,
+          }
+        );
+        this.getUsers();
+        this.clean();
+        this.taskListModal = false;
+        console.log(this.id_user);
+      } catch (error) {
+        console.error("Erreur lors de l'appel de l'API : ", error);
+        console.log(this.id_user);
+      }
+    },
+
+    getProfil() {
+      axios
+        .get(
+          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/profil/getAllProfil"
+        )
+        .then((response) => {
+          this.allProfils = response.data.data;
+          console.log(this.allProfils);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getUniteGest() {
+      axios
+        .get(
+          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/uniteGestion/getAllUniteGestion"
+        )
+        .then(
+          function (response) {
+            this.allUnite = response.data.data;
+            console.log("coucouuu", this.allUnite);
+          }.bind(this)
+        )
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    getPartenaire() {
+      axios
+        .get(
+          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/partenaire/getAllPartenaire"
+        )
+        .then(
+          function (response) {
+            this.allPartenaire = response.data.data;
+            console.log(response.data.data);
+          }.bind(this)
+        )
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    recup(id) {
+      for (let u of this.allTask) {
+        if (u.id_user === id) {
+          this.id = u.id_user;
+          this.nom = u.nom_user;
+          this.login = u.login_user;
+          this.titre = u.titre_user;
+          this.prenom = u.prenom_user;
+          this.email = u.email_user;
+          this.profil_id = u.profil_id;
+          this.unite_gest = u.code_unite_gestion;
+          this.partenaire = u.code_partenaire;
+        }
+      }
+    },
+
+    async deleteUser() {
+      try {
+        await axios
+          .delete(
+            "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/users/delete",
+            {
+              data: { id_user: this.id },
+            }
+          )
+          .then((response) => {
+            console.log(response);
+            this.getUsers();
+            this.id = "";
+            this.deleteModal = false;
+          });
+      } catch (error) {
+        console.error("Erreur lors de l'appel de l'API : ", error);
+        console.log(this.id);
+      }
+    },
     performAction() {
       if (this.dataEdit) {
-        console.log("yooo");
+        this.modifUser();
       } else {
         this.insertUser();
       }
+    },
+
+    clean() {
+      this.nom = "";
+      this.login = "";
+      this.titre = "";
+      this.password = "";
+      this.prenom = "";
+      this.email = "";
+      this.profil_id = "";
+      this.unite_gest = "";
+      this.partenaire = "";
     },
     handleSubmit() {
       if (this.dataEdit) {
@@ -250,10 +369,10 @@ export default {
       this.allTask = sortedArray;
     },
 
-    editDetails(data) {
+    editDetails() {
       this.dataEdit = true;
       this.taskListModal = true;
-      this.event = { ...data };
+      // this.recup(data);
 
       this.submitted = false;
     },
@@ -266,9 +385,9 @@ export default {
       this.submitted = false;
     },
 
-    deleteModalToggle(data) {
+    deleteModalToggle(id) {
       this.deleteModal = true;
-      console.log(this.deleteModal, "yooooooooo", data);
+      this.id = id;
     },
 
     deleteData() {
@@ -379,9 +498,8 @@ export default {
                     <i class="ri-delete-bin-2-line"></i>
                   </BButton>
                   <BButton
-                    variant="danger"
-                    class="add-btn"
                     @click="toggleModal"
+                    style="background-color: #285e43"
                   >
                     <i class="ri-add-line align-bottom me-1"></i> Nouveau
                   </BButton>
@@ -420,56 +538,42 @@ export default {
                     <th
                       class="sort"
                       data-sort="project_name"
-                      @click="onSort('nom')"
+                      @click="onSort('nom_user')"
                     >
                       Login
                     </th>
                     <th
                       class="sort"
                       data-sort="tasks_name"
-                      @click="onSort('client')"
+                      @click="onSort('login_user')"
                     >
                       Unite de Gestion
                     </th>
                     <th
                       class="sort"
                       data-sort="client_name"
-                      @click="onSort('prix_annuel')"
+                      @click="onSort('code_unite_gestion')"
                     >
-                      Projets
-                    </th>
-                    <th
-                      class="sort"
-                      data-sort="assignedto"
-                      @click="onSort('date_creation')"
-                    >
-                      Fonction
-                    </th>
-                    <th
-                      class="sort"
-                      data-sort="due_date"
-                      @click="onSort('date_expiration')"
-                    >
-                      Niveau d'accès
+                      Partenaire
                     </th>
                     <th
                       class="sort"
                       data-sort="status"
-                      @click="onSort('nom_hote')"
+                      @click="onSort('contact_user')"
                     >
                       Contact
                     </th>
                     <th
                       class="sort"
                       data-sort="priority"
-                      @click="onSort('nom_utilisateur')"
+                      @click="onSort('email_user')"
                     >
                       Email
                     </th>
                     <th
                       class="sort"
                       data-sort="priority"
-                      @click="onSort('nom_utilisateur')"
+                      @click="onSort('nom_user')"
                     >
                       Action
                     </th>
@@ -481,51 +585,39 @@ export default {
                       <router-link
                         to="/apps/tasks-details"
                         class="fw-medium link-primary"
-                        >{{ task.nom }}
+                        >{{ task.nom_user }} {{ task.prenom_user }}
                       </router-link>
                     </td>
                     <td class="project_name">
                       <router-link
                         to="/apps/projects-overview"
                         class="fw-medium link-primary"
-                        >{{ task.client }}
+                        >{{ task.login_user }}
                       </router-link>
                     </td>
                     <td>
                       <div class="d-flex">
                         <div class="flex-grow-1 tasks_name">
-                          {{ task.prix_annuel }}
+                          {{ task.code_unite_gestion }}
                         </div>
                       </div>
                     </td>
-                    <td class="client_name">{{ task.date_expiration }}</td>
-                    <td class="assignedto">
-                      <div class="avatar-group">
-                        <BLink
-                          href="javascript: void(0);"
-                          class="avatar-group-item"
-                          data-bs-toggle="tooltip"
-                          v-b-tooltip.hover
-                          title="Frank"
-                        >
-                          <img
-                            :src="task.image_src"
-                            alt=""
-                            class="rounded-circle avatar-xxs"
-                          />
-                        </BLink>
-                      </div>
-                    </td>
-                    <td class="due_date">{{ task.date_creation }}</td>
-                    <td class="status">yoooo</td>
-                    <td class="priority">bonjour</td>
+                    <td class="client_name">{{ task.code_partenaire }}</td>
+
+                    <td class="due_date">{{ task.contact_user }}</td>
+                    <td class="status">{{ task.email_user }}</td>
                     <td class="due_date">
-                      <span @click="editDetails(task)">
+                      <span
+                        @click="
+                          editDetails();
+                          recup(task.id_user);
+                        "
+                      >
                         <i
                           class="ri-pencil-fill align-bottom me-2 text-muted"
                         ></i>
                       </span>
-                      <span @click="deleteModalToggle(task)">
+                      <span @click="deleteModalToggle(task.id_user)">
                         <i
                           class="ri-delete-bin-fill align-bottom me-2 text-muted"
                         ></i>
@@ -632,7 +724,7 @@ export default {
               <div class="invalid-feedback">Please enter a title.</div>
             </div>
           </BCol>
-          <BCol lg="6">
+          <BCol lg="6" v-if="!dataEdit">
             <label for="projectName-field" class="form-label"
               >Mot de passe</label
             >
@@ -684,60 +776,43 @@ export default {
 
           <BCol lg="6">
             <label for="ticket-status" class="form-label">Profil</label>
-            <Multiselect
-              id="statusid"
-              :close-on-select="true"
-              :searchable="true"
-              :create-option="true"
-              :options="[
-                { value: '', label: 'Status' },
-                { value: 'New', label: 'New' },
-                { value: 'Inprogress', label: 'Inprogress' },
-                { value: 'Pending', label: 'Pending' },
-                { value: 'Completed', label: 'Completed' },
-              ]"
-              v-model="event.status"
-              :class="{ 'is-invalid': submitted && !event.status }"
-            />
+            <select v-model="profil_id" class="form-control">
+              <option
+                v-for="(task, index) of allProfils"
+                :key="index"
+                :value="task.id_profil"
+              >
+                {{ task.libelle_profil }}
+              </option>
+            </select>
             <div class="invalid-feedback">Please select a status.</div>
           </BCol>
           <BCol lg="6">
             <label for="ticket-status" class="form-label"
               >Unite de gestion</label
             >
-            <Multiselect
-              id="statusid"
-              :close-on-select="true"
-              :searchable="true"
-              :create-option="true"
-              :options="[
-                { value: '', label: 'Status' },
-                { value: 'New', label: 'New' },
-                { value: 'Inprogress', label: 'Inprogress' },
-                { value: 'Pending', label: 'Pending' },
-                { value: 'Completed', label: 'Completed' },
-              ]"
-              v-model="event.status"
-              :class="{ 'is-invalid': submitted && !event.status }"
-            />
+            <select v-model="unite_gest" class="form-control">
+              <option
+                v-for="option in allUnite"
+                :key="option.id_unite_gestion"
+                :value="option.id_unite_gestion"
+              >
+                {{ option.nom_unite_gestion }}
+              </option>
+            </select>
             <div class="invalid-feedback">Please select a status.</div>
           </BCol>
-          <BCol lg="12">
+          <BCol lg="6">
             <label for="priority-field" class="form-label">Partenaire</label>
-            <Multiselect
-              id="priority"
-              :close-on-select="true"
-              :searchable="true"
-              :create-option="true"
-              :options="[
-                { value: '', label: 'Priority' },
-                { value: 'High', label: 'High' },
-                { value: 'Medium', label: 'Medium' },
-                { value: 'Low', label: 'Low' },
-              ]"
-              v-model="event.priority"
-              :class="{ 'is-invalid': submitted && !event.priority }"
-            />
+            <select v-model="partenaire" class="form-control">
+              <option
+                v-for="option in allPartenaire"
+                :key="option.id_partenaire"
+                :value="option.id_partenaire"
+              >
+                {{ option.sigle_partenaire }}
+              </option>
+            </select>
             <div class="invalid-feedback">Please select a priority.</div>
           </BCol>
         </BRow>
@@ -746,14 +821,18 @@ export default {
           <BButton
             type="button"
             variant="light"
-            @click="taskListModal = false"
+            @click="
+              taskListModal = false;
+              clean();
+            "
             id="closemodal"
           >
-            Close
+            Fermer
           </BButton>
           <BButton
             type="submit"
             variant="success"
+            style="background-color: #285e43"
             id="add-btn"
             @click="performAction()"
           >
@@ -780,9 +859,9 @@ export default {
           :width="75"
         />
         <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-          <h4>Are you sure ?</h4>
+          <h4>Etes vous sur?</h4>
           <p class="text-muted mx-4 mb-0">
-            Are you sure you want to remove this record ?
+            etes vous sur de vouloir supprimer cet element ?
           </p>
         </div>
       </div>
@@ -792,15 +871,15 @@ export default {
           class="btn w-sm btn-light"
           @click="deleteModal = false"
         >
-          Close
+          Fermer
         </button>
         <button
           type="button"
           class="btn w-sm btn-danger"
           id="delete-record"
-          @click="deleteData"
+          @click="deleteUser"
         >
-          Yes, Delete It!
+          Supprimer
         </button>
       </div>
     </BModal>
