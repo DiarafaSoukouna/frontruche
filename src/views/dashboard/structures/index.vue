@@ -16,6 +16,9 @@ import animationData1 from "@/components/widgets/gsqxdxog.json";
 export default {
   data() {
     return {
+      
+      API_URL : process.env.VUE_APP_BACK_URL,
+      PROXY_URL : process.env.VUE_APP_BACK_URL_PROXY,
       taskListModal: false,
       date3: null,
       structures: [], // Pour stocker les niveaux de localité de l'API
@@ -202,7 +205,7 @@ export default {
   methods: {
     //
     handleSubmit() {
-      let url = "http://ssise-cosit.com/api-ssise/structureGenerale/update";
+      let url = this.API_URL+ "structureGenerale/update";
       let method = "POST";
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
@@ -429,17 +432,16 @@ export default {
       this.caractere;
       this.test;
       this.loadingClass = "loading-yellow";
-
       axios
         .get(
-          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/structureGenerale/getAllStructureGenerale"
+          this.PROXY_URL + this.API_URL+"structureGenerale/getAllStructureGenerale"
         )
         .then((response) => {
           // Mettre à jour les structures générales avec les données reçues
           const data = response.data.data[0];
 
           this.newstructures = { ...data };
-
+          console.log('coooc', this.cot);
         })
         .catch((error) => {
           console.error(
@@ -607,14 +609,14 @@ export default {
                   </label>
                 </div>
               </div>
-              <h5 class="fs-17 mb-1">{{ newstructures.NomSysteme_sg }}</h5>
+              <h5 class="fs-17 mb-1">{{ newstructures.NomSysteme_sg }} </h5>
               <p class="text-muted mb-0">
                 {{ newstructures.Email_sg }}/ {{ newstructures.Telephone_sg }}
               </p>
             </div>
           </BCardBody>
         </BCard>
-        <BCard no-body>
+        <!-- <BCard no-body>
           <BCardBody>
             <div class="d-flex align-items-center mb-5">
               <div class="flex-grow-1">
@@ -635,7 +637,7 @@ export default {
               </BProgressBar>
             </BProgress>
           </BCardBody>
-        </BCard>
+        </BCard> -->
         <BCard no-body>
           <BCardBody>
             <BCol lg="12">
@@ -830,8 +832,6 @@ export default {
                         <input
                           type="text"
                           class="form-control"
-                          minlength="5"
-                          maxlength="6"
                           id="zipcodeInput"
                           placeholder="Enter zipcode"
                           v-model="newstructures.SloganSysteme_sg"

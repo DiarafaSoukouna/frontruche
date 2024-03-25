@@ -1,4 +1,6 @@
 import { createWebHistory, createRouter } from "vue-router";
+import NProgress from 'nprogress';
+
 import axios from 'axios';
 import routes from './routes';
 import appConfig from "../../app.config";
@@ -98,6 +100,11 @@ router.beforeResolve(async (routeTo, routeFrom, next) => {
       await new Promise((resolve, reject) => {
         // If a `beforeResolve` hook is defined, call it with
         // the same arguments as the `beforeEnter` hook.
+        if (routeTo.name) {
+          // Start the route progress bar.
+          NProgress.start()
+        }
+        next()
         if (route.meta && route.meta.beforeResolve) {
           route.meta.beforeResolve(routeTo, routeFrom, (...args) => {
             // If the user chose to redirect...
@@ -124,5 +131,8 @@ router.beforeResolve(async (routeTo, routeFrom, next) => {
   // If we reach this point, continue resolving the route.
   next();
 });
-
+router.afterEach(() => {
+  // Complete the animation of the route progress bar.
+  NProgress.done()
+});
 export default router;
