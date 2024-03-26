@@ -17,6 +17,7 @@ export default {
     return {
       taskListModal: false,
       date3: null,
+      loading:true,
       rangeDateconfig: {
         wrap: true,
         altFormat: "M j, Y",
@@ -144,6 +145,8 @@ export default {
         .then(
           function (response) {
             this.allTask = response.data.data;
+            this.loading = false;
+            
             console.log(response.data.data);
           }.bind(this)
         )
@@ -320,9 +323,7 @@ export default {
             .then((response) => {
               const data = response.data.data;
               this.allTask = this.allTask.map((item) =>
-                item._id.toString() == data._id.toString()
-                  ? { ...item, ...data }
-                  : item
+                item._id.toString() == data._id.toString() ? { ...item, ...data } : item
               );
             })
             .catch((er) => {
@@ -393,14 +394,10 @@ export default {
     deleteData() {
       if (this.event._id) {
         axios
-          .delete(
-            `https://api-node.themesbrand.website/apps/task/${this.event._id}`
-          )
+          .delete(`https://api-node.themesbrand.website/apps/task/${this.event._id}`)
           .then((response) => {
             if (response.data.status === "success") {
-              this.allTask = this.allTask.filter(
-                (item) => item._id != this.event._id
-              );
+              this.allTask = this.allTask.filter((item) => item._id != this.event._id);
             }
           })
           .catch((er) => {
@@ -465,16 +462,12 @@ export default {
 
         if (event.target.closest("tr").classList.contains("table-active")) {
           checkedCount > 0
-            ? (document.getElementById("remove-actions").style.display =
-                "block")
-            : (document.getElementById("remove-actions").style.display =
-                "none");
+            ? (document.getElementById("remove-actions").style.display = "block")
+            : (document.getElementById("remove-actions").style.display = "none");
         } else {
           checkedCount > 0
-            ? (document.getElementById("remove-actions").style.display =
-                "block")
-            : (document.getElementById("remove-actions").style.display =
-                "none");
+            ? (document.getElementById("remove-actions").style.display = "block")
+            : (document.getElementById("remove-actions").style.display = "none");
         }
       });
     });
@@ -497,10 +490,7 @@ export default {
                   <BButton variant="secondary" class="me-1" id="remove-actions">
                     <i class="ri-delete-bin-2-line"></i>
                   </BButton>
-                  <BButton
-                    @click="toggleModal"
-                    style="background-color: #285e43"
-                  >
+                  <BButton @click="toggleModal" style="background-color: #285e43">
                     <i class="ri-add-line align-bottom me-1"></i> Nouveau
                   </BButton>
                 </div>
@@ -525,28 +515,27 @@ export default {
             </b-form>
           </BCardBody>
           <BCardBody>
-            <div class="table-responsive table-card mb-4">
-              <table
-                class="table align-middle table-nowrap mb-0"
-                id="tasksTable"
-              >
+            <div class="text-center mt-sm-5 pt-4" v-if="loading">
+              <button class="btn btn-outline-success btn-load">
+                <span class="d-flex align-items-center">
+                  <span class="spinner-border flex-shrink-0" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                  </span>
+                  <span class="flex-grow-1 ms-2"> Chargement... </span>
+                </span>
+              </button>
+            </div>
+            <div class="table-responsive table-card mb-4" v-if="!loading">
+              <table class="table align-middle table-nowrap mb-0" id="tasksTable">
                 <thead class="table-light text-muted">
                   <tr>
                     <th class="sort" data-sort="id" @click="onSort('taskId')">
                       Nom & Prenom
                     </th>
-                    <th
-                      class="sort"
-                      data-sort="project_name"
-                      @click="onSort('nom_user')"
-                    >
+                    <th class="sort" data-sort="project_name" @click="onSort('nom_user')">
                       Login
                     </th>
-                    <th
-                      class="sort"
-                      data-sort="tasks_name"
-                      @click="onSort('login_user')"
-                    >
+                    <th class="sort" data-sort="tasks_name" @click="onSort('login_user')">
                       Unite de Gestion
                     </th>
                     <th
@@ -556,25 +545,13 @@ export default {
                     >
                       Partenaire
                     </th>
-                    <th
-                      class="sort"
-                      data-sort="status"
-                      @click="onSort('contact_user')"
-                    >
+                    <th class="sort" data-sort="status" @click="onSort('contact_user')">
                       Contact
                     </th>
-                    <th
-                      class="sort"
-                      data-sort="priority"
-                      @click="onSort('email_user')"
-                    >
+                    <th class="sort" data-sort="priority" @click="onSort('email_user')">
                       Email
                     </th>
-                    <th
-                      class="sort"
-                      data-sort="priority"
-                      @click="onSort('nom_user')"
-                    >
+                    <th class="sort" data-sort="priority" @click="onSort('nom_user')">
                       Action
                     </th>
                   </tr>
@@ -582,9 +559,7 @@ export default {
                 <tbody class="list form-check-all">
                   <tr v-for="(task, index) of resultQuery" :key="index">
                     <td class="id">
-                      <router-link
-                        to="/apps/tasks-details"
-                        class="fw-medium link-primary"
+                      <router-link to="/apps/tasks-details" class="fw-medium link-primary"
                         >{{ task.nom_user }} {{ task.prenom_user }}
                       </router-link>
                     </td>
@@ -613,14 +588,10 @@ export default {
                           recup(task.id_user);
                         "
                       >
-                        <i
-                          class="ri-pencil-fill align-bottom me-2 text-muted"
-                        ></i>
+                        <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                       </span>
                       <span @click="deleteModalToggle(task.id_user)">
-                        <i
-                          class="ri-delete-bin-fill align-bottom me-2 text-muted"
-                        ></i>
+                        <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
                       </span>
                     </td>
                   </tr>
@@ -636,17 +607,14 @@ export default {
                   />
                   <h5 class="mt-2">Sorry! No Result Found</h5>
                   <p class="text-muted mb-0">
-                    We've searched more than 200k+ tasks We did not find any
-                    tasks for you search.
+                    We've searched more than 200k+ tasks We did not find any tasks for you
+                    search.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div
-              class="d-flex justify-content-end"
-              v-if="resultQuery.length >= 1"
-            >
+            <div class="d-flex justify-content-end" v-if="resultQuery.length >= 1">
               <div class="pagination-wrap hstack gap-2">
                 <BLink
                   class="page-item pagination-prev"
@@ -725,9 +693,7 @@ export default {
             </div>
           </BCol>
           <BCol lg="6" v-if="!dataEdit">
-            <label for="projectName-field" class="form-label"
-              >Mot de passe</label
-            >
+            <label for="projectName-field" class="form-label">Mot de passe</label>
             <input
               type="text"
               id="password"
@@ -788,9 +754,7 @@ export default {
             <div class="invalid-feedback">Please select a status.</div>
           </BCol>
           <BCol lg="6">
-            <label for="ticket-status" class="form-label"
-              >Unite de gestion</label
-            >
+            <label for="ticket-status" class="form-label">Unite de gestion</label>
             <select v-model="unite_gest" class="form-control">
               <option
                 v-for="option in allUnite"
@@ -866,11 +830,7 @@ export default {
         </div>
       </div>
       <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-        <button
-          type="button"
-          class="btn w-sm btn-light"
-          @click="deleteModal = false"
-        >
+        <button type="button" class="btn w-sm btn-light" @click="deleteModal = false">
           Fermer
         </button>
         <button

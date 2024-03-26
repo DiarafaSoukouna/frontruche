@@ -166,7 +166,7 @@ export default [
         next();
       },
     },
-    component: () => import("../views/auth/signin/cover")
+    component: () => import("../views/account/login")
   },
   {
     path: "/main-calendar",
