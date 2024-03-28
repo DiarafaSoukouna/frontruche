@@ -162,7 +162,9 @@ export default {
     // Appel à setPages() et à la requête axios pour récupérer les niveaux de localité
     this.setPages();
     axios
-      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/getAllNiveauLocalite")
+      .get(
+        "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/getAllNiveauLocalite"
+      )
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
         this.niveauxLocalite = response.data.data;
@@ -178,9 +180,11 @@ export default {
         }
       })
       .catch((error) => {
-        console.error("Erreur lors de la récupération des niveaux de localité:", error);
+        console.error(
+          "Erreur lors de la récupération des niveaux de localité:",
+          error
+        );
       });
-
   },
 
   filters: {
@@ -225,11 +229,11 @@ export default {
 
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
-        title: 'Êtes-vous sûr de vouloir enregistrer cette localité ?',
-        icon: 'question',
+        title: "Êtes-vous sûr de vouloir enregistrer cette localité ?",
+        icon: "question",
         showCancelButton: true,
-        confirmButtonText: 'Oui',
-        cancelButtonText: 'Non'
+        confirmButtonText: "Oui",
+        cancelButtonText: "Non",
       }).then((result) => {
         // Si l'utilisateur clique sur "Oui", procéder à l'enregistrement
         if (result.isConfirmed) {
@@ -238,7 +242,7 @@ export default {
           axios({
             method: method,
             url: url,
-            data: this.newLocalite
+            data: this.newLocalite,
           })
             .then((response) => {
               // Une fois que la localité a été ajoutée ou mise à jour avec succès
@@ -247,14 +251,13 @@ export default {
 
               // Affichez un message de succès avec SweetAlert
               Swal.fire({
-                title: 'Localité enregistrée !',
-                icon: 'success',
-                confirmButtonText: 'OK'
+                title: "Localité enregistrée !",
+                icon: "success",
+                confirmButtonText: "OK",
               });
 
               // Réinitialiser les champs du formulaire
               this.resetNewLocalite();
-
 
               // Fermer le modal après avoir ajouté ou mis à jour la localité
               this.taskListModal = false;
@@ -265,12 +268,14 @@ export default {
             })
             .catch((error) => {
               // En cas d'erreur lors de l'ajout ou de la mise à jour de la localité, gérez l'erreur ici
-              console.error("Erreur lors de l'enregistrement de la localité :", error);
+              console.error(
+                "Erreur lors de l'enregistrement de la localité :",
+                error
+              );
             });
         }
       });
-    }
-    ,
+    },
     getParentLibelle(localite) {
       let libelles = []; // Initialiser un tableau pour stocker les libellés
 
@@ -294,12 +299,12 @@ export default {
       this.foundLocalite;
       // Recherche de la localité par ID dans la liste des localités
 
-      this.foundLocalite = this.allTask.find(localite => localite.id_localite === parseInt(id));
+      this.foundLocalite = this.allTask.find(
+        (localite) => localite.id_localite === parseInt(id)
+      );
       console.log("Localité trouvée :", this.foundLocalite); // Vérifier la localité trouvée
       return this.foundLocalite;
-    }
-    ,
-
+    },
     setActiveTab(tabName) {
       this.activeTab = tabName;
       this.niveauActif = tabName;
@@ -445,7 +450,9 @@ export default {
     },
 
     getLibelleByRang(idNiveau) {
-      const niveau = this.niveauxLocalite.find(niveau => niveau.rang_niveau === idNiveau);
+      const niveau = this.niveauxLocalite.find(
+        (niveau) => niveau.rang_niveau === idNiveau
+      );
 
       if (niveau) {
         return niveau.libelle_niv_localite;
@@ -461,12 +468,15 @@ export default {
       this.caractere;
       this.test;
       // Définir la couleur de chargement à jaune
-      this.loadingClass = 'loading-yellow';
+      this.loadingClass = "loading-yellow";
       this.niveauLocalite = idNiveau;
       axios
-        .post("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/getById", {
-          id_niv_localite: idNiveau,
-        })
+        .post(
+          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/getById",
+          {
+            id_niv_localite: idNiveau,
+          }
+        )
         .then((response) => {
           // Mettre à jour la liste des localités avec les données reçues
 
@@ -477,14 +487,14 @@ export default {
           this.rang = this.rangLocalite - 1;
           this.localites = response.data.data[0].localites;
 
-
-          this.test = this.niveauxLocalite.find(niveau => niveau.rang_niveau === this.rang);
+          this.test = this.niveauxLocalite.find(
+            (niveau) => niveau.rang_niveau === this.rang
+          );
           this.localiteParent = this.test.localites;
           this.libelleParent = this.test.libelle_niv_localite;
 
           console.log("parent1", this.parentLocalite);
           console.log("parent", this.localiteParent);
-
         })
         .catch((error) => {
           console.error("Erreur lors de la récupération des localités:", error);
@@ -498,11 +508,11 @@ export default {
     deleteLocalite(id_localite) {
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
-        title: 'Êtes-vous sûr de vouloir supprimer cette localité ?',
-        icon: 'question',
+        title: "Êtes-vous sûr de vouloir supprimer cette localité ?",
+        icon: "question",
         showCancelButton: true,
-        confirmButtonText: 'Oui',
-        cancelButtonText: 'Non'
+        confirmButtonText: "Oui",
+        cancelButtonText: "Non",
       }).then((result) => {
         // Si l'utilisateur clique sur "Oui", procéder à la suppression
         if (result.isConfirmed) {
@@ -511,17 +521,18 @@ export default {
 
           // Corps de la requête contenant l'ID de la localité à supprimer
           const requestBody = {
-            id_localite: id_localite
+            id_localite: id_localite,
           };
 
           // Envoyer la requête DELETE à l'API
-          axios.delete(url, { data: requestBody })
+          axios
+            .delete(url, { data: requestBody })
             .then(() => {
               // Afficher un message de succès avec SweetAlert
               Swal.fire({
-                title: 'Localité supprimée !',
-                icon: 'success',
-                confirmButtonText: 'OK'
+                title: "Localité supprimée !",
+                icon: "success",
+                confirmButtonText: "OK",
               });
 
               // Actualiser la liste des localités après la suppression
@@ -529,7 +540,10 @@ export default {
             })
             .catch((error) => {
               // En cas d'erreur lors de la suppression de la localité, gérez l'erreur ici
-              console.error("Erreur lors de la suppression de la localité :", error);
+              console.error(
+                "Erreur lors de la suppression de la localité :",
+                error
+              );
             });
         }
       });
@@ -546,7 +560,10 @@ export default {
       }
       if (this.newLocalite.code_localite.length > parseInt(this.caractere)) {
         // Si la limite est dépassée, couper la saisie
-        this.newLocalite.code_localite = this.newLocalite.code_localite.slice(0, parseInt(this.caractere));
+        this.newLocalite.code_localite = this.newLocalite.code_localite.slice(
+          0,
+          parseInt(this.caractere)
+        );
       }
     },
   },
@@ -584,15 +601,15 @@ export default {
         if (event.target.closest("tr").classList.contains("table-active")) {
           checkedCount > 0
             ? (document.getElementById("remove-actions").style.display =
-              "block")
+                "block")
             : (document.getElementById("remove-actions").style.display =
-              "none");
+                "none");
         } else {
           checkedCount > 0
             ? (document.getElementById("remove-actions").style.display =
-              "block")
+                "block")
             : (document.getElementById("remove-actions").style.display =
-              "none");
+                "none");
         }
       });
     });
@@ -612,15 +629,23 @@ export default {
               <h5 class="card-title mb-0 flex-grow-1">All Tasks</h5>
               <div class="flex-shrink-0">
                 <div class="d-flex flex-wrap gap-2">
-                  <BButton variant="secondary" class="me-1" id="remove-actions" @click="deleteMultiple">
+                  <BButton
+                    variant="secondary"
+                    class="me-1"
+                    id="remove-actions"
+                    @click="deleteMultiple"
+                  >
                     <i class="ri-delete-bin-2-line"></i>
                   </BButton>
 
-                  <BButton variant="warning" class="add-btn" @click="toggleModal">
-                    <i class="ri-add-line align-bottom me-1"></i>  {{ $t("ajout") }} {{ niveauActif }}
+                  <BButton
+                    variant="warning"
+                    class="add-btn"
+                    @click="toggleModal"
+                  >
+                    <i class="ri-add-line align-bottom me-1"></i>
+                    {{ $t("ajout") }} {{ niveauActif }}
                   </BButton>
-
-
                 </div>
               </div>
             </div>
@@ -628,17 +653,26 @@ export default {
 
           <BCardBody>
             <BTabs nav-class="mb-3">
-              <BTab v-for="(niveau, index) in niveauxLocalite" :key="index" :title="niveau.libelle_niv_localite"
-                :active="activeTab === niveau.libelle_niv_localite" @click="fetchLocalites(niveau.id_niv_localite)">
-
-                <BCardBody class="border border-dashed border-end-0 border-start-0">
-
+              <BTab
+                v-for="(niveau, index) in niveauxLocalite"
+                :key="index"
+                :title="niveau.libelle_niv_localite"
+                :active="activeTab === niveau.libelle_niv_localite"
+                @click="fetchLocalites(niveau.id_niv_localite)"
+              >
+                <BCardBody
+                  class="border border-dashed border-end-0 border-start-0"
+                >
                   <b-form>
                     <BRow class="g-3">
                       <BCol xxl="5" sm="12">
                         <div class="search-box">
-                          <input type="text" class="form-control search bg-light border-light"
-                            placeholder="Search for tasks or something..." v-model="searchQuery" />
+                          <input
+                            type="text"
+                            class="form-control search bg-light border-light"
+                            placeholder="Search for tasks or something..."
+                            v-model="searchQuery"
+                          />
                           <i class="ri-search-line search-icon"></i>
                         </div>
                       </BCol>
@@ -647,25 +681,37 @@ export default {
                 </BCardBody>
                 <BCardBody>
                   <div class="table-responsive table-card mb-4">
-                    <table class="table align-middle table-nowrap mb-0" id="tasksTable">
+                    <table
+                      class="table align-middle table-nowrap mb-0"
+                      id="tasksTable"
+                    >
                       <thead class="table-light text-muted">
                         <tr>
-                          <th class="sort" data-sort="id">
-                            Code
-                          </th>
+                          <th class="sort" data-sort="id">Code</th>
 
-                          <th v-for="(rang, index) in rangLocalite" :key="index" class="sort" data-sort="project_name">
+                          <th
+                            v-for="(rang, index) in rangLocalite"
+                            :key="index"
+                            class="sort"
+                            data-sort="project_name"
+                          >
                             {{ getLibelleByRang(rang) }}
                           </th>
-                          <th class="sort" data-sort="id" v-if="rangLocalite == 1">
+                          <th
+                            class="sort"
+                            data-sort="id"
+                            v-if="rangLocalite == 1"
+                          >
                             Abréviation
                           </th>
-                          <th class="sort" data-sort="id" v-if="rangLocalite == 1">
+                          <th
+                            class="sort"
+                            data-sort="id"
+                            v-if="rangLocalite == 1"
+                          >
                             Couleur
                           </th>
-                          <th class="sort" data-sort="due_date">
-                            Actions
-                          </th>
+                          <th class="sort" data-sort="due_date">Actions</th>
                         </tr>
                       </thead>
                       <tbody class="list form-check-all">
@@ -673,30 +719,45 @@ export default {
                           <!-- Remplacez 'localite.id_localite' par l'ID approprié -->
                           <td class="id">{{ localite.code_localite }}</td>
                           <!-- Remplacez 'localite.libelle_localite' par le nom ou libellé approprié -->
-                          <td class="project_name" v-for="(libelle, index) in getParentLibelle(localite)" :key="index">
+                          <td
+                            class="project_name"
+                            v-for="(libelle, index) in getParentLibelle(
+                              localite
+                            )"
+                            :key="index"
+                          >
                             <template v-if="localite.parent_localite">
-
                               <span>{{ libelle }}</span>
-
                             </template>
                             <template v-else>
                               <span>{{ localite.libelle_localite }}</span>
                             </template>
                           </td>
 
-                          <td class="id" v-if="rangLocalite == 1">{{ localite.abreviation_localite }}</td>
-                          <td class="id" v-if="rangLocalite == 1"
-                            :style="{ 'background-color': localite.code_couleur }">{{ localite.code_couleur
-                            }}</td>
-
+                          <td class="id" v-if="rangLocalite == 1">
+                            {{ localite.abreviation_localite }}
+                          </td>
+                          <td
+                            class="id"
+                            v-if="rangLocalite == 1"
+                            :style="{
+                              'background-color': localite.code_couleur,
+                            }"
+                          >
+                            {{ localite.code_couleur }}
+                          </td>
 
                           <td class="due_date">
                             <!-- Ajoutez ici les actions nécessaires -->
                             <span @click="editDetails(localite)">
-                              <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                              <i
+                                class="ri-pencil-fill align-bottom me-2 text-muted"
+                              ></i>
                             </span>
                             <span @click="deleteLocalite(localite.id_localite)">
-                              <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                              <i
+                                class="ri-delete-bin-fill align-bottom me-2 text-muted"
+                              ></i>
                             </span>
                           </td>
                         </tr>
@@ -705,8 +766,12 @@ export default {
 
                     <div class="noresult" v-if="resultQuery.length < 1">
                       <div class="text-center">
-                        <lottie colors="primary:#121331,secondary:#08a88a" :options="defaultOptions" :height="75"
-                          :width="75" />
+                        <lottie
+                          colors="primary:#121331,secondary:#08a88a"
+                          :options="defaultOptions"
+                          :height="75"
+                          :width="75"
+                        />
                         <h5 class="mt-2">Partenaire non trouvé</h5>
                         <p class="text-muted mb-0">
                           Le partenaire recherché n'a pas été retrouvé.
@@ -715,21 +780,44 @@ export default {
                     </div>
                   </div>
 
-                  <div class="d-flex justify-content-end" v-if="resultQuery.length >= 1">
+                  <div
+                    class="d-flex justify-content-end"
+                    v-if="resultQuery.length >= 1"
+                  >
                     <div class="pagination-wrap hstack gap-2">
-                      <BLink class="page-item pagination-prev" href="#" :disabled="page <= 1" @click="page--">
+                      <BLink
+                        class="page-item pagination-prev"
+                        href="#"
+                        :disabled="page <= 1"
+                        @click="page--"
+                      >
                         Previous
                       </BLink>
                       <ul class="pagination listjs-pagination mb-0">
-                        <li :class="{
-                    active: pageNumber == page,
-                    disabled: pageNumber == '...',
-                  }" v-for="(pageNumber, index) in pages" :key="index" @click="page = pageNumber">
-                          <BLink class="page" href="#" data-i="1" data-page="8">{{ pageNumber }}</BLink>
+                        <li
+                          :class="{
+                            active: pageNumber == page,
+                            disabled: pageNumber == '...',
+                          }"
+                          v-for="(pageNumber, index) in pages"
+                          :key="index"
+                          @click="page = pageNumber"
+                        >
+                          <BLink
+                            class="page"
+                            href="#"
+                            data-i="1"
+                            data-page="8"
+                            >{{ pageNumber }}</BLink
+                          >
                         </li>
                       </ul>
-                      <BLink class="page-item pagination-next" href="#" :disabled="page >= pages.length"
-                        @click="page++">
+                      <BLink
+                        class="page-item pagination-next"
+                        href="#"
+                        :disabled="page >= pages.length"
+                        @click="page++"
+                      >
                         Next
                       </BLink>
                     </div>
@@ -737,68 +825,115 @@ export default {
                 </BCardBody>
               </BTab>
             </BTabs>
-
           </BCardBody>
         </BCard>
       </BCol>
     </BRow>
 
     <!-- task list modal -->
-    <BModal v-model="taskListModal" id="showmodal" modal-class="zoomIn" hide-footer
-      header-class="p-3 bg-info-subtle taskModal" class="v-modal-custom" centered size="lg"
-      :title="dataEdit ? 'Modifier localité' : 'Nouvelle localité'">
+    <BModal
+      v-model="taskListModal"
+      id="showmodal"
+      modal-class="zoomIn"
+      hide-footer
+      header-class="p-3 bg-info-subtle taskModal"
+      class="v-modal-custom"
+      centered
+      size="lg"
+      :title="dataEdit ? 'Modifier localité' : 'Nouvelle localité'"
+    >
       <b-form id="addform" class="tablelist-form" autocomplete="off">
         <BRow class="g-3">
           <input type="hidden" id="id" name="" />
           <BCol lg="12">
-            <label for="projectName-field" class="form-label">Code Localité</label>
-            <input type="text" id="projectName" class="form-control" placeholder="Project name"
-              v-model="newLocalite.code_localite" @input="validateCodeLocalite"
-              :class="{ 'is-invalid': codeLocaliteInvalid }" />
+            <label for="projectName-field" class="form-label"
+              >Code Localité</label
+            >
+            <input
+              type="text"
+              id="projectName"
+              class="form-control"
+              placeholder="Project name"
+              v-model="newLocalite.code_localite"
+              @input="validateCodeLocalite"
+              :class="{ 'is-invalid': codeLocaliteInvalid }"
+            />
             <div class="invalid-feedback" v-if="codeLocaliteInvalid">
-              Le code de la localité doit avoir exactement {{ caractere }} caractères.
+              Le code de la localité doit avoir exactement
+              {{ caractere }} caractères.
             </div>
-
           </BCol>
           <BCol lg="12">
             <div>
               <label for="tasksTitle-field" class="form-label">Nom </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="Title"
-                v-model="newLocalite.libelle_localite" :class="{ 'is-invalid': submitted && !event.task }" />
+              <input
+                type="text"
+                id="tasksTitle"
+                class="form-control"
+                placeholder="Title"
+                v-model="newLocalite.libelle_localite"
+                :class="{ 'is-invalid': submitted && !event.task }"
+              />
               <div class="invalid-feedback">Please enter a title.</div>
             </div>
           </BCol>
           <BCol lg="12" v-if="parentLocalite != 1">
-            <label for="createName-field" class="form-label">{{ libelleParent }}</label>
+            <label for="createName-field" class="form-label">{{
+              libelleParent
+            }}</label>
             <select class="form-select" v-model="newLocalite.parent_localite">
               <!-- Utilisation de v-for pour itérer sur les localités et afficher chaque option -->
-              <option v-for="localite in localiteParent" :key="localite.id_localite" :value="localite.id_localite">{{
-                    localite.libelle_localite }}</option>
+              <option
+                v-for="localite in localiteParent"
+                :key="localite.id_localite"
+                :value="localite.id_localite"
+              >
+                {{ localite.libelle_localite }}
+              </option>
             </select>
           </BCol>
 
           <BCol lg="12" v-if="parentLocalite == 1">
             <label for="createName-field" class="form-label">Abréviation</label>
-            <input type="text" id="createName" class="form-control" placeholder="Client name"
-              v-model="newLocalite.abreviation_localite" :class="{ 'is-invalid': submitted && !event.creater }" />
+            <input
+              type="text"
+              id="createName"
+              class="form-control"
+              placeholder="Client name"
+              v-model="newLocalite.abreviation_localite"
+              :class="{ 'is-invalid': submitted && !event.creater }"
+            />
             <div class="invalid-feedback">Please enter a client name.</div>
           </BCol>
           <BCol lg="12" v-if="parentLocalite == 1">
             <label for="createName-field" class="form-label">Couleur</label>
-            <input type="color" id="createName" class="form-control" placeholder="Client name"
-              v-model="newLocalite.code_couleur" :class="{ 'is-invalid': submitted && !event.creater }" />
+            <input
+              type="color"
+              id="createName"
+              class="form-control"
+              placeholder="Client name"
+              v-model="newLocalite.code_couleur"
+              :class="{ 'is-invalid': submitted && !event.creater }"
+            />
             <div class="invalid-feedback">Please enter a client name.</div>
           </BCol>
-
-
-
         </BRow>
 
         <div class="hstack gap-2 justify-content-end mt-3">
-          <BButton type="button" variant="light" @click="taskListModal = false" id="closemodal">
+          <BButton
+            type="button"
+            variant="light"
+            @click="taskListModal = false"
+            id="closemodal"
+          >
             Fermer
           </BButton>
-          <BButton type="submit" variant="success" id="add-btn" @click="handleSubmit">
+          <BButton
+            type="submit"
+            variant="success"
+            id="add-btn"
+            @click="handleSubmit"
+          >
             {{ dataEdit ? "Modifier" : "Enregistrer" }}
           </BButton>
         </div>
@@ -806,10 +941,21 @@ export default {
     </BModal>
 
     <!-- delete modal -->
-    <BModal v-model="deleteModal" modal-class="zoomIn" hide-footer no-close-on-backdrop centered>
+    <BModal
+      v-model="deleteModal"
+      modal-class="zoomIn"
+      hide-footer
+      no-close-on-backdrop
+      centered
+    >
       <div class="mt-2 text-center">
-        <lottie class="avatar-xl" colors="primary:#f7b84b,secondary:#f06548" :options="defaultOptions1" :height="75"
-          :width="75" />
+        <lottie
+          class="avatar-xl"
+          colors="primary:#f7b84b,secondary:#f06548"
+          :options="defaultOptions1"
+          :height="75"
+          :width="75"
+        />
         <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
           <h4>Are you sure ?</h4>
           <p class="text-muted mx-4 mb-0">
@@ -818,10 +964,19 @@ export default {
         </div>
       </div>
       <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-        <button type="button" class="btn w-sm btn-light" @click="deleteModal = false">
+        <button
+          type="button"
+          class="btn w-sm btn-light"
+          @click="deleteModal = false"
+        >
           Close
         </button>
-        <button type="button" class="btn w-sm btn-danger" id="delete-record" @click="deleteData">
+        <button
+          type="button"
+          class="btn w-sm btn-danger"
+          id="delete-record"
+          @click="deleteData"
+        >
           Yes, Delete It!
         </button>
       </div>

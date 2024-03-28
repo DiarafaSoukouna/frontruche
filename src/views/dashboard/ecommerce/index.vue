@@ -410,7 +410,13 @@ export default {
         this.deleteModal = false;
       }
     },
-    //
+    returnUnite(id) {
+      for (let t of this.allUnite) {
+        if (t.id_unite_gestion == id) {
+          return t.nom_unite_gestion;
+        }
+      }
+    },
 
     SearchData() {
       this.filterdate = this.filterdate1;
@@ -794,8 +800,8 @@ export default {
             <select v-model="unite_gest" class="form-control">
               <option
                 v-for="option in allUnite"
-                :key="option.id_unite_gestion"
-                :value="option.id_unite_gestion"
+                :key="option.code_unite_gestion"
+                :value="option.code_unite_gestion"
               >
                 {{ option.nom_unite_gestion }}
               </option>
@@ -807,8 +813,8 @@ export default {
             <select v-model="partenaire" class="form-control">
               <option
                 v-for="option in allPartenaire"
-                :key="option.id_partenaire"
-                :value="option.id_partenaire"
+                :key="option.code_partenaire"
+                :value="option.code_partenaire"
               >
                 {{ option.sigle_partenaire }}
               </option>

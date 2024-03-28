@@ -6,8 +6,8 @@
   "t-crm": "Partners",
   "t-ecommerce": "Users",
   "t-crypto": "Services and Directions",
-  "t-projects": "Strategic plan",
-  "t-nft": "Analytical framework", 
+  "t-projects": "Analytical framework",
+  "t-nft": "Strategic plan",
   "t-autre": "Other parameter",
   "t-job": "Job",
   "t-apps": "Apps",
@@ -212,15 +212,13 @@
   "t-level-3.1": "Level 3.1",
   "t-level-3.2": "Level 3.2",
 
-  
   "unite-gestion": "management unit",
   "ajout": "Add",
   "nouvelle": "new",
-  "localite":"Localite",
-  "type_pat":"Partner type",
+  "localite": "Localite",
+  "type_pat": "Partner type",
   "unite": "Unit",
   "indicateurs": "indicator",
   "categorie": "Category",
   "depense": "expenditure"
-
 }

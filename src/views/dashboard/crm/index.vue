@@ -524,10 +524,10 @@ export default {
                   >
                     <i class="ri-add-line align-bottom me-1"></i> Partenaire
                   </BButton>
-                  <BButton style="background-color: #285e43" @click="modalType">
+                  <!-- <BButton style="background-color: #285e43" @click="modalType">
                     <i class="ri-add-line align-bottom me-1"></i> Type
                     partenaire
-                  </BButton>
+                  </BButton> -->
                 </div>
               </div>
             </div>
@@ -542,7 +542,7 @@ export default {
                   <BCardBody
                     class="border border-dashed border-end-0 border-start-0"
                   >
-                    <BButton
+                    <!-- <BButton
                       @click="
                         editTyp();
                         recupTyp(tab.id_type_pat);
@@ -555,8 +555,8 @@ export default {
                     >
                       <i class="ri-pencil-fill"></i>
                       {{ tab.libelle_pat }}
-                    </BButton>
-                    <BButton
+                    </BButton> -->
+                    <!-- <BButton
                       style="
                         background-color: #ea9600;
                         margin-bottom: 15px;
@@ -567,7 +567,7 @@ export default {
                     >
                       <i class="ri-delete-bin-fill"></i>
                       {{ tab.libelle_pat }}
-                    </BButton>
+                    </BButton> -->
                     <b-form>
                       <BRow class="g-3">
                         <BCol xxl="5" sm="12">
