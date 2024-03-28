@@ -5,7 +5,6 @@ import Layout from "@/layouts/main.vue";
 import PageHeader from "@/components/page-header";
 
 import animationData from "@/components/widgets/lupuorrc.json";
-import Multiselect from "@vueform/multiselect";
 import Swal from "sweetalert2";
 import "@vueform/multiselect/themes/default.css";
 import animationData1 from "@/components/widgets/gsqxdxog.json";
@@ -25,6 +24,7 @@ export default {
       uniteIndicateur: [], // Ajoutez une propriété pour stocker les Type partenaires
       localiteParent: [], // Ajoutez une propriété pour stocker les Type partenaires
       loading: false,
+      range: null,
       niveauActif: null,
       niveauLocalite: null,
       parentLocalite: null,
@@ -49,12 +49,12 @@ export default {
         dateFormat: "d M, Y",
       },
       newLocalite: {
-        code_unite_gestion: "",
-        nom_unite_gestion: "",
-        abrege_unite_gestion: "",
-        localite_concerne_ugl: [],
-        chef_lieu_ugl: "",
-        couleur_ugl: "",
+        nombre_niv_localite: null,
+        libelle_niv_localite: "",
+        nb_char_niv_localite: "",
+
+        niveau_ugl_concerne: 1,
+        idusrcreation: 1,
 
       },
       unite: {
@@ -116,7 +116,6 @@ export default {
   components: {
     Layout,
     PageHeader,
-    Multiselect,
   },
   computed: {
     displayedPosts() {
@@ -190,7 +189,8 @@ export default {
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
         this.niveauLocal = response.data.data;
-        console.log("env", process.env);
+        this.range = this.niveauLocal[0].rang_niveau;
+        console.log("Premier enregistrement:", this.range);
 
 
       })
@@ -366,20 +366,24 @@ export default {
       });
     },
     handleSubmit2() {
-      let url = "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteGestion/";
+      let url = "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/";
       let method = "";
 
       if (this.dataEdit2) {
         // Si dataEdit est true, nous mettons à jour une Type partenaire existante
+
         url += "update";
         method = "POST";
       } else {
         // Sinon, nous ajoutons une Nouveau Type partenaire
+        this.newLocalite.rang_niveau = this.range + 1;
         url += "insert";
         method = "POST";
       }
 
-      let localite_concerne_ugl_str = this.newLocalite.localite_concerne_ugl.join(',');
+
+
+
 
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
@@ -396,7 +400,7 @@ export default {
           axios({
             method: method,
             url: url,
-            data: { ...this.newLocalite, localite_concerne_ugl: localite_concerne_ugl_str } // Utilisez la chaîne de caractères convertie
+            data: { ...this.newLocalite } // Utilisez la chaîne de caractères convertie
           })
             .then((response) => {
               // Une fois que la Type partenaire a été ajoutée ou mise à jour avec succès
@@ -508,6 +512,7 @@ export default {
       // Filtrer les propriétés indésirables de l'objet data
       const filteredData = { ...data };
 
+      delete filteredData.localites;
       delete filteredData.created_at;
       delete filteredData.updated_at;
 
@@ -541,14 +546,13 @@ export default {
 
     resetNewLocalite() {
       this.newLocalite = {
-        code_unite_gestion: "",
-        nom_unite_gestion: "",
-        abrege_unite_gestion: "",
-        localite_concerne_ugl: [],
-        chef_lieu_ugl: "",
-        couleur_ugl: "",
-        geler_unite_gestion: 0,
-        idusrcreation: "",
+        nombre_niv_localite: null,
+        libelle_niv_localite: "",
+        nb_char_niv_localite: "",
+
+        niveau_ugl_concerne: 1,
+        idusrcreation: 1,
+
       };
     },
     resetNewUnite() {
@@ -672,7 +676,7 @@ export default {
       this.loadingClass = 'loading-yellow';
 
       axios
-        .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteGestion/getAllUniteGestion", {
+        .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/getAllNiveauLocalite", {
 
         })
         .then((response) => {
@@ -801,11 +805,11 @@ export default {
         // Si l'utilisateur clique sur "Oui", procéder à la suppression
         if (result.isConfirmed) {
           // Définir l'URL de la requête de suppression
-          let url = 'https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise//uniteGestion/delete';
+          let url = 'https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/delete';
 
           // Corps de la requête contenant l'ID de la Type partenaire à supprimer
           const requestBody = {
-            id_UniteGestion: id_localite
+            id_niv_localite: id_localite
           };
 
           // Envoyer la requête DELETE à l'API
@@ -813,7 +817,7 @@ export default {
             .then(() => {
               // Afficher un message de succès avec SweetAlert
               Swal.fire({
-                title: 'Unité de gestion supprimée !',
+                title: 'Niveau localité supprimé !',
                 icon: 'success',
                 confirmButtonText: 'OK'
               });
@@ -989,7 +993,7 @@ export default {
                           </div>
                         </BCol>
 
-                        <BButton variant="warning" class="add-btn" @click="toggleModal2">
+                        <BButton style="background-color: #285e43" @click="toggleModal2">
                           <i class="ri-add-line align-bottom me-1"></i> {{ $t("ajout") }} {{ $t("niveau-localite") }}
                         </BButton>
                       </div>
@@ -1001,7 +1005,7 @@ export default {
                         <thead class="table-light text-muted">
                           <tr>
                             <th class="sort" data-sort="id">
-                              Rang
+                              Niveau
                             </th>
 
                             <th class="sort" data-sort="id">
@@ -1017,7 +1021,9 @@ export default {
                           </tr>
                         </thead>
                         <tbody class="list form-check-all">
-                          <tr v-for="(localite, index) in niveauLocal" :key="index">
+                          <tr v-for="(localite, index) in niveauLocal.sort((a, b) => a.rang_niveau - b.rang_niveau) "
+                            :key="index">
+
                             <!-- Remplacez 'localite.id_localite' par l'ID approprié -->
                             <td class="id">{{ localite.rang_niveau }}</td>
 
@@ -1086,58 +1092,29 @@ export default {
 
     <BModal v-model="taskListModal2" id="showmodal2" modal-class="zoomIn" hide-footer
       header-class="p-3 bg-info-subtle taskModal1" class="v-modal-custom" centered size="lg"
-      :title="dataEdit2 ? 'Modifier unité de gestion' : 'Nouvelle unité de gestion'">
+      :title="dataEdit2 ? 'Modifier  niveau localté' : 'Nouveau niveau localté'">
       <b-form id="addform2" class="tablelist-form2" autocomplete="off">
         <BRow class="g-3">
           <input type="hidden" id="id" name="" />
 
           <BCol lg="12">
             <div>
-              <label for="tasksTitle-field" class="form-label">Code </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="Code"
-                v-model="newLocalite.code_unite_gestion" :class="{ 'is-invalid': submitted && !event.task }" />
-              <div class="invalid-feedback">Please enter a title.</div>
-            </div>
-          </BCol>
-          <BCol lg="6">
-            <div>
-              <label for="tasksTitle-field" class="form-label">Nom </label>
+              <label for="tasksTitle-field" class="form-label">Niveau </label>
               <input type="text" id="tasksTitle" class="form-control" placeholder="Nom"
-                v-model="newLocalite.nom_unite_gestion" :class="{ 'is-invalid': submitted && !event.task }" />
-              <div class="invalid-feedback">Please enter a title.</div>
-            </div>
-          </BCol>
-          <BCol lg="6">
-            <div>
-              <label for="tasksTitle-field" class="form-label">Abréviation </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="Abréviation"
-                v-model="newLocalite.abrege_unite_gestion" :class="{ 'is-invalid': submitted && !event.task }" />
+                v-model="newLocalite.libelle_niv_localite" :class="{ 'is-invalid': submitted && !event.task }" />
               <div class="invalid-feedback">Please enter a title.</div>
             </div>
           </BCol>
           <BCol lg="12">
-            <label for="localiteSelect" class="form-label">Localité concernée</label>
-            <Multiselect v-model="newLocalite.localite_concerne_ugl" id="skillsinput" mode="tags"
-              :close-on-select="false" :searchable="true" :create-option="true"
-              :options="localiteParent.map(localite => ({ value: localite.id_localite, label: localite.libelle_localite }))" />
+            <div>
+              <label for="tasksTitle-field" class="form-label">Taille du code </label>
+              <input type="number" id="tasksTitle" class="form-control" placeholder="Code"
+                v-model="newLocalite.nb_char_niv_localite" :class="{ 'is-invalid': submitted && !event.task }" />
+              <div class="invalid-feedback">Please enter a title.</div>
+            </div>
+          </BCol>
 
-          </BCol>
-          <BCol lg="6">
-            <div>
-              <label for="tasksTitle-field" class="form-label">Chef lieu </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="Chef lieu"
-                v-model="newLocalite.chef_lieu_ugl" :class="{ 'is-invalid': submitted && !event.task }" />
-              <div class="invalid-feedback">Please enter a title.</div>
-            </div>
-          </BCol>
-          <BCol lg="6">
-            <div>
-              <label for="tasksTitle-field" class="form-label">Couleur </label>
-              <input type="color" id="tasksTitle" class="form-control" v-model="newLocalite.couleur_ugl"
-                :class="{ 'is-invalid': submitted && !event.task }" />
-              <div class="invalid-feedback">Please enter a title.</div>
-            </div>
-          </BCol>
+
 
 
 

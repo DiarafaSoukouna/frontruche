@@ -295,6 +295,11 @@ export default {
                 </router-link>
               </li>
               <li class="nav-item">
+                <router-link to="/parametrage/projet" class="nav-link" data-key="t-crm">
+                  {{ $t("projet") }}
+                </router-link>
+              </li>
+              <li class="nav-item">
                 <router-link
                   to="/parametrage/unite-gestion"
                   class="nav-link"

@@ -47,6 +47,8 @@ export default {
         });
         // Vous pouvez ajuster cette condition en fonction de la réponse de votre API
         if (result.data.status === "success") {
+          this.isLoggedIn = true;
+          console.log(this.isLoggedIn);
           console.log("test", result.data);
           localStorage.setItem("jwt", result.data.data);
           this.$router.push({ path: "/" });
@@ -158,7 +160,7 @@ export default {
 
 <template>
   <BCard no-body class="overflow-hidden m-0">
-    <BRow class="g-0">
+    <BRow class="g-0" style="height: 100%;">
       <BCol lg="8">
         <div class="p-lg-5 p-4 auth-one-bg h-100">
           <div class="bg-overlay"></div>
@@ -175,18 +177,10 @@ export default {
                 <!-- <i class="ri-double-quotes-l display-4 text-success"></i> -->
               </div>
 
-              <div
-                id="qoutescarouselIndicators"
-                class="carousel slide"
-                data-bs-ride="carousel"
-              >
-                <Swiper
-                  class="text-center text-white pb-5"
-                  :autoplay="{ delay: 3000, disableOnInteraction: false }"
-                  :loop="true"
-                  :modules="[Autoplay, Navigation, Pagination]"
-                  :pagination="{ clickable: true, el: '.swiper-pagination' }"
-                >
+              <div id="qoutescarouselIndicators" class="carousel slide" data-bs-ride="carousel">
+                <Swiper class="text-center text-white pb-5" :autoplay="{ delay: 3000, disableOnInteraction: false }"
+                  :loop="true" :modules="[Autoplay, Navigation, Pagination]"
+                  :pagination="{ clickable: true, el: '.swiper-pagination' }">
                   <swiper-slide>
                     <div class="active">
                       <p class="fs-15 fst-italic">
@@ -217,23 +211,14 @@ export default {
           <div class="mt-4">
             <form class="needs-validation" novalidate>
               <div class="mb-3">
-                <label for="username" class="form-label"
-                  >Login <span class="text-danger">*</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="login_user"
-                  placeholder="Enter login"
-                  v-model="email"
-                  required
-                />
+                <label for="username" class="form-label">Login <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="login_user" placeholder="Enter login" v-model="email"
+                  required />
                 <div class="invalid-feedback">Please enter Login</div>
               </div>
 
               <div class="mb-3">
-                <label class="form-label" for="password-input"
-                  >Mot de passe <span class="text-danger">*</span>
+                <label class="form-label" for="password-input">Mot de passe <span class="text-danger">*</span>
                 </label>
                 <div class="position-relative auth-pass-inputgroup">
                   <!-- <input
@@ -250,21 +235,11 @@ export default {
                     id="password-addon"
                     ><i class="ri-eye-fill align-middle"></i
                   ></BButton> -->
-                  <input
-                    :type="togglePassword ? 'text' : 'password'"
-                    v-model="password"
-                    class="form-control pe-5"
-                    placeholder="Enter password"
-                    id="password-input"
-                  />
-                  <BButton
-                    variant="link"
-                    class="position-absolute end-0 top-0 text-decoration-none text-muted"
-                    type="button"
-                    id="password-addon"
-                    @click="togglePassword = !togglePassword"
-                    ><i class="ri-eye-fill align-middle"></i
-                  ></BButton>
+                  <input :type="togglePassword ? 'text' : 'password'" v-model="password" class="form-control pe-5"
+                    placeholder="Enter password" id="password-input" />
+                  <BButton variant="link" class="position-absolute end-0 top-0 text-decoration-none text-muted"
+                    type="button" id="password-addon" @click="togglePassword = !togglePassword"><i
+                      class="ri-eye-fill align-middle"></i></BButton>
                   <div class="invalid-feedback">Please enter password</div>
                 </div>
               </div>
@@ -289,12 +264,8 @@ export default {
                 </p>
               </div>
               <div class="mt-4">
-                <BButton
-                  class="btn btn-md w-100" style="background-color: #288f24;"
-                  type="submit"
-                  @click="signinapi"
-                  :disabled="processing"
-                >
+                <BButton class="btn btn-md w-100" style="background-color: #288f24;" type="submit" @click="signinapi"
+                  :disabled="processing">
                   {{ processing ? "Connexion" : "Se connecter" }}
                 </BButton>
               </div>
@@ -303,16 +274,13 @@ export default {
                   <img src="@/assets/images/merf.jpg" alt="" height="150" />
                 </router-link>
               </div>
-              <footer
-                class="mt-4"
-                style="
+              <footer class="mt-4" style="
                   bottom: 0;
                   padding: 20px calc(1.5rem * 0.5);
                   position: absolute;
                   color: #288f24;
                   height: 60px;
-                "
-              >
+                ">
                 <BContainer fluid>
                   <BRow>
                     <BCol col sm="6">
