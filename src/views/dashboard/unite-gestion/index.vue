@@ -15,6 +15,8 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      API_URL: process.env.VUE_APP_BACK_URL,
+      PROXY_URL: process.env.VUE_APP_BACK_URL_PROXY,
       taskListModal: false,
       taskListModal1: false,
       taskListModal2: false,
@@ -186,7 +188,7 @@ export default {
     // Appel à setPages() et à la requête axios pour récupérer les niveaux de Type partenaire
     this.setPages();
     axios
-      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteGestion/getAllUniteGestion")
+      .get(this.PROXY_URL + this.API_URL + "uniteGestion/getAllUniteGestion")
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
         this.typePartenaires = response.data.data;
@@ -201,7 +203,7 @@ export default {
 
     axios
       .get(
-        "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/localite/getAllLocalite"
+        this.PROXY_URL + this.API_URL + "localite/getAllLocalite"
       )
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
@@ -225,7 +227,7 @@ export default {
   beforeMount() {
     axios
       .get(
-        "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/typePartenaire/getAllTypePartenaire"
+        this.PROXY_URL + this.API_URL + "typePartenaire/getAllTypePartenaire"
       )
       .then((data) => {
         this.allTask = [];
@@ -247,7 +249,7 @@ export default {
       // Aucune action nécessaire ici car la logique de filtrage est gérée dans la propriété calculée filteredItems
     },
     handleSubmit() {
-      let url = "http://ssise-cosit.com/api-ssise/typePartenaire/";
+      let url = this.PROXY_URL + this.API_URL + "typePartenaire/";
       let method = "";
 
       if (this.dataEdit) {
@@ -310,7 +312,7 @@ export default {
       });
     },
     handleSubmit1() {
-      let url = "http://ssise-cosit.com/api-ssise/uniteIndicateur/";
+      let url = this.PROXY_URL + this.API_URL + "uniteIndicateur/";
       let method = "";
 
       if (this.dataEdit1) {
@@ -370,7 +372,7 @@ export default {
       });
     },
     handleSubmit2() {
-      let url = "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteGestion/";
+      let url = this.PROXY_URL + this.API_URL + "uniteGestion/";
       let method = "";
 
       if (this.dataEdit2) {
@@ -681,7 +683,7 @@ export default {
       this.loadingClass = 'loading-yellow';
 
       axios
-        .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteGestion/getAllUniteGestion", {
+        .get(this.PROXY_URL + this.API_URL + "uniteGestion/getAllUniteGestion", {
 
         })
         .then((response) => {
@@ -710,7 +712,7 @@ export default {
       this.loadingClass = 'loading-yellow';
 
       axios
-        .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteIndicateur/getAllUniteIndicateur", {
+        .get(this.PROXY_URL + this.API_URL + "uniteIndicateur/getAllUniteIndicateur", {
 
         })
         .then((response) => {
@@ -740,7 +742,7 @@ export default {
 
       axios
         .get(
-          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/categorieDepense/getAllCategorieDepense",
+          this.PROXY_URL + this.API_URL + "categorieDepense/getAllCategorieDepense",
           {}
         )
         .then((response) => {
@@ -770,7 +772,7 @@ export default {
         // Si l'utilisateur clique sur "Oui", procéder à la suppression
         if (result.isConfirmed) {
           // Définir l'URL de la requête de suppression
-          const url = "http://ssise-cosit.com/api-ssise/typePartenaire/delete";
+          const url = this.PROXY_URL + this.API_URL + "typePartenaire/delete";
 
           // Corps de la requête contenant l'ID de la Type partenaire à supprimer
           const requestBody = {
@@ -814,7 +816,7 @@ export default {
         if (result.isConfirmed) {
           // Définir l'URL de la requête de suppression
           let url =
-            "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise//uniteGestion/delete";
+            this.PROXY_URL + this.API_URL + "uniteGestion/delete";
 
           // Corps de la requête contenant l'ID de la Type partenaire à supprimer
           const requestBody = {
@@ -857,7 +859,7 @@ export default {
         // Si l'utilisateur clique sur "Oui", procéder à la suppression
         if (result.isConfirmed) {
           // Définir l'URL de la requête de suppression
-          const url = "http://ssise-cosit.com/api-ssise/categorieDepense/delete";
+          const url = this.PROXY_URL + this.API_URL + "delete";
 
           // Corps de la requête contenant l'ID de la Type partenaire à supprimer
           const requestBody = {

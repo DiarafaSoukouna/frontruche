@@ -16,6 +16,8 @@ import Lottie from "@/components/widgets/lottie.vue";
 export default {
   data() {
     return {
+      API_URL: process.env.VUE_APP_BACK_URL,
+      PROXY_URL: process.env.VUE_APP_BACK_URL_PROXY,
       taskListModal: false,
       date3: null,
       niveauxLocalite: [], // Pour stocker les niveaux de localité de l'API
@@ -24,7 +26,7 @@ export default {
       localiteParent: [], // Ajoutez une propriété pour stocker les localités
       loading: false,
       loadings: true,
-
+      id: "",
       niveauActif: null,
       niveauLocalite: null,
       parentLocalite: null,
@@ -139,7 +141,7 @@ export default {
     this.setPages();
     axios
       .get(
-        "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/getAllNiveauLocalite"
+        this.PROXY_URL + this.API_URL + "niveauLocalite/getAllNiveauLocalite"
       )
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
@@ -168,7 +170,7 @@ export default {
   beforeMount() {
     axios
       .get(
-        "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/localite/getAllLocalite"
+        this.PROXY_URL + this.API_URL + "localite/getAllLocalite"
       )
       .then((data) => {
         this.allTask = [];
@@ -332,9 +334,9 @@ export default {
       };
     },
 
-    deleteModalToggle(data) {
+    deleteModalToggle(id) {
       this.deleteModal = true;
-      this.event._id = data._id;
+      this.id = id;
     },
 
     deleteData() {
@@ -439,7 +441,7 @@ export default {
       this.niveauLocalite = idNiveau;
       axios
         .post(
-          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/getById",
+          this.PROXY_URL + this.API_URL + "niveauLocalite/getById",
           {
             id_niv_localite: idNiveau,
           }
@@ -472,45 +474,38 @@ export default {
           this.loading = false;
         });
     },
-    deleteLocalite(id_localite) {
+    deleteLocalite() {
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
-      Swal.fire({
-        title: "Êtes-vous sûr de vouloir supprimer cette localité ?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Oui",
-        cancelButtonText: "Non",
-      }).then((result) => {
-        // Si l'utilisateur clique sur "Oui", procéder à la suppression
-        if (result.isConfirmed) {
-          // Définir l'URL de la requête de suppression
-          const url = "http://ssise-cosit.com/api-ssise/localite/delete";
 
-          // Corps de la requête contenant l'ID de la localité à supprimer
-          const requestBody = {
-            id_localite: id_localite,
-          };
+      // Définir l'URL de la requête de suppression
+      const url = this.PROXY_URL + this.API_URL + "localite/delete";
 
-          // Envoyer la requête DELETE à l'API
-          axios
-            .delete(url, { data: requestBody })
-            .then(() => {
-              // Afficher un message de succès avec SweetAlert
-              Swal.fire({
-                title: "Localité supprimée !",
-                icon: "success",
-                confirmButtonText: "OK",
-              });
+      // Corps de la requête contenant l'ID de la localité à supprimer
+      const requestBody = {
+        id_localite: this.id,
+      };
 
-              // Actualiser la liste des localités après la suppression
-              this.fetchLocalites(this.niveauLocalite);
-            })
-            .catch((error) => {
-              // En cas d'erreur lors de la suppression de la localité, gérez l'erreur ici
-              console.error("Erreur lors de la suppression de la localité :", error);
-            });
-        }
-      });
+      // Envoyer la requête DELETE à l'API
+      axios
+        .delete(url, { data: requestBody })
+        .then(() => {
+          // Afficher un message de succès avec SweetAlert
+          Swal.fire({
+            title: "Localité supprimée !",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+
+          this.deleteModal = false;
+          // Actualiser la liste des localités après la suppression
+          this.fetchLocalites(this.niveauLocalite);
+        })
+        .catch((error) => {
+          // En cas d'erreur lors de la suppression de la localité, gérez l'erreur ici
+          console.error("Erreur lors de la suppression de la localité :", error);
+        });
+
+
     },
     validateCodeLocalite() {
       // Vérifiez la longueur de la saisie du code de la localité
@@ -677,7 +672,9 @@ export default {
                             <span @click="editDetails(localite)">
                               <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                             </span>
-                            <span @click="deleteLocalite(localite.id_localite)">
+
+
+                            <span @click="deleteModalToggle(localite.id_localite)">
                               <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
                             </span>
                           </td>
@@ -729,13 +726,13 @@ export default {
     <!-- task list modal -->
     <BModal v-model="taskListModal" id="showmodal" modal-class="zoomIn" hide-footer
       header-class="p-3 bg-info-subtle taskModal" class="v-modal-custom" centered size="lg"
-      :title="dataEdit ? 'Modifier localité' : 'Nouvelle localité'">
+      :title="dataEdit ? 'Modifier' + niveauActif : 'Nouvelle ' + niveauActif">
       <b-form id="addform" class="tablelist-form" autocomplete="off">
         <BRow class="g-3">
           <input type="hidden" id="id" name="" />
           <BCol lg="12">
             <label for="projectName-field" class="form-label">Code Localité</label>
-            <input type="text" id="projectName" class="form-control" placeholder="Project name"
+            <input type="text" id="projectName" class="form-control" placeholder="Code localité"
               v-model="newLocalite.code_localite" @input="validateCodeLocalite"
               :class="{ 'is-invalid': codeLocaliteInvalid }" />
             <div class="invalid-feedback" v-if="codeLocaliteInvalid">
@@ -745,7 +742,7 @@ export default {
           <BCol lg="12">
             <div>
               <label for="tasksTitle-field" class="form-label">Nom </label>
-              <input type="text" id="tasksTitle" class="form-control" placeholder="Title"
+              <input type="text" id="tasksTitle" class="form-control" placeholder="Nom localité"
                 v-model="newLocalite.libelle_localite" :class="{ 'is-invalid': submitted && !event.task }" />
               <div class="invalid-feedback">Please enter a title.</div>
             </div>
@@ -791,18 +788,18 @@ export default {
         <lottie class="avatar-xl" colors="primary:#f7b84b,secondary:#f06548" :options="defaultOptions1" :height="75"
           :width="75" />
         <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-          <h4>Are you sure ?</h4>
+          <h4>Êtes-vous sûr(e)?</h4>
           <p class="text-muted mx-4 mb-0">
-            Are you sure you want to remove this record ?
+            Cette donnée sera supprimer
           </p>
         </div>
       </div>
       <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
         <button type="button" class="btn w-sm btn-light" @click="deleteModal = false">
-          Close
+          Fermer
         </button>
-        <button type="button" class="btn w-sm btn-danger" id="delete-record" @click="deleteData">
-          Yes, Delete It!
+        <button type="button" class="btn w-sm btn-danger" id="delete-record" @click="deleteLocalite">
+          Supprimer
         </button>
       </div>
     </BModal>
