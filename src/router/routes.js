@@ -108,7 +108,7 @@ export default [
     component: () => import("../views/dashboard/analytics/index"),
   },
   {
-    path: "/dashboard/structures",
+    path: "/parametrage/structures",
     name: "dashboard-structures",
     meta: {
       title: "Structures", authRequired: true,

@@ -561,16 +561,10 @@ export default {
                 <tbody class="list form-check-all">
                   <tr v-for="(task, index) of resultQuery" :key="index">
                     <td class="id">
-                      <router-link to="/apps/tasks-details" class="fw-medium link-primary"
-                        >{{ task.nom_user }} {{ task.prenom_user }}
-                      </router-link>
+                      {{ task.nom_user }} {{ task.prenom_user }}
                     </td>
                     <td class="project_name">
-                      <router-link
-                        to="/apps/projects-overview"
-                        class="fw-medium link-primary"
-                        >{{ task.login_user }}
-                      </router-link>
+                      {{ task.login_user }}
                     </td>
                     <td>
                       <div class="d-flex">
