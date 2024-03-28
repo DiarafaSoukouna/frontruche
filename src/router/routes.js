@@ -63,6 +63,15 @@ export default [
       title: "Dashboard",
       authRequired: true,
     },
+    component: () => import("../views/dashboard/projects/index.vue"),
+  },
+  {
+    path: "/parametrage/user",
+    name: "parametrage-user",
+    meta: {
+      title: "Utilisateur",
+      authRequired: true,
+    },
     component: () => import("../views/dashboard/ecommerce/index.vue"),
   },
   {
