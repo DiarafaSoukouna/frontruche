@@ -19,13 +19,15 @@ export default {
       API_URL: process.env.VUE_APP_BACK_URL,
       PROXY_URL: process.env.VUE_APP_BACK_URL_PROXY,
       taskListModal: false,
+      showBoutton:false,
       date3: null,
-      structures: [], // Pour stocker les niveaux de localité de l'API
+      structures: [], // Pour stocker les niveaux de structure de l'API
       activeTab: "Product", // Onglet actif par défaut
-      localites: [], // Ajoutez une propriété pour stocker les localités
-      localiteParent: [], // Ajoutez une propriété pour stocker les localités
+      localites: [], // Ajoutez une propriété pour stocker les structures
+      localiteParent: [], // Ajoutez une propriété pour stocker les structures
       loading: true,
       niveauActif: null,
+      uploads_url: "https://ssise-cosit.com/api-ssise/uploads/",
       niveauLocalite: null,
       parentLocalite: null,
       libelleParent: null,
@@ -48,22 +50,23 @@ export default {
         dateFormat: "d M, Y",
       },
       newstructures: {
-        id_sg: 0,
-        code_localite: "",
-        parent_localite: "",
-        code_localite_national: "",
-        libelle_localite: "",
-        code_couleur: "",
-        abreviation_localite: "",
-        longetude_localite: "",
-        latitude_localite: "",
-        homme_localite: "",
-        femme_localite: "",
-        jeune_localite: "",
-        menage_localite: "",
-        niveau_ugl_concerne: 1,
-        idusrcreation: 2, // Exemple de valeur pour l'utilisateur qui ajoute la localité (à adapter selon votre logique)
-        niveau_localite: "", // Exemple de niveau de localité (à adapter selon votre logique)
+        id_sg: "",
+        Sigle_sg: "",
+        Nom_sg: "",
+        SigleSysteme_sg: "",
+        NomSysteme_sg: "",
+        DescriptionSysteme_sg: "",
+        SloganSysteme_sg: "",
+        Adresse_sg: "",
+        Email_sg: "",
+        Telephone_sg: "",
+        WhattApp_sg: "",
+        NomPremierResponsable_sg: "",
+        FonctionPremierResponsable_sg: "",
+        EmailPremierResponsable_sg: "",
+        CodeNiveau_sg: "",
+        Localite_sg: "",
+        LogoSysteme_sg: "",
       },
       filterdate: null,
       filterdate1: null,
@@ -162,7 +165,7 @@ export default {
     },
   },
   created() {
-    // Appel à setPages() et à la requête axios pour récupérer les niveaux de localité
+    // Appel à setPages() et à la requête axios pour récupérer les niveaux de structure
     this.setPages();
     axios
       .get(
@@ -173,7 +176,7 @@ export default {
         console.log("structures", response.data.data);
       })
       .catch((error) => {
-        console.error("Erreur lors de la récupération des niveaux de localité:", error);
+        console.error("Erreur lors de la récupération des niveaux de structure:", error);
       });
   },
 
@@ -208,7 +211,7 @@ export default {
       let method = "POST";
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
-        title: "Êtes-vous sûr de vouloir enregistrer cette localité ?",
+        title: "Êtes-vous sûr de vouloir enregistrer cette structure ?",
         icon: "question",
         showCancelButton: true,
         confirmButtonText: "Oui",
@@ -217,31 +220,102 @@ export default {
         // Si l'utilisateur clique sur "Oui", procéder à l'enregistrement
         if (result.isConfirmed) {
           // this.newstructures.niveau_localite = this.niveauLocalite;
-          // Envoyer les détails de la localité à votre API via une requête POST ou PUT
+          // Envoyer les détails de la structure à votre API via une requête POST ou PUT
           axios({
             method: method,
             url: url,
             data: this.newstructures,
           })
             .then((response) => {
-              // Une fois que la localité a été ajoutée ou mise à jour avec succès
+              // Une fois que la structure a été ajoutée ou mise à jour avec succès
               // Accédez aux données de la réponse si nécessaire
               console.log("Réponse de la requête :", response.data);
 
               // Affichez un message de succès avec SweetAlert
-              Swal.fire({
-                title: "Structures enregistrée !",
-                icon: "success",
-                confirmButtonText: "OK",
-              });
+              window.location.reload();
+              // Swal.fire({
+              //   title: "Structures enregistrée !",
+              //   icon: "success",
+              //   confirmButtonText: "OK",
+              // });
 
               this.getStructures();
-              // Actualiser la liste des localités si nécessaire
+              // Actualiser la liste des structures si nécessaire
               // (supposons que vous actualisez la liste après chaque modification)
             })
             .catch((error) => {
-              // En cas d'erreur lors de l'ajout ou de la mise à jour de la localité, gérez l'erreur ici
-              console.error("Erreur lors de l'enregistrement de la localité :", error);
+              // En cas d'erreur lors de l'ajout ou de la mise à jour de la structure, gérez l'erreur ici
+              console.error("Erreur lors de l'enregistrement de la structure :", error);
+            });
+        }
+      });
+    },
+    UploadLogo() {
+      let url = this.API_URL + "files/upload-file";
+      let method = "POST";
+      // Afficher une boîte de dialogue de confirmation avec SweetAlert
+      Swal.fire({
+        title: "Êtes-vous sûr de vouloir uploader ce loo ?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Oui",
+        cancelButtonText: "Non",
+      }).then((result) => {
+        // Si l'utilisateur clique sur "Oui", procéder à l'enregistrement
+        if (result.isConfirmed) {
+          var files = document.getElementById("profile-img-file-input").files[0];
+          var fd = new FormData();
+          fd.append("file", files);
+          axios({
+            method: method,
+            url: url,
+            data: fd,
+          })
+            .then((response) => {
+              // Une fois que la structure a été ajoutée ou mise à jour avec succès
+              // Accédez aux données de la réponse si nécessaire
+              console.log("Réponse de la requête :", response.data);
+              const data = {
+                LogoSysteme_sg: this.uploads_url + response.data.filename,
+                id_sg: this.newstructures.id_sg,
+              };
+              axios({
+                method: method,
+                url: this.API_URL + "structureGenerale/update",
+                data: data,
+              })
+                .then((response) => {
+                  // Une fois que la structure a été ajoutée ou mise à jour avec succès
+                  // Accédez aux données de la réponse si nécessaire
+                  console.log("Réponse de la requête :", response.data);
+
+                  // Affichez un message de succès avec SweetAlert
+                  Swal.fire({
+                    title: "Structures enregistrée !",
+                    icon: "success",
+                    confirmButtonText: "OK",
+                  });
+
+                  this.getStructures();
+                  window.location.reload();
+                  // window.location.reload();
+                  // Actualiser la liste des structures si nécessaire
+                  // (supposons que vous actualisez la liste après chaque modification)
+                })
+                .catch((error) => {
+                  // En cas d'erreur lors de l'ajout ou de la mise à jour de la structure, gérez l'erreur ici
+                  console.error(
+                    "Erreur lors de l'enregistrement de la structure :",
+                    error
+                  );
+                });
+              // window.location.reload();
+              // Actualiser la liste des structures si nécessaire
+              // (supposons que vous actualisez la liste après chaque modification)
+            })
+            .catch((error) => {
+              // En cas d'erreur lors de l'ajout ou de la mise à jour de la structure, gérez l'erreur ici
+              console.error("Erreur lors de l'enregistrement de la structure :", error);
             });
         }
       });
@@ -249,7 +323,7 @@ export default {
     getParentLibelle(localite) {
       let libelles = []; // Initialiser un tableau pour stocker les libellés
 
-      // Vérifier si la localité a un parent
+      // Vérifier si la structure a un parent
       if (localite.parent_localite !== "") {
         let parent = this.findLocaliteById(localite.parent_localite);
         console.log("Parent initial :", parent); // Vérifier le parent initial
@@ -261,18 +335,18 @@ export default {
         }
       }
 
-      libelles.push(localite.libelle_localite); // Ajouter le libellé de la localité actuelle à la fin du tableau
+      libelles.push(localite.libelle_localite); // Ajouter le libellé de la structure actuelle à la fin du tableau
       console.log(libelles);
       return libelles; // Retourner le tableau de libellés
     },
     findLocaliteById(id) {
       this.foundLocalite;
-      // Recherche de la localité par ID dans la liste des localités
+      // Recherche de la structure par ID dans la liste des structures
 
       this.foundLocalite = this.allTask.find(
         (localite) => localite.id_localite === parseInt(id)
       );
-      console.log("Localité trouvée :", this.foundLocalite); // Vérifier la localité trouvée
+      console.log("structure trouvée :", this.foundLocalite); // Vérifier la structure trouvée
       return this.foundLocalite;
     },
     setActiveTab(tabName) {
@@ -298,7 +372,7 @@ export default {
       delete filteredData.created_at;
       delete filteredData.updated_at;
 
-      // Remplir les champs du formulaire avec les détails de la localité sélectionnée
+      // Remplir les champs du formulaire avec les détails de la structure sélectionnée
       this.newstructures = { ...filteredData };
 
       this.submitted = false;
@@ -314,6 +388,7 @@ export default {
 
     resetnewstructures() {
       this.newstructures = {
+        id_sg: "",
         Sigle_sg: "",
         Nom_sg: "",
         SigleSysteme_sg: "",
@@ -324,6 +399,7 @@ export default {
         Email_sg: "",
         Telephone_sg: "",
         WhattApp_sg: "",
+        LogoSysteme_sg: "",
         NomPremierResponsable_sg: "",
         FonctionPremierResponsable_sg: "",
         EmailPremierResponsable_sg: "",
@@ -448,11 +524,30 @@ export default {
           );
         });
     },
+    handleFileInputChange(event) {
+      const file = event.target.files[0]; // Obtenez le premier fichier sélectionné
 
+      if (file) {
+        // Créez un objet FileReader
+        const reader = new FileReader();
+        this.showBoutton = true;
+        // Écoutez l'événement onload qui se déclenche lorsque la lecture du fichier est terminée
+        reader.onload = (e) => {
+          // Accédez aux données base64 de l'image
+          const base64Image = e.target.result;
+          this.newstructures.LogoSysteme_sg = base64Image;
+          // Utilisez base64Image comme vous le souhaitez, par exemple, en l'envoyant à un serveur ou en l'affichant dans votre interface utilisateur
+          console.log("Image en base64:", base64Image);
+        };
+
+        // Lisez le fichier en tant que données URL (base64)
+        reader.readAsDataURL(file);
+      }
+    },
     deleteStructure(id_sg) {
       // Afficher une boîte de dialogue de confirmation avec SweetAlert
       Swal.fire({
-        title: "Êtes-vous sûr de vouloir supprimer cette localité ?",
+        title: "Êtes-vous sûr de vouloir supprimer cette structure ?",
         icon: "question",
         showCancelButton: true,
         confirmButtonText: "Oui",
@@ -463,7 +558,7 @@ export default {
           // Définir l'URL de la requête de suppression
           const url = "http://ssise-cosit.com/api-ssise/structureGenerale/delete";
 
-          // Corps de la requête contenant l'ID de la localité à supprimer
+          // Corps de la requête contenant l'ID de la structure à supprimer
           const requestBody = {
             id_sg: id_sg,
           };
@@ -479,18 +574,18 @@ export default {
                 confirmButtonText: "OK",
               });
 
-              // Actualiser la liste des localités après la suppression
+              // Actualiser la liste des structures après la suppression
               this.mounted();
             })
             .catch((error) => {
-              // En cas d'erreur lors de la suppression de la localité, gérez l'erreur ici
+              // En cas d'erreur lors de la suppression de la structure, gérez l'erreur ici
               console.error("Erreur lors de la suppression de la structures :", error);
             });
         }
       });
     },
     validateCodeLocalite() {
-      // Vérifiez la longueur de la saisie du code de la localité
+      // Vérifiez la longueur de la saisie du code de la structure
       console.log(typeof this.caractere);
       if (this.newstructures.code_localite.length < parseInt(this.caractere)) {
         console.log("non");
@@ -559,7 +654,7 @@ export default {
   <Layout>
     <div class="position-relative mx-n4 mt-n4">
       <div class="profile-wid-bg profile-setting-img">
-        <img src="@/assets/images/profile-bg.jpg" class="profile-wid-img" alt="" />
+        <img :src="newstructures.LogoSysteme_sg" class="profile-wid-img" alt="" />
         <div class="overlay-content">
           <!-- <div class="text-end p-3">
             <div class="p-0 ms-auto rounded-circle profile-photo-edit">
@@ -580,24 +675,40 @@ export default {
       </div>
     </div>
     <div class="text-center mt-sm-5 pt-4" v-if="loading">
-      <button class="btn btn-outline-success btn-load" >
-      <span class="d-flex align-items-center">
-        <span class="spinner-border flex-shrink-0" role="status">
-          <span class="visually-hidden">Chargement...</span>
+      <button class="btn btn-outline-success btn-load">
+        <span class="d-flex align-items-center">
+          <span class="spinner-border flex-shrink-0" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </span>
+          <span class="flex-grow-1 ms-2"> Chargement... </span>
         </span>
-        <span class="flex-grow-1 ms-2"> Chargement... </span>
-      </span>
-    </button>
+      </button>
     </div>
-   
+
     <BRow v-if="!loading">
       <BCol xxl="3">
         <BCard no-body class="mt-n5">
           <BCardBody class="p-4">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1">
+                <h5 class="card-title mb-0"></h5>
+              </div>
+              <div class="flex-shrink-0">
+                <BLink href="javascript:void(0);"
+                  ><i v-if="showBoutton"
+                    class="ri-checkbox-circle-fill align-bottom me-1 h3"
+                    style="color: #285e43"
+                    @click="UploadLogo"
+                  ></i
+                ></BLink>
+              </div>
+            </div>
             <div class="text-center">
+              <!-- @/assets/images/ruche.png -->
               <div class="profile-user position-relative d-inline-block mx-auto mb-4">
                 <img
-                  src="@/assets/images/ruche.png"
+                  id="logoImage"
+                  :src="newstructures.LogoSysteme_sg"
                   width="40"
                   class="rounded-circle avatar-xl img-thumbnail user-profile-image"
                   alt="user-profile-image"
@@ -607,6 +718,7 @@ export default {
                     id="profile-img-file-input"
                     type="file"
                     class="profile-img-file-input"
+                    @change="handleFileInputChange"
                   />
                   <label
                     for="profile-img-file-input"
@@ -651,7 +763,9 @@ export default {
           <BCardBody>
             <BCol lg="12">
               <div class="mb-3">
-                <label for="firstnameInput" class="form-label">Localité </label>
+                <label for="firstnameInput" class="form-label"
+                  >structure {{ newstructures.id_sg }}</label
+                >
                 <input
                   type="text"
                   class="form-control"
@@ -849,7 +963,12 @@ export default {
                     </BCol>
                     <BCol lg="12">
                       <div class="hstack gap-2 justify-content-end">
-                        <BButton type="submit" variant="primary" @click="handleSubmit">
+                        <BButton
+                          type="submit"
+                          style="background-color: #288f24"
+                          class="btn btn-md"
+                          @click="handleSubmit"
+                        >
                           Enregistrer
                         </BButton>
                       </div>
@@ -930,7 +1049,7 @@ export default {
                       <th class="sort" data-sort="id">Fonction du Responsable</th>
                       <th class="sort" data-sort="id">Email du Responsable</th>
                       <th class="sort" data-sort="id">Code du Niveau</th>
-                      <th class="sort" data-sort="id">Localité</th>
+                      <th class="sort" data-sort="id">structure</th>
                       <th class="sort" data-sort="due_date">Actions</th>
                     </tr>
                   </thead>
@@ -1219,12 +1338,12 @@ export default {
             <div class="invalid-feedback">Please enter a client name.</div>
           </BCol>
           <BCol lg="12">
-            <label for="createName-field" class="form-label">Localité</label>
+            <label for="createName-field" class="form-label">structure</label>
             <input
               type="text"
               id="createName"
               class="form-control"
-              placeholder="Localité"
+              placeholder="structure"
               v-model="newstructures.Localite_sg"
               :class="{ 'is-invalid': submitted && !event.creater }"
             />
