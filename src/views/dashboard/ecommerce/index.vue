@@ -18,6 +18,8 @@ export default {
       taskListModal: false,
       date3: null,
       loading:true,
+      API_URL: process.env.VUE_APP_BACK_URL,
+      PROXY_URL: process.env.VUE_APP_BACK_URL_PROXY,
       rangeDateconfig: {
         wrap: true,
         altFormat: "M j, Y",
@@ -140,7 +142,7 @@ export default {
     getUsers() {
       axios
         .get(
-          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/users/getAllUsers"
+          this.PROXY_URL + this.API_URL+"users/getAllUsers"
         )
         .then(
           function (response) {
@@ -157,7 +159,7 @@ export default {
     async insertUser() {
       try {
         await axios.post(
-          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/users/insert",
+          this.PROXY_URL + this.API_URL+"users/insert",
           {
             nom_user: this.nom,
             login_user: this.login,
@@ -180,7 +182,7 @@ export default {
     async modifUser() {
       try {
         await axios.post(
-          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/users/update",
+          this.PROXY_URL + this.API_URL+"users/update",
           {
             id_user: this.id,
             nom_user: this.nom,
@@ -206,7 +208,7 @@ export default {
     getProfil() {
       axios
         .get(
-          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/profil/getAllProfil"
+          this.PROXY_URL + this.API_URL+"profil/getAllProfil"
         )
         .then((response) => {
           this.allProfils = response.data.data;
@@ -219,7 +221,7 @@ export default {
     getUniteGest() {
       axios
         .get(
-          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/uniteGestion/getAllUniteGestion"
+          this.PROXY_URL + this.API_URL+"uniteGestion/getAllUniteGestion"
         )
         .then(
           function (response) {
@@ -234,7 +236,7 @@ export default {
     getPartenaire() {
       axios
         .get(
-          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/partenaire/getAllPartenaire"
+          this.PROXY_URL + this.API_URL+"partenaire/getAllPartenaire"
         )
         .then(
           function (response) {
@@ -266,7 +268,7 @@ export default {
       try {
         await axios
           .delete(
-            "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/users/delete",
+            this.PROXY_URL + this.API_URL+"users/delete",
             {
               data: { id_user: this.id },
             }
@@ -757,9 +759,9 @@ export default {
             <label for="ticket-status" class="form-label">Unite de gestion</label>
             <select v-model="unite_gest" class="form-control">
               <option
-                v-for="option in allUnite"
-                :key="option.id_unite_gestion"
-                :value="option.id_unite_gestion"
+                v-for="(option, index) of allUnite"
+                :key="index"
+                :value="option.code_unite_gestion"
               >
                 {{ option.nom_unite_gestion }}
               </option>
@@ -770,9 +772,9 @@ export default {
             <label for="priority-field" class="form-label">Partenaire</label>
             <select v-model="partenaire" class="form-control">
               <option
-                v-for="option in allPartenaire"
-                :key="option.id_partenaire"
-                :value="option.id_partenaire"
+                v-for="(option, index) of allPartenaire"
+                :key="index"
+                :value="option.code_partenaire"
               >
                 {{ option.sigle_partenaire }}
               </option>
