@@ -1,6 +1,7 @@
 import store from "@/state/store";
 
 export default [
+
   {
     path: "/login",
     name: "login",
@@ -64,6 +65,15 @@ export default [
       authRequired: true,
     },
     component: () => import("../views/dashboard/projects/index.vue"),
+  },
+  {
+    path: "/parametrage/projet",
+    name: "parametrage-projet",
+    meta: {
+      title: "Projet",
+      authRequired: true,
+    },
+    component: () => import("../views/dashboard/projet/index.vue"),
   },
   {
     path: "/parametrage/user",

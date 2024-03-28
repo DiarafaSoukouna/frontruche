@@ -589,12 +589,12 @@ export default {
               <div class="flex-shrink-0">
                 <div class="d-flex flex-wrap gap-2">
                   <router-link :to="{ name: 'dashboard-niveau-localite' }">
-                    <BButton variant="secondary" class="add-btn">
+                    <BButton style="background-color: #E88E00">
                       Niveau localité
                     </BButton>
                   </router-link>
 
-                  <BButton variant="warning" class="add-btn" @click="toggleModal">
+                  <BButton style="background-color: #285e43" @click="toggleModal">
                     <i class="ri-add-line align-bottom me-1"></i> {{ $t("ajout") }}
                     {{ niveauActif }}
                   </BButton>
@@ -605,24 +605,15 @@ export default {
 
           <BCardBody>
             <BTabs nav-class="mb-3">
-              <BTab
-                v-for="(niveau, index) in niveauxLocalite"
-                :key="index"
-                :title="niveau.libelle_niv_localite"
-                :active="activeTab === niveau.libelle_niv_localite"
-                @click="fetchLocalites(niveau.id_niv_localite)"
-              >
+              <BTab v-for="(niveau, index) in niveauxLocalite" :key="index" :title="niveau.libelle_niv_localite"
+                :active="activeTab === niveau.libelle_niv_localite" @click="fetchLocalites(niveau.id_niv_localite)">
                 <BCardBody class="border border-dashed border-end-0 border-start-0">
                   <b-form>
                     <BRow class="g-3">
                       <BCol xxl="5" sm="12">
                         <div class="search-box">
-                          <input
-                            type="text"
-                            class="form-control search bg-light border-light"
-                            placeholder="Search for tasks or something..."
-                            v-model="searchQuery"
-                          />
+                          <input type="text" class="form-control search bg-light border-light"
+                            placeholder="Search for tasks or something..." v-model="searchQuery" />
                           <i class="ri-search-line search-icon"></i>
                         </div>
                       </BCol>
@@ -646,12 +637,7 @@ export default {
                         <tr>
                           <th class="sort" data-sort="id">Code</th>
 
-                          <th
-                            v-for="(rang, index) in rangLocalite"
-                            :key="index"
-                            class="sort"
-                            data-sort="project_name"
-                          >
+                          <th v-for="(rang, index) in rangLocalite" :key="index" class="sort" data-sort="project_name">
                             {{ getLibelleByRang(rang) }}
                           </th>
                           <th class="sort" data-sort="id" v-if="rangLocalite == 1">
@@ -669,11 +655,7 @@ export default {
                           <!-- Remplacez 'localite.id_localite' par l'ID approprié -->
                           <td class="id">{{ localite.code_localite }}</td>
                           <!-- Remplacez 'localite.libelle_localite' par le nom ou libellé approprié -->
-                          <td
-                            class="project_name"
-                            v-for="(libelle, index) in getParentLibelle(localite)"
-                            :key="index"
-                          >
+                          <td class="project_name" v-for="(libelle, index) in getParentLibelle(localite)" :key="index">
                             <template v-if="localite.parent_localite">
                               <span>{{ libelle }}</span>
                             </template>
@@ -685,11 +667,8 @@ export default {
                           <td class="id" v-if="rangLocalite == 1">
                             {{ localite.abreviation_localite }}
                           </td>
-                          <td
-                            class="id"
-                            v-if="rangLocalite == 1"
-                            :style="{ 'background-color': localite.code_couleur }"
-                          >
+                          <td class="id" v-if="rangLocalite == 1"
+                            :style="{ 'background-color': localite.code_couleur }">
                             {{ localite.code_couleur }}
                           </td>
 
@@ -699,9 +678,7 @@ export default {
                               <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                             </span>
                             <span @click="deleteLocalite(localite.id_localite)">
-                              <i
-                                class="ri-delete-bin-fill align-bottom me-2 text-muted"
-                              ></i>
+                              <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
                             </span>
                           </td>
                         </tr>
@@ -710,12 +687,8 @@ export default {
 
                     <div class="noresult" v-if="resultQuery.length < 1">
                       <div class="text-center">
-                        <lottie
-                          colors="primary:#121331,secondary:#08a88a"
-                          :options="defaultOptions"
-                          :height="75"
-                          :width="75"
-                        />
+                        <lottie colors="primary:#121331,secondary:#08a88a" :options="defaultOptions" :height="75"
+                          :width="75" />
                         <h5 class="mt-2">Partenaire non trouvé</h5>
                         <p class="text-muted mb-0">
                           Le partenaire recherché n'a pas été retrouvé.
@@ -726,35 +699,21 @@ export default {
 
                   <div class="d-flex justify-content-end" v-if="resultQuery.length >= 1">
                     <div class="pagination-wrap hstack gap-2">
-                      <BLink
-                        class="page-item pagination-prev"
-                        href="#"
-                        :disabled="page <= 1"
-                        @click="page--"
-                      >
+                      <BLink class="page-item pagination-prev" href="#" :disabled="page <= 1" @click="page--">
                         Previous
                       </BLink>
                       <ul class="pagination listjs-pagination mb-0">
-                        <li
-                          :class="{
-                            active: pageNumber == page,
-                            disabled: pageNumber == '...',
-                          }"
-                          v-for="(pageNumber, index) in pages"
-                          :key="index"
-                          @click="page = pageNumber"
-                        >
+                        <li :class="{
+                    active: pageNumber == page,
+                    disabled: pageNumber == '...',
+                  }" v-for="(pageNumber, index) in pages" :key="index" @click="page = pageNumber">
                           <BLink class="page" href="#" data-i="1" data-page="8">{{
-                            pageNumber
-                          }}</BLink>
+                    pageNumber
+                  }}</BLink>
                         </li>
                       </ul>
-                      <BLink
-                        class="page-item pagination-next"
-                        href="#"
-                        :disabled="page >= pages.length"
-                        @click="page++"
-                      >
+                      <BLink class="page-item pagination-next" href="#" :disabled="page >= pages.length"
+                        @click="page++">
                         Next
                       </BLink>
                     </div>
@@ -768,31 +727,17 @@ export default {
     </BRow>
 
     <!-- task list modal -->
-    <BModal
-      v-model="taskListModal"
-      id="showmodal"
-      modal-class="zoomIn"
-      hide-footer
-      header-class="p-3 bg-info-subtle taskModal"
-      class="v-modal-custom"
-      centered
-      size="lg"
-      :title="dataEdit ? 'Modifier localité' : 'Nouvelle localité'"
-    >
+    <BModal v-model="taskListModal" id="showmodal" modal-class="zoomIn" hide-footer
+      header-class="p-3 bg-info-subtle taskModal" class="v-modal-custom" centered size="lg"
+      :title="dataEdit ? 'Modifier localité' : 'Nouvelle localité'">
       <b-form id="addform" class="tablelist-form" autocomplete="off">
         <BRow class="g-3">
           <input type="hidden" id="id" name="" />
           <BCol lg="12">
             <label for="projectName-field" class="form-label">Code Localité</label>
-            <input
-              type="text"
-              id="projectName"
-              class="form-control"
-              placeholder="Project name"
-              v-model="newLocalite.code_localite"
-              @input="validateCodeLocalite"
-              :class="{ 'is-invalid': codeLocaliteInvalid }"
-            />
+            <input type="text" id="projectName" class="form-control" placeholder="Project name"
+              v-model="newLocalite.code_localite" @input="validateCodeLocalite"
+              :class="{ 'is-invalid': codeLocaliteInvalid }" />
             <div class="invalid-feedback" v-if="codeLocaliteInvalid">
               Le code de la localité doit avoir exactement {{ caractere }} caractères.
             </div>
@@ -800,14 +745,8 @@ export default {
           <BCol lg="12">
             <div>
               <label for="tasksTitle-field" class="form-label">Nom </label>
-              <input
-                type="text"
-                id="tasksTitle"
-                class="form-control"
-                placeholder="Title"
-                v-model="newLocalite.libelle_localite"
-                :class="{ 'is-invalid': submitted && !event.task }"
-              />
+              <input type="text" id="tasksTitle" class="form-control" placeholder="Title"
+                v-model="newLocalite.libelle_localite" :class="{ 'is-invalid': submitted && !event.task }" />
               <div class="invalid-feedback">Please enter a title.</div>
             </div>
           </BCol>
@@ -815,11 +754,7 @@ export default {
             <label for="createName-field" class="form-label">{{ libelleParent }}</label>
             <select class="form-select" v-model="newLocalite.parent_localite">
               <!-- Utilisation de v-for pour itérer sur les localités et afficher chaque option -->
-              <option
-                v-for="localite in localiteParent"
-                :key="localite.id_localite"
-                :value="localite.id_localite"
-              >
+              <option v-for="localite in localiteParent" :key="localite.id_localite" :value="localite.id_localite">
                 {{ localite.libelle_localite }}
               </option>
             </select>
@@ -827,37 +762,20 @@ export default {
 
           <BCol lg="12" v-if="parentLocalite == 1">
             <label for="createName-field" class="form-label">Abréviation</label>
-            <input
-              type="text"
-              id="createName"
-              class="form-control"
-              placeholder="Client name"
-              v-model="newLocalite.abreviation_localite"
-              :class="{ 'is-invalid': submitted && !event.creater }"
-            />
+            <input type="text" id="createName" class="form-control" placeholder="Client name"
+              v-model="newLocalite.abreviation_localite" :class="{ 'is-invalid': submitted && !event.creater }" />
             <div class="invalid-feedback">Please enter a client name.</div>
           </BCol>
           <BCol lg="12" v-if="parentLocalite == 1">
             <label for="createName-field" class="form-label">Couleur</label>
-            <input
-              type="color"
-              id="createName"
-              class="form-control"
-              placeholder="Client name"
-              v-model="newLocalite.code_couleur"
-              :class="{ 'is-invalid': submitted && !event.creater }"
-            />
+            <input type="color" id="createName" class="form-control" placeholder="Client name"
+              v-model="newLocalite.code_couleur" :class="{ 'is-invalid': submitted && !event.creater }" />
             <div class="invalid-feedback">Please enter a client name.</div>
           </BCol>
         </BRow>
 
         <div class="hstack gap-2 justify-content-end mt-3">
-          <BButton
-            type="button"
-            variant="light"
-            @click="taskListModal = false"
-            id="closemodal"
-          >
+          <BButton type="button" variant="light" @click="taskListModal = false" id="closemodal">
             Fermer
           </BButton>
           <BButton type="submit" variant="success" id="add-btn" @click="handleSubmit">
@@ -868,21 +786,10 @@ export default {
     </BModal>
 
     <!-- delete modal -->
-    <BModal
-      v-model="deleteModal"
-      modal-class="zoomIn"
-      hide-footer
-      no-close-on-backdrop
-      centered
-    >
+    <BModal v-model="deleteModal" modal-class="zoomIn" hide-footer no-close-on-backdrop centered>
       <div class="mt-2 text-center">
-        <lottie
-          class="avatar-xl"
-          colors="primary:#f7b84b,secondary:#f06548"
-          :options="defaultOptions1"
-          :height="75"
-          :width="75"
-        />
+        <lottie class="avatar-xl" colors="primary:#f7b84b,secondary:#f06548" :options="defaultOptions1" :height="75"
+          :width="75" />
         <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
           <h4>Are you sure ?</h4>
           <p class="text-muted mx-4 mb-0">
@@ -894,12 +801,7 @@ export default {
         <button type="button" class="btn w-sm btn-light" @click="deleteModal = false">
           Close
         </button>
-        <button
-          type="button"
-          class="btn w-sm btn-danger"
-          id="delete-record"
-          @click="deleteData"
-        >
+        <button type="button" class="btn w-sm btn-danger" id="delete-record" @click="deleteData">
           Yes, Delete It!
         </button>
       </div>

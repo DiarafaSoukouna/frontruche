@@ -8,8 +8,8 @@ import { authMethods, authFackMethods, notificationMethods } from "@/state/helpe
 export default {
   data() {
     return {
-      API_URL : process.env.VUE_APP_BACK_URL,
-      PROXY_URL : process.env.VUE_APP_BACK_URL_PROXY,
+      API_URL: process.env.VUE_APP_BACK_URL,
+      PROXY_URL: process.env.VUE_APP_BACK_URL_PROXY,
       email: "",
       password: "",
       submitted: false,
@@ -17,6 +17,7 @@ export default {
       tryingToLogIn: false,
       isAuthError: false,
       processing: false,
+      isLoggedIn: false, // État de l'authentification
     };
   },
   validations: {
@@ -38,7 +39,7 @@ export default {
       this.processing = true;
       try {
         const result = await axios.post(
-           this.PROXY_URL + this.API_URL + "users/login",
+          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/users/login",
           {
             login_user: this.email,
             pass_user: this.password,
@@ -46,6 +47,8 @@ export default {
         );
         // Vous pouvez ajuster cette condition en fonction de la réponse de votre API
         if (result.data.status === "success") {
+          this.isLoggedIn = true;
+          console.log(this.isLoggedIn);
           console.log("test", result.data);
           localStorage.setItem("jwt", result.data.data);
           this.$router.push({ path: "/" });
@@ -128,7 +131,7 @@ export default {
 
 <template>
   <BCard no-body class="overflow-hidden m-0">
-    <BRow class="g-0">
+    <BRow class="g-0" style="height: 100%;">
       <BCol lg="8">
         <div class="p-lg-5 p-4 auth-one-bg  h-100">
           <div class="bg-overlay"></div>
@@ -143,18 +146,10 @@ export default {
                 <i class="ri-double-quotes-l display-4 text-success"></i>
               </div>
 
-              <div
-                id="qoutescarouselIndicators"
-                class="carousel slide"
-                data-bs-ride="carousel"
-              >
-                <Swiper
-                  class="text-center text-white pb-5"
-                  :autoplay="{ delay: 3000, disableOnInteraction: false }"
-                  :loop="true"
-                  :modules="[Autoplay, Navigation, Pagination]"
-                  :pagination="{ clickable: true, el: '.swiper-pagination' }"
-                >
+              <div id="qoutescarouselIndicators" class="carousel slide" data-bs-ride="carousel">
+                <Swiper class="text-center text-white pb-5" :autoplay="{ delay: 3000, disableOnInteraction: false }"
+                  :loop="true" :modules="[Autoplay, Navigation, Pagination]"
+                  :pagination="{ clickable: true, el: '.swiper-pagination' }">
                   <swiper-slide>
                     <div class="active">
                       <p class="fs-15 fst-italic">
@@ -196,37 +191,20 @@ export default {
           <div class="mt-4">
             <form class="needs-validation" novalidate>
               <div class="mb-3">
-                <label for="username" class="form-label"
-                  >Username <span class="text-danger">*</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="login_user"
-                  placeholder="Enter login"
-                  v-model="email"
-                  required
-                />
+                <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="login_user" placeholder="Enter login" v-model="email"
+                  required />
                 <div class="invalid-feedback">Please enter username</div>
               </div>
 
               <div class="mb-3">
                 <label class="form-label" for="password-input">Password</label>
                 <div class="position-relative auth-pass-inputgroup">
-                  <input
-                    type="password"
-                    v-model="password"
-                    class="form-control pe-5"
-                    placeholder="Enter password"
-                    required
-                  />
-                  <BButton
-                    variant="link"
-                    class="position-absolute end-0 top-0 text-decoration-none text-muted password-addon"
-                    type="button"
-                    id="password-addon"
-                    ><i class="ri-eye-fill align-middle"></i
-                  ></BButton>
+                  <input type="password" v-model="password" class="form-control pe-5" placeholder="Enter password"
+                    required />
+                  <BButton variant="link"
+                    class="position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button"
+                    id="password-addon"><i class="ri-eye-fill align-middle"></i></BButton>
                   <div class="invalid-feedback">Please enter password</div>
                 </div>
               </div>
@@ -251,13 +229,7 @@ export default {
                 </p>
               </div>
               <div class="mt-4">
-                <BButton
-                  variant="success"
-                  class="w-100"
-                  type="submit"
-                  @click="signinapi"
-                  :disabled="processing"
-                >
+                <BButton variant="success" class="w-100" type="submit" @click="signinapi" :disabled="processing">
                   {{ processing ? "Connexion" : "Se connecter" }}
                 </BButton>
               </div>
@@ -268,18 +240,15 @@ export default {
                 </div>
 
                 <div>
-                  <BButton type="button" variant="primary" class="btn-icon"
-                    ><i class="ri-facebook-fill fs-16"></i
-                  ></BButton>
+                  <BButton type="button" variant="primary" class="btn-icon"><i class="ri-facebook-fill fs-16"></i>
+                  </BButton>
                   <BButton type="button" variant="danger" class="btn-icon ms-1">
                     <i class="ri-google-fill fs-16"></i>
                   </BButton>
-                  <BButton type="button" variant="dark" class="btn-icon ms-1"
-                    ><i class="ri-github-fill fs-16"></i
-                  ></BButton>
-                  <BButton type="button" variant="info" class="btn-icon ms-1"
-                    ><i class="ri-twitter-fill fs-16"></i
-                  ></BButton>
+                  <BButton type="button" variant="dark" class="btn-icon ms-1"><i class="ri-github-fill fs-16"></i>
+                  </BButton>
+                  <BButton type="button" variant="info" class="btn-icon ms-1"><i class="ri-twitter-fill fs-16"></i>
+                  </BButton>
                 </div>
               </div>
             </form>
@@ -288,10 +257,7 @@ export default {
           <div class="mt-5 text-center">
             <p class="mb-0">
               Already have an account ?
-              <router-link
-                to="/auth/signin-cover"
-                class="fw-semibold text-primary text-decoration-underline"
-              >
+              <router-link to="/auth/signin-cover" class="fw-semibold text-primary text-decoration-underline">
                 Signin
               </router-link>
             </p>
