@@ -7,7 +7,7 @@ import img4 from "../assets/images/products/img-6.png";
 import img5 from "../assets/images/products/img-5.png";
 import axios from "axios";
 
-import simplebar from "simplebar-vue";
+// import simplebar from "simplebar-vue";
 
 import i18n from "../i18n";
 
@@ -71,37 +71,37 @@ export default {
           language: "en",
           title: "English",
         },
-        {
-          flag: require("@/assets/images/flags/spain.svg"),
-          language: "sp",
-          title: "Española",
-        },
-        {
-          flag: require("@/assets/images/flags/germany.svg"),
-          language: "gr",
-          title: "Deutsche",
-        },
-        {
-          flag: require("@/assets/images/flags/italy.svg"),
-          language: "it",
-          title: "italiana",
-        },
-        {
-          flag: require("@/assets/images/flags/russia.svg"),
-          language: "ru",
-          title: "русский",
-        },
-        {
-          flag: require("@/assets/images/flags/china.svg"),
-          language: "ch",
-          title: "中國人",
-        },
+        // {
+        //   flag: require("@/assets/images/flags/spain.svg"),
+        //   language: "sp",
+        //   title: "Española",
+        // },
+        // {
+        //   flag: require("@/assets/images/flags/germany.svg"),
+        //   language: "gr",
+        //   title: "Deutsche",
+        // },
+        // {
+        //   flag: require("@/assets/images/flags/italy.svg"),
+        //   language: "it",
+        //   title: "italiana",
+        // },
+        // {
+        //   flag: require("@/assets/images/flags/russia.svg"),
+        //   language: "ru",
+        //   title: "русский",
+        // },
+        // {
+        //   flag: require("@/assets/images/flags/china.svg"),
+        //   language: "ch",
+        //   title: "中國人",
+        // },
        
-        {
-          flag: require("@/assets/images/flags/ae.svg"),
-          language: "ar",
-          title: "Arabic",
-        },
+        // {
+        //   flag: require("@/assets/images/flags/ae.svg"),
+        //   language: "ar",
+        //   title: "Arabic",
+        // },
       ],
       lan: i18n.locale,
       text: null,
@@ -109,10 +109,12 @@ export default {
       value: null,
       myVar: 1,
       NomSysteme : null,
+      NomUsers : null,
+      PrenomUsers : null,
+      TitreUsers : null,
     };
   },
   components: {
-    simplebar,
   },
 
   methods: {
@@ -133,6 +135,29 @@ export default {
 
           this.NomSysteme = data.NomSysteme_sg;
           console.log("my data", data);
+
+        })
+        .catch((error) => {
+          console.error(
+            "Erreur lors de la récupération des structures générales:",
+            error
+          );
+        });
+    },
+    getUsers() {
+
+      axios
+        .get(
+          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise//users/protected"
+        )
+        .then((response) => {
+          // Mettre à jour les structures générales avec les données reçues
+          const data = response.data.data;
+
+          this.NomUsers = data.nom_user;
+          this.PrenomUsers = data.prenom_user;
+          this.TitreUsers = data.titre_user;
+          console.log("my users data", data);
 
         })
         .catch((error) => {
@@ -295,6 +320,7 @@ export default {
  
   mounted() {
     this.getStructures();
+    this.getUsers();
     if (process.env.VUE_APP_I18N_LOCALE) {
       this.flag = process.env.VUE_APP_I18N_LOCALE;
       this.languages.forEach((item) => {
@@ -362,7 +388,7 @@ export default {
 
           <!-- App Search-->
           <div class="dropdown-header">
-            <h2 class="mb-2 text-uppercase" style="color: #285e43; font-weight: 800;">{{NomSysteme}} </h2>
+            <label class="mb-2 text-uppercase" style="color: #285e43; font-weight: 800; font-size: 200%;">{{NomSysteme}} </label>
           </div>
           <!-- <form class="app-search d-none d-md-block">
             <div class="position-relative">
@@ -561,7 +587,7 @@ export default {
             </BLink>
           </BDropdown>
 
-          <BDropdown
+          <!-- <BDropdown
             class="dropdown"
             variant="ghost-secondary"
             dropstart
@@ -746,7 +772,7 @@ export default {
                 Checkout
               </router-link>
             </div>
-          </BDropdown>
+          </BDropdown> -->
 
           <div class="ms-1 header-item d-none d-sm-flex">
             <BButton
@@ -771,7 +797,7 @@ export default {
             </BButton>
           </div>
 
-          <BDropdown
+          <!-- <BDropdown
             variant="ghost-dark"
             dropstart
             class="ms-1 dropdown"
@@ -1069,7 +1095,7 @@ export default {
                 </simplebar>
               </BTab>
             </BTabs>
-          </BDropdown>
+          </BDropdown> -->
 
           <BDropdown
             variant="link"
@@ -1082,60 +1108,27 @@ export default {
               <span class="d-flex align-items-center">
                 <img
                   class="rounded-circle header-profile-user"
-                  src="@/assets/images/users/avatar-1.jpg"
+                  src="@/assets/images/users/user-dummy-img.jpg"
                   alt="Header Avatar"
                 />
                 <span class="text-start ms-xl-2">
                   <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"
-                    >Edward Diana</span
+                    >{{NomUsers}} {{PrenomUsers}}</span
                   >
                   <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text"
-                    >Founder</span
+                    >{{TitreUsers}}</span
                   >
                 </span>
               </span>
             </template>
-            <h6 class="dropdown-header">Welcome Anna!</h6>
-            <router-link class="dropdown-item" to="/pages/profile"
+            <h6 class="dropdown-header">Bienvenue {{NomUsers}}!</h6>
+            <!-- <router-link class="dropdown-item" to="/pages/profile"
               ><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
               <span class="align-middle"> Profile</span>
-            </router-link>
-            <router-link class="dropdown-item" to="/chat">
-              <i
-                class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"
-              ></i>
-              <span class="align-middle"> Messages</span>
-            </router-link>
-            <router-link class="dropdown-item" to="/apps/tasks-kanban">
-              <i
-                class="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"
-              ></i>
-              <span class="align-middle"> Taskboard</span>
-            </router-link>
-            <router-link class="dropdown-item" to="/pages/faqs"
-              ><i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i>
-              <span class="align-middle"> Help</span>
-            </router-link>
-            <div class="dropdown-divider"></div>
-            <router-link class="dropdown-item" to="/pages/profile"
-              ><i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i>
-              <span class="align-middle"> Balance : <b>$5971.67</b></span>
-            </router-link>
-            <router-link class="dropdown-item" to="/pages/profile-setting">
-              <BBadge
-                variant="success-subtle"
-                class="bg-success-subtle text-success mt-1 float-end"
-                >New</BBadge
-              ><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>
-              <span class="align-middle"> Settings</span>
-            </router-link>
-            <router-link class="dropdown-item" to="/auth/lockscreen-basic"
-              ><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i>
-              <span class="align-middle"> Lock screen</span>
-            </router-link>
+            </router-link> -->
             <router-link class="dropdown-item" to="/logout"
               ><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
-              <span class="align-middle" data-key="t-logout"> Logout</span>
+              <span class="align-middle" data-key="t-logout"> Déconnexion</span>
             </router-link>
           </BDropdown>
         </div>
