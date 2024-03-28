@@ -2,6 +2,7 @@
 import router from "@/router";
 import simplebar from "simplebar-vue";
 import { layoutComputed } from "@/state/helpers";
+import axios from "axios";
 
 import NavBar from "@/components/nav-bar";
 import Menu from "@/components/menu.vue";
@@ -17,6 +18,7 @@ export default {
   data() {
     return {
       isMenuCondensed: false,
+      LogoSysteme:null,
     };
   },
   computed: {
@@ -42,7 +44,32 @@ export default {
       // Update the data-sidebar-size attribute of document.documentElement
       document.documentElement.setAttribute("data-sidebar-size", sidebarSize);
     },
+    getStructures() {
+      this.loading = true;
+      this.rang = 0;
+      this.caractere;
+      this.test;
+      this.loadingClass = "loading-yellow";
 
+      axios
+        .get(
+          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/structureGenerale/getAllStructureGenerale"
+        )
+        .then((response) => {
+          // Mettre à jour les structures générales avec les données reçues
+          const data = response.data.data[0];
+
+          this.LogoSysteme = data.LogoSysteme_sg;
+          console.log("my data", data);
+
+        })
+        .catch((error) => {
+          console.error(
+            "Erreur lors de la récupération des structures générales:",
+            error
+          );
+        });
+    },
     initActiveMenu() {
       if (document.documentElement.getAttribute('data-sidebar-size') === 'sm-hover') {
         localStorage.setItem('hoverd', true);
@@ -82,6 +109,7 @@ export default {
 
   },
   mounted() {
+    this.getStructures();
     if (localStorage.getItem('hoverd') == 'true') {
       document.documentElement.setAttribute('data-sidebar-size', 'sm-hover-active');
     }
@@ -116,7 +144,7 @@ export default {
         <!-- LOGO -->
         <div class="navbar-brand-box">
           <!-- Dark Logo-->
-          <router-link to="/" class="logo logo-dark">
+          <router-link to="/" class="logo logo-dark"> 
             <span class="logo-sm">
               <img src="@/assets/images/logo-sm.png" alt="" height="22" />
             </span>
@@ -130,7 +158,7 @@ export default {
               <img src="@/assets/images/logo-sm.png" alt="" height="22" />
             </span>
             <span class="logo-lg">
-              <img src="@/assets/images/ruche.png" alt="" height="47" width="100" />
+              <img :src="LogoSysteme" alt="" height="47" width="100" />
             </span>
           </router-link>
           <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"

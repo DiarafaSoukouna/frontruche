@@ -87,7 +87,7 @@ export default {
                                 <BCol lg="6">
                                     <div class="p-lg-5 p-4">
                                         <div>
-                                            <h5 class="text-primary">Welcome Back !</h5>
+                                            <h5 class="text-primary">Welcome Back !hjh</h5>
                                             <p class="text-muted">Sign in to continue to Velzon.</p>
                                         </div>
 
