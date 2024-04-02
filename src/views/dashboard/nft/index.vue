@@ -90,7 +90,7 @@ export default {
     getPro() {
       axios
         .get(
-          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/programme/getAllProgramme"
+          "https://ssise-cosit.com/api-ssise/programme/getAllProgramme"
         )
         .then(
           function (response) {
@@ -105,7 +105,7 @@ export default {
     async insertPro() {
       try {
         await axios.post(
-          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/programme/insert",
+          "https://ssise-cosit.com/api-ssise/programme/insert",
           {
             code_programme: this.code,
             sigle_programme: this.sigle,
@@ -127,7 +127,7 @@ export default {
     async updatePro() {
       try {
         await axios.post(
-          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/programme/update",
+          "https://ssise-cosit.com/api-ssise/programme/update",
           {
             id_programme: this.id,
             code_programme: this.code,
@@ -152,7 +152,7 @@ export default {
       try {
         await axios
           .delete(
-            "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/programme/delete",
+            "https://ssise-cosit.com/api-ssise/programme/delete",
             {
               data: { id_programme: this.id },
             }

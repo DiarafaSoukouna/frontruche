@@ -34,7 +34,7 @@ router.beforeEach(async (routeTo, routeFrom, next) => {
   if (!authRequired) return next();
   
   axios.defaults.headers.common['authorization'] = 'Bearer ' + localStorage.getItem('jwt'); // for all requests
-  await axios.get('https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/users/protected').then((data) => {
+  await axios.get('https://ssise-cosit.com/api-ssise/users/protected').then((data) => {
     localStorage.setItem('userdata', JSON.stringify(data.data));
     localStorage.setItem('userid', data.data.id_user);
     localStorage.setItem('user', JSON.stringify(data.data));

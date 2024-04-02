@@ -143,7 +143,7 @@ export default {
     getDirection() {
       axios
         .get(
-          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/planDirection/getAllPlanDirectionService"
+          "https://ssise-cosit.com/api-ssise/planDirection/getAllPlanDirectionService"
         )
         .then(
           function (response) {
@@ -158,7 +158,7 @@ export default {
     async insertDirection() {
       try {
         await axios.post(
-          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/planDirection/insert",
+          "https://ssise-cosit.com/api-ssise/planDirection/insert",
           {
             code_direction_service: this.code,
             intitule_direction_service: this.intitule,
@@ -175,7 +175,7 @@ export default {
     async modifDirection() {
       try {
         await axios.post(
-          "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/planDirection/update",
+          "https://ssise-cosit.com/api-ssise/planDirection/update",
           {
             id_direction_service: this.id,
             code_direction_service: this.code,
@@ -207,7 +207,7 @@ export default {
       try {
         await axios
           .delete(
-            "https://cors-proxy.fringe.zone/https://ssise-cosit.com/api-ssise/planDirection/delete",
+            "https://ssise-cosit.com/api-ssise/planDirection/delete",
             {
               data: { id_direction_service: this.id },
             }

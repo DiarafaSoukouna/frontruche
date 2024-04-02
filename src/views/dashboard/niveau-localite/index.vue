@@ -185,7 +185,7 @@ export default {
     // Appel à setPages() et à la requête axios pour récupérer les niveaux de Type partenaire
     this.setPages();
     axios
-      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/getAllNiveauLocalite")
+      .get("http://ssise-cosit.com/api-ssise/niveauLocalite/getAllNiveauLocalite")
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
         this.niveauLocal = response.data.data;
@@ -199,7 +199,7 @@ export default {
       });
 
     axios
-      .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/localite/getAllLocalite")
+      .get("http://ssise-cosit.com/api-ssise/localite/getAllLocalite")
       .then((response) => {
         // Une fois que les données ont été récupérées avec succès, les assigner à niveauxLocalite
         this.localiteParent = response.data.data;
@@ -221,7 +221,7 @@ export default {
   beforeMount() {
     axios
       .get(
-        "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/typePartenaire/getAllTypePartenaire"
+        "http://ssise-cosit.com/api-ssise/typePartenaire/getAllTypePartenaire"
       )
       .then((data) => {
         this.allTask = [];
@@ -366,7 +366,7 @@ export default {
       });
     },
     handleSubmit2() {
-      let url = "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/";
+      let url = "http://ssise-cosit.com/api-ssise/niveauLocalite/";
       let method = "";
 
       if (this.dataEdit2) {
@@ -676,7 +676,7 @@ export default {
       this.loadingClass = 'loading-yellow';
 
       axios
-        .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/getAllNiveauLocalite", {
+        .get("http://ssise-cosit.com/api-ssise/niveauLocalite/getAllNiveauLocalite", {
 
         })
         .then((response) => {
@@ -705,7 +705,7 @@ export default {
       this.loadingClass = 'loading-yellow';
 
       axios
-        .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/uniteIndicateur/getAllUniteIndicateur", {
+        .get("http://ssise-cosit.com/api-ssise/uniteIndicateur/getAllUniteIndicateur", {
 
         })
         .then((response) => {
@@ -734,7 +734,7 @@ export default {
       this.loadingClass = 'loading-yellow';
 
       axios
-        .get("https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/categorieDepense/getAllCategorieDepense", {
+        .get("http://ssise-cosit.com/api-ssise/categorieDepense/getAllCategorieDepense", {
 
         })
         .then((response) => {
@@ -805,7 +805,7 @@ export default {
         // Si l'utilisateur clique sur "Oui", procéder à la suppression
         if (result.isConfirmed) {
           // Définir l'URL de la requête de suppression
-          let url = 'https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/niveauLocalite/delete';
+          let url = 'http://ssise-cosit.com/api-ssise/niveauLocalite/delete';
 
           // Corps de la requête contenant l'ID de la Type partenaire à supprimer
           const requestBody = {

@@ -53,7 +53,7 @@ export default {
 
       axios
         .get(
-          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/structureGenerale/getAllStructureGenerale"
+          "http://ssise-cosit.com/api-ssise/structureGenerale/getAllStructureGenerale"
         )
         .then((response) => {
           // Mettre à jour les structures générales avec les données reçues

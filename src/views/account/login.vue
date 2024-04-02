@@ -41,7 +41,7 @@ export default {
     async signinapi() {
       this.processing = true;
       try {
-        const result = await axios.post(this.PROXY_URL + this.API_URL + "users/login", {
+        const result = await axios.post( this.API_URL + "users/login", {
           login_user: this.email,
           pass_user: this.password,
         });
@@ -77,7 +77,7 @@ export default {
 
       axios
         .get(
-          "https://cors-proxy.fringe.zone/http://ssise-cosit.com/api-ssise/structureGenerale/getAllStructureGenerale"
+          "http://ssise-cosit.com/api-ssise/structureGenerale/getAllStructureGenerale"
         )
         .then((response) => {
           // Mettre à jour les structures générales avec les données reçues
